@@ -1,4 +1,4 @@
-import(runjags,coda) 
+import(runjags,coda,rjags) 
 export(trace.plot,conv.diag, table.means,table.pvalues, BAnova, BANOVA.Bern, BANOVA.Bin, BANOVA.Multinomial, BANOVA.Normal, BANOVA.ordMultinomial, BANOVA.Poisson, BANOVA.T)
 S3method(print,conv.diag)
 S3method(print,BANOVA.Bern)

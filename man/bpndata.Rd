@@ -41,7 +41,7 @@ data(bpndata)
 
 # within-subjects model using the dependent variable : PIC_FIX 
 res1 <- BANOVA.Poisson(PIC_FIX ~ PIC_SIZE+ PAGE_NUM 
-+ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 10, sample = 10, thin = 1)
++ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 5, sample = 5, thin = 1)
 res1
 
 if(0){

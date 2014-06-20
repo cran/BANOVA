@@ -10,7 +10,8 @@
 }
 \usage{
 BANOVA.Bin(l1_formula = "NA", l2_formula = "NA", data,
-  id, num_trails, burnin = 500, sample = 1000, thin = 1, jags = findjags())
+  id, num_trails, burnin = 500, sample = 1000, thin = 1, 
+  jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Bin}(object, ...)
 \method{predict}{BANOVA.Bin}(object, newdata = NULL,...)
 \method{print}{BANOVA.Bin}(x, ...)
@@ -28,7 +29,7 @@ BANOVA.Bin(l1_formula = "NA", l2_formula = "NA", data,
   \item{num_trails}{the number of trails of each
   observation(=1, if it is bernoulli), the type is forced to be 'integer'}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a warning. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
 
   \item{sample}{target samples in the MCMC algorithm after thinning}
 
@@ -69,6 +70,7 @@ Level 1 model: \cr
 \examples{
 
 data(colorad)
+
 # mean center Blur for effect coding
 colorad$blur <- colorad$blur - mean(colorad$blur)
 res <- BANOVA.Bin(y~typic, ~color*blur, colorad, colorad$id, as.integer(16), 

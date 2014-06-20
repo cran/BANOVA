@@ -9,7 +9,8 @@
 }
 \usage{
 BANOVA.Normal(l1_formula = "NA", l2_formula = "NA", data,
-  id, burnin = 500, sample = 1000, thin = 1, jags = findjags())
+  id, burnin = 500, sample = 1000, thin = 1, 
+  jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Normal}(object, ...)
 \method{predict}{BANOVA.Normal}(object, newdata = NULL,...)
 \method{print}{BANOVA.Normal}(x, ...)
@@ -24,7 +25,7 @@ BANOVA.Normal(l1_formula = "NA", l2_formula = "NA", data,
 
   \item{id}{subject ID of each response unit}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a warning. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
 
   \item{sample}{target samples in the MCMC algorithm after thinning}
 
@@ -65,6 +66,7 @@ Level 1 model: \cr
 \examples{
 # Use the ipadstudy data set
 data(ipadstudy)
+
 # mean center covariates
 ipadstudy$age <- ipadstudy$age - mean(ipadstudy$age) 
 ipadstudy$owner <- ipadstudy$owner - mean(ipadstudy$owner)

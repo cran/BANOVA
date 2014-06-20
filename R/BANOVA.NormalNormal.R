@@ -18,7 +18,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin = 1000, sample =
   JAGS.data <- dump.format(list(n = n, id = id, M = num_id, y = dMatrice$y, X = dMatrice$X, Z = dMatrice$Z))
   result <- run.jags (model = JAGS.model$sModel, data = JAGS.data, inits = JAGS.model$inits, n.chains = 1,
                       monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters), 
-                      burnin = burnin, sample = sample, thin = thin, adapt = 0, jags = jags, summarise = FALSE, check.stochastic = FALSE)
+                      burnin = burnin, sample = sample, thin = thin, adapt = 0, jags = jags, summarise = FALSE, 
+                      check.stochastic = FALSE, method="rjags")
   samples <- result$mcmc[[1]]
   # find the correct samples, in case the order of monitors is shuffled by JAGS
   n_p_l2 <- length(JAGS.model$monitorl2.parameters)

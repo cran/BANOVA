@@ -9,7 +9,7 @@
 }
 \usage{
 BANOVA.Bern(l1_formula = "NA", l2_formula = "NA", data,
-  id, burnin = 500, sample = 1000, thin = 1, jags = findjags())
+  id, burnin = 500, sample = 1000, thin = 1, jags = runjags.getOption('jagspath'))
 
 \method{summary}{BANOVA.Bern}(object, ...)
 \method{predict}{BANOVA.Bern}(object, newdata = NULL,...)
@@ -25,7 +25,7 @@ BANOVA.Bern(l1_formula = "NA", l2_formula = "NA", data,
 
   \item{id}{subject ID of each response unit}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a warning. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
 
   \item{sample}{target samples in the MCMC algorithm after thinning}
 
@@ -67,6 +67,7 @@ Level 1 model: \cr
 
 # use the data in bernlogtime
 data(bernlogtime)
+
 # model with the dependent variable : response
 res <- BANOVA.Bern(response~typical, ~blur + color, bernlogtime,
 bernlogtime$subject, burnin = 10, sample = 10, thin = 1)

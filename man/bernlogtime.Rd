@@ -34,11 +34,11 @@ bernlogtime$subject, burnin = 10, sample = 10, thin = 1)
 summary(res1)
 # table.means(res1)
 
-
+if(0){
 # model using the dependent variable : response
 res2 <- BANOVA.Bern(response~typical, ~blur + color, bernlogtime, 
 bernlogtime$subject, burnin = 10, sample = 10, thin = 1)
 summary(res2)
 # table.means(res2)
-
+}
 }

@@ -26,6 +26,7 @@ Wedel, M. and Pieters, R. (2014) \emph{The Role of Color Schemes when Advertisin
 }
 
 \examples{ 
+
 data(colorad)
 # mean center blur
 colorad$blur <- colorad$blur - mean(colorad$blur)

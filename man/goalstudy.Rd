@@ -31,13 +31,13 @@ data(goalstudy)
 res1 <- BANOVA.Normal(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
 burnin = 10, sample = 10, thin = 1) 
 
+if(0){
 conv.diag(res1)
 BAnova(res1)
 table.pvalues(res1)
 trace.plot(res1)
 table.means(res1)
 
-if(0){
 res1_t <- BANOVA.T(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
 burnin = 10, sample = 10, thin = 1) 
 

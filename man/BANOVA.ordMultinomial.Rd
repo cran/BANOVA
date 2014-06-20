@@ -11,7 +11,8 @@
 
 \usage{
 BANOVA.ordMultinomial(l1_formula = "NA",
-  l2_formula = "NA", data, id, burnin = 500, sample = 1000, thin = 1, jags = findjags())
+  l2_formula = "NA", data, id, burnin = 500, sample = 1000, thin = 1, 
+  jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.ordMultinomial}(object, ...)
 \method{predict}{BANOVA.ordMultinomial}(object, newdata = NULL,...)
 \method{print}{BANOVA.ordMultinomial}(x, ...)
@@ -26,7 +27,7 @@ BANOVA.ordMultinomial(l1_formula = "NA",
 
   \item{id}{subject ID of each response unit}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a warning. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
 
   \item{sample}{target samples in the MCMC algorithm after thinning}
 
@@ -72,11 +73,12 @@ Level 1 model: \cr
 
 \examples{
 data(goalstudy)
+
 res <- BANOVA.ordMultinomial (perceivedsim~1, ~goalprogress*varmeans,  goalstudy,
 goalstudy$id, burnin = 10, sample = 10, thin = 1)
 summary(res)
 # BAnova(res)
 # table.means(res)
-predict(res, goalstudy[1:5,])
+# predict(res, goalstudy[1:5,])
 
 }

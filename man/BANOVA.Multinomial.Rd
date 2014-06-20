@@ -9,7 +9,8 @@
 }
 \usage{
 BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
-  dataX, dataZ, y, id, burnin = 500, sample = 1000, thin = 1, jags = findjags())
+  dataX, dataZ, y, id, burnin = 500, sample = 1000, thin = 1, 
+  jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Multinomial}(object, ...)
 \method{predict}{BANOVA.Multinomial}(object, Xsamples = NULL, Zsamples = NULL,...)
 \method{print}{BANOVA.Multinomial}(x, ...)
@@ -29,7 +30,7 @@ BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
 
   \item{id}{subject id}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a warning. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
 
   \item{sample}{target samples in the MCMC algorithm after thinning}
 

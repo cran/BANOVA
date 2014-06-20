@@ -9,7 +9,7 @@
 }
 \usage{
 BANOVA.T(l1_formula = "NA", l2_formula = "NA", data, id,
-  burnin = 1000, sample = 1000, thin = 2, jags = findjags())
+  burnin = 1000, sample = 1000, thin = 2, jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.T}(object, ...)
 \method{predict}{BANOVA.T}(object, newdata = NULL,...)
 \method{print}{BANOVA.T}(x, ...)
@@ -24,7 +24,7 @@ BANOVA.T(l1_formula = "NA", l2_formula = "NA", data, id,
 
   \item{id}{subject ID of each response unit}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a warning. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
 
   \item{sample}{target samples in the MCMC algorithm after thinning}
 
