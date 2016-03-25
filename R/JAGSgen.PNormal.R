@@ -1,5 +1,5 @@
 JAGSgen.PNormal <-
-function (X, Z){
+function (X, Z, l2_hyper, conv_speedup){
   num_l1_v <- ncol(X)
   num_l2_v <- ncol(Z)
   num_id <- nrow(Z)
@@ -13,17 +13,12 @@ function (X, Z){
   sModel <- paste(sModel,"
   for (i in 1:n){
     y[i] ~ dpois(y.hat[i])
-  ","	log(y.hat[i]) <-")
+","	log(y.hat[i]) <-")
   for (i in 1:num_l1_v){
     if (i != num_l1_v)
       sModel <- paste(sModel,"beta",i,"[id[i]]","*","X[i,",i,"]+",sep="")
     else
       sModel <- paste(sModel,"beta",i,"[id[i]]","*","X[i,",i,"]",sep="")
-    # generate inits for betas
-    s <- paste("inits$","beta",i,"<-rep(",1/max(X[,i]), ",", num_id,")",sep="")
-    s1 <- paste("inits$","sigma.beta",i,"<-runif(",1,")",sep="")
-    eval(parse(text = s))
-    eval(parse(text = s1))
     for (j in 1:num_id)
       monitorl1.parameters<-c(monitorl1.parameters, paste("beta",i,"[",j,"]",sep=""))
   }
@@ -38,6 +33,7 @@ function (X, Z){
   
   ### level 2 likelihood
   for (i in 1:num_l1_v){
+    if (!conv_speedup){
     sModel <- paste(sModel,"
   for (i in 1:M){
     ","beta",i,"[i]~dnorm(mu.beta",i,"[i]",",tau.beta",i,")
@@ -51,12 +47,47 @@ function (X, Z){
     sModel <- paste(sModel,"
   }",sep="")
     sModel <- paste(sModel,"
-  tau.beta",i,"<-pow(sigma.beta",i,",-2)
-  sigma.beta",i,"~dgamma(1,1)",sep="")
+  tau.beta",i,"~dgamma(", l2_hyper[1],",", l2_hyper[2],")
+  sigma.beta",i,"<-pow(tau.beta",i,",-0.5)",sep="")
+    
+    # generate inits for betas
+    s <- paste("inits$","beta",i,"<-rep(",1/max(X[,i]), ",", num_id,")",sep="")
+    s1 <- paste("inits$","tau.beta",i,"<-runif(",1,")",sep="")
+    eval(parse(text = s))
+    eval(parse(text = s1))
+    
+    }else{
+      sModel <- paste(sModel,"
+  for (i in 1:M){
+    ","beta",i,".raw[i]~dnorm(mu.beta",i,".raw[i]",",tau.beta",i,".raw)
+    beta",i,"[i] <- xi",i,"*beta",i,".raw[i]
+    mu.beta",i,".raw[i]<- 1/xi",i,"*(",sep="")
+      for (j in 1:num_l2_v){
+        if (j != num_l2_v)
+          sModel <- paste(sModel,"beta",i,'_',j,"*Z[i,",j,"]+",sep="")
+        else
+          sModel <- paste(sModel,"beta",i,'_',j,"*Z[i,",j,"])",sep="")
+      }
+      sModel <- paste(sModel,"
+  }",sep="")
+      sModel <- paste(sModel,"
+  xi",i,"~dunif(0, 100)
+  tau.beta",i,".raw~dgamma(", l2_hyper[1],",", l2_hyper[2],")
+  sigma.beta",i,"<-xi",i,"*pow(tau.beta",i,".raw,-0.5)",sep="")
+      
+      # generate inits for betas
+      s <- paste("inits$","beta",i,".raw<-rep(",1/max(X[,i]), ",", num_id,")",sep="")
+      s1 <- paste("inits$","tau.beta",i,".raw<-runif(",1,")",sep="")
+      sxi <- paste("inits$","xi",i,"<-runif(",1,")",sep="")
+      eval(parse(text = s))
+      eval(parse(text = s1))
+      eval(parse(text = sxi))
+      
+    }
     ### level 2 priors
     for (j in 1:num_l2_v){
       sModel <- paste(sModel,"
-  beta",i,'_',j,"~dnorm(0,0.0001)",sep="")
+  beta",i,'_',j,"~dnorm(0,",l2_hyper[3],")",sep="")
       s<-paste("inits$","beta",i,'_',j,"<-",1/max(Z[,j]),sep="")
       eval(parse(text=s))
       monitorl2.parameters <- c(monitorl2.parameters,paste("beta",i,'_',j,sep=""))

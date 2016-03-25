@@ -9,7 +9,8 @@
 }
 \usage{
 BANOVA.Normal(l1_formula = "NA", l2_formula = "NA", data,
-  id, burnin = 500, sample = 1000, thin = 1, 
+  id, l1_hyper = c(1, 1), l2_hyper = c(1, 1, 0.0001), burnin = 1000, 
+  sample = 1000, thin = 1, adapt = 0, conv_speedup = F, 
   jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Normal}(object, ...)
 \method{predict}{BANOVA.Normal}(object, newdata = NULL,...)
@@ -24,12 +25,20 @@ BANOVA.Normal(l1_formula = "NA", l2_formula = "NA", data,
   \item{data}{a data.frame in long format including all features in level 1 and level 2(covariates and categorical factors) and responses}
 
   \item{id}{subject ID of each response unit}
+  
+  \item{l1_hyper}{level 1 hyperparameters, c(\eqn{\alpha, \beta)}), default c(1,1)}
+  
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  
+  \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
+  
+  \item{conv_speedup}{whether to speedup convergence, default F}
   
   \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
   
@@ -45,8 +54,8 @@ BANOVA.Normal(l1_formula = "NA", l2_formula = "NA", data,
 
 \details{
 Level 1 model: \cr
-  \eqn{y_i} {~} \eqn{Normal(\eta_i,\sigma)} \cr
-  where \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}. see \code{\link{BANOVA-package}}
+  \eqn{y_i} {~} \eqn{Normal(\eta_i,\sigma^{-2})} \cr
+  where \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}, \eqn{\sigma^{-2}} {~} {Gamma(\eqn{\alpha,\beta})}. see \code{\link{BANOVA-package}}
   
 }
 \value{
@@ -72,7 +81,7 @@ ipadstudy$age <- ipadstudy$age - mean(ipadstudy$age)
 ipadstudy$owner <- ipadstudy$owner - mean(ipadstudy$owner)
 ipadstudy$gender <- ipadstudy$gender - mean(ipadstudy$gender)
 res <- BANOVA.Normal(attitude~1, ~owner + age + gender + selfbrand*conspic, ipadstudy,
-ipadstudy$id, burnin = 10, sample = 10, thin = 1 )
+ipadstudy$id, burnin = 1000, sample = 1000, thin = 1 )
 summary(res)
 
 }

@@ -11,7 +11,8 @@
 
 \usage{
 BANOVA.ordMultinomial(l1_formula = "NA",
-  l2_formula = "NA", data, id, burnin = 500, sample = 1000, thin = 1, 
+  l2_formula = "NA", data, id, l2_hyper = c(1, 1, 0.0001, 100), burnin = 1000, 
+  sample = 1000, thin = 1, adapt = 0, conv_speedup = F, 
   jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.ordMultinomial}(object, ...)
 \method{predict}{BANOVA.ordMultinomial}(object, newdata = NULL,...)
@@ -26,12 +27,18 @@ BANOVA.ordMultinomial(l1_formula = "NA",
   \item{data}{a data frame}
 
   \item{id}{subject ID of each response unit}
+  
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s, d), default c(1,1,0.0001,100)}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  
+  \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
+  
+  \item{conv_speedup}{whether to speedup convergence, default F}
   
   \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
   
@@ -50,9 +57,9 @@ Level 1 model: \cr
   \eqn{y_i = 1}, if \eqn{l_i < 0} \cr
   \eqn{y_i = 2}, if \eqn{0 < l_i < c_2} \cr
   {...} \cr
-  \eqn{y_i = k}, if \eqn{c_{k-1} < l_i < \infty} \cr
+  \eqn{y_i = \ell}, if \eqn{c_{\ell-1} < l_i < \infty} \cr
   \eqn{l_i = \eta_i + \epsilon_i}
-  where \eqn{\epsilon_i} {~} logistic \eqn{(0,1)}, \eqn{c_k, (k = 2,...k-1)} are cut points,\cr \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}. see \code{\link{BANOVA-package}}
+  where \eqn{\epsilon_i} {~} logistic \eqn{(0,1)}, \eqn{c_\ell, (\ell = 2,...L-1)} are cut points, \eqn{c_\ell} {~} \eqn{N(0, \bar{\sigma}_\ell^2)}, and \eqn{\bar{\sigma}_\ell^2} {~} \eqn{Uniform(0, d)}, with \eqn{d} a hyper-parameter. \cr \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}. see \code{\link{BANOVA-package}}
   
 }
 
@@ -72,13 +79,14 @@ Level 1 model: \cr
 }
 
 \examples{
+if(0){
 data(goalstudy)
-
 res <- BANOVA.ordMultinomial (perceivedsim~1, ~goalprogress*varmeans,  goalstudy,
-goalstudy$id, burnin = 10, sample = 10, thin = 1)
+goalstudy$id, burnin = 1000, sample = 1000, thin = 1)
 summary(res)
 # BAnova(res)
 # table.means(res)
 # predict(res, goalstudy[1:5,])
+}
 
 }

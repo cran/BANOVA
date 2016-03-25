@@ -27,16 +27,18 @@ Wedel, M. and Pieters, R. (2014) \emph{The Role of Color Schemes when Advertisin
 
 \examples{ 
 
+if(0){
 data(colorad)
 # mean center blur
 colorad$blur <- colorad$blur - mean(colorad$blur)
 res <- BANOVA.Bin(y ~ typic, ~ color + blur + color*blur, colorad, colorad$id, 
-as.integer(16), burnin = 10, sample = 10, thin = 1)
+as.integer(16), burnin = 1000, sample = 1000, thin = 1)
 res
 summary(res)
 table.means(res)
 # use the the first row of data to predict, 
 # only the in-model variables data will be used, the others will be ignored
 predict(res, c(1, 0, 8, 2, 1, 0.03400759))
+}
 
 }

@@ -9,7 +9,8 @@
 }
 \usage{
 BANOVA.Bern(l1_formula = "NA", l2_formula = "NA", data,
-  id, burnin = 500, sample = 1000, thin = 1, jags = runjags.getOption('jagspath'))
+  id, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, thin = 1, 
+  adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 
 \method{summary}{BANOVA.Bern}(object, ...)
 \method{predict}{BANOVA.Bern}(object, newdata = NULL,...)
@@ -24,12 +25,18 @@ BANOVA.Bern(l1_formula = "NA", l2_formula = "NA", data,
   \item{data}{a data.frame in long format including all features in level 1 and level 2(covariates and categorical factors) and responses}
 
   \item{id}{subject ID of each response unit}
+  
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  
+  \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
+  
+  \item{conv_speedup}{whether to speedup convergence, default F}
   
   \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
   
@@ -65,14 +72,15 @@ Level 1 model: \cr
 
 \examples{
 
+if(0){
 # use the data in bernlogtime
 data(bernlogtime)
-
 # model with the dependent variable : response
 res <- BANOVA.Bern(response~typical, ~blur + color, bernlogtime,
-bernlogtime$subject, burnin = 10, sample = 10, thin = 1)
+bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)
 summary(res)
 # table.means(res)
+}
 
 }
 

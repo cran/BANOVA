@@ -37,7 +37,7 @@ ipadstudy$owner <- ipadstudy$owner - mean(ipadstudy$owner )
 ipadstudy$gender <- ipadstudy$gender - mean(ipadstudy$gender)
 
 res <- BANOVA.Normal(attitude~1, ~owner + age + gender + selfbrand*conspic, 
-ipadstudy, ipadstudy$id, burnin = 10, sample = 10, thin = 1 )
+ipadstudy, ipadstudy$id, burnin = 1000, sample = 1000, thin = 1 )
 summary(res)
 
 if(0){

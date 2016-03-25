@@ -3,6 +3,9 @@ function(x, ...){
   cat('Call:\n')
   print(x$call)
   
+  cat('\nConvergence diagnostics:\n')
+  print(x$conv)
+  
   cat('\nTable of sum of squares and effect sizes (Bayesian ANOVA/ANCOVA):\n')
   print(x$anova.table)
   

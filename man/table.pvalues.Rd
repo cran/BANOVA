@@ -35,7 +35,7 @@ It borrows the idea of Sheffe F-test for multiple testing: the F-stat for testin
 data(goalstudy)
 
 res1 <- BANOVA.Normal(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
-burnin = 100, sample = 100, thin = 2) 
+burnin = 1000, sample = 1000, thin = 2) 
 
 table.pvalues(res1)
 

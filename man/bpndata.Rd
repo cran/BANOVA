@@ -39,15 +39,15 @@ Wedel, M. and Pieters, R. (Autumn, 2000). \emph{Eye Fixations on Advertisements 
 \examples{ 
 data(bpndata)
 
-# within-subjects model using the dependent variable : PIC_FIX 
+# within-subjects model using the dependent variable : PIC_FIX
+if(0){
 res1 <- BANOVA.Poisson(PIC_FIX ~ PIC_SIZE+ PAGE_NUM 
-+ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 5, sample = 5, thin = 1)
++ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 1000, sample = 1000, thin = 1)
 res1
 
-if(0){
 # within-subjects model using the dependent variable : RECALL_ACCU
 res2 <- BANOVA.Bern(RECALL_ACCU~ RECALL_TIME + PAGE_NUM 
-+ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 10, sample = 10, thin = 1)
++ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 1000, sample = 1000, thin = 1)
 res2
 }
 }

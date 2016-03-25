@@ -1,19 +1,27 @@
 BANOVA.ordMultiNormal <-
-function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin, sample, thin, jags){
+function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sample, thin, adapt, conv_speedup, jags){
   cat('Model initializing...\n')
   # check y, if it is integers
   mf1 <- model.frame(formula = l1_formula, data = data)
   y <- model.response(mf1)
   mf2 <- model.frame(formula = l2_formula, data = data)
-  if (class(y) != 'integer') stop("The response variable must be integers (data class also must be 'integer')")
+  if (class(y) != 'integer'){
+    warning("The response variable must be integers (data class also must be 'integer')..")
+    y <- as.integer(y)
+    warning("The response variable has been converted to integers..")
+  }
   DV_sort <- sort(unique(y))
   n_categories <- length(DV_sort)
   if (n_categories < 2) stop('The number of categories must be greater than 1!')
   if (DV_sort[1] != 1 || DV_sort[n_categories] != n_categories) stop('Check if response variable follows categorical distribution!') 
   n.cut <- n_categories - 1
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
-  for (i in 1:ncol(data))
+  for (i in 1:ncol(data)){
     if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+    response_name <- attr(mf1,"names")[attr(attr(mf1, "terms"),"response")]
+    if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
+      data[,i] = data[,i] - mean(data[,i])
+  }
   n <- nrow(data)
   uni_id <- unique(id)
   num_id <- length(uni_id)
@@ -22,12 +30,12 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin, sample, thin, j
     new_id[i] <- which(uni_id == id[i])
   id <- new_id
   dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id)
-  JAGS.model <- JAGSgen.ordmultiNormal(dMatrice$X, dMatrice$Z, n.cut)
-  JAGS.data <- dump.format(list(n = n, id = id, M = num_id, y = dMatrice$y, X = dMatrice$X, Z = dMatrice$Z, n.cut = n.cut))
+  JAGS.model <- JAGSgen.ordmultiNormal(dMatrice$X, dMatrice$Z, n.cut, l2_hyper, conv_speedup)
+  JAGS.data <- dump.format(list(n = n, id = id, M = num_id, y = y, X = dMatrice$X, Z = dMatrice$Z, n.cut = n.cut))
   result <- run.jags (model = JAGS.model$sModel, data = JAGS.data, inits = JAGS.model$inits, n.chains = 1,
                       monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters, JAGS.model$monitor.cutp), 
-                      burnin = burnin, sample = sample, thin = thin, adapt = 0, jags = jags, summarise = FALSE, normalise.mcmc = FALSE, plots = FALSE, 
-                      check.stochastic = FALSE, check.conv = FALSE, method="rjags")
+                      burnin = burnin, sample = sample, thin = thin, adapt = adapt, jags = jags, summarise = FALSE,
+                      method="rjags")
   samples <- result$mcmc[[1]]
   # find the correct samples, in case the order of monitors is shuffled by JAGS
   n_p_l2 <- length(JAGS.model$monitorl2.parameters)
@@ -64,7 +72,12 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin, sample, thin, j
                                     attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
   pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 
                                l2_names = attr(dMatrice$Z, 'varNames'))
+  conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X), colnames(dMatrice$Z))
+  class(conv) <- 'conv.diag'
+  cat('Done...\n')
   return(list(anova.table = anova.table,
               coef.tables = coef.tables,
-              pvalue.table = pvalue.table, dMatrice = dMatrice, samples_l2_param = samples_l2_param, samples_cutp_param = samples_cutp_param, data = data, mf1 = mf1, mf2 = mf2,JAGSmodel = JAGS.model$sModel))
+              pvalue.table = pvalue.table, 
+              conv = conv,
+              dMatrice = dMatrice, samples_l2_param = samples_l2_param, samples_cutp_param = samples_cutp_param, data = data, mf1 = mf1, mf2 = mf2,JAGSmodel = JAGS.model$sModel))
 }

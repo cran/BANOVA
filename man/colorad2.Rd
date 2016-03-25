@@ -31,7 +31,7 @@ Wedel, M. and Pieters, R. (2014) \emph{The Role of Color Schemes when Advertisin
 data(colorad2)
 # factor C is effect coded
 res1 <- BANOVA.Bin(Y1 ~ 1, ~ C + B + C*B, colorad2, colorad2$id, as.integer(25), 
-burnin = 10, sample = 10, thin = 1) 
+burnin = 1000, sample = 1000, thin = 1) 
 # or use dummy variables 
 # res1 <- BANOVA.Bin(Y1 ~ 1, ~ C1 + B + C2 + C1*B + C2*B, colorad2, colorad2$ID, as.integer(25))
 res1

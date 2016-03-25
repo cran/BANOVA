@@ -12,8 +12,8 @@ This package include several hierarchical Bayes Analysis of Variance models. The
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2014-05-11\cr
+Version: \tab 0.4\cr
+Date: \tab 2016-03-21\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
@@ -25,16 +25,19 @@ Model: \cr
   
   The population-level ANCOVA model can be expressed as a linear model with a design matrix \eqn{Z} that contains all between-subject factors and their interactions and a constant term: \cr
   \eqn{\beta_{j,s}^p = \sum_{k = 1}^Q Z_{s,k}\theta_{j,k}^{p} + \delta_{j,s}^p} \cr
-  where \eqn{Z_{s,k} }is an element of \eqn{Z}, a \eqn{S \times Q} matrix of covariates. \eqn{\theta_{j,k}^p} is a hyperparameter which captures the effects of between-subject factor \eqn{q} on the parameter \eqn{\beta_{j,s}^p} of within-subject factor p. The error \eqn{\delta_{j,s}^p} is assumed to be normal: \eqn{\delta_{j,s}^p} {~} \eqn{N(0,\sigma_p^{-2} )}. Proper, but diffuse priors are assumed: \eqn{\theta_{j,k}^p} {~} \eqn{N(0,s)}, and \eqn{\sigma_p} {~} \eqn{Gamma(a,b)}, where \eqn{s,a,b} are hyper-parameters. The default setting is \eqn{s = 10^{-4}, a = 1, b = 1}.
+  where \eqn{Z_{s,k} }is an element of \eqn{Z}, a \eqn{S \times Q} matrix of covariates. \eqn{\theta_{j,k}^p} is a hyperparameter which captures the effects of between-subject factor \eqn{q} on the parameter \eqn{\beta_{j,s}^p} of within-subject factor p. The error \eqn{\delta_{j,s}^p} is assumed to be normal: \eqn{\delta_{j,s}^p} {~} \eqn{N(0,\sigma_p^{-2} )}. Proper, but diffuse priors are assumed: \eqn{\theta_{j,k}^p} {~} \eqn{N(0,s)}, and \eqn{\sigma_p^{-2}} {~} \eqn{Gamma(a,b)}, where \eqn{s,a,b} are hyper-parameters. The default setting is \eqn{s = 10^{-4}, a = 1, b = 1}.
 }
 \author{
 Chen Dong;
 Michel Wedel
 
-Maintainer: Chen Dong <chendong@umd.edu>
+Maintainer: Chen Dong <cdong@math.umd.edu>
 
 }
 \references{
+Dong, C. and Wedel, M. (2016) 
+\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, under review. 
+
 McCullagh, P., Nelder, JA. (1989)
 \emph{Generalized linear models}, New York, NY: Chapman and Hall.
 
@@ -46,7 +49,6 @@ Rossi, P., Allenby,G., McCulloch, R. (2005)
 
 Gill, J. (2007) 
 \emph{Bayesian Methods for the Social and Behavioral Sciences}, Chapman and Hall, Second Edition.
-
 
 Gelman, A., Carlin, J., Stern, H. and Dunson, D. (2013)
 \emph{Bayesian Data Analysis}, London: Chapman and Hall.

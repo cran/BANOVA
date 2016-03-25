@@ -1,11 +1,16 @@
 BANOVA.NormalNormal <-
-function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin = 1000, sample = 1000, thin = 2, jags){
+function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, burnin, sample, thin, adapt, conv_speedup, jags){
   cat('Model initializing...\n')
-  # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
-  for (i in 1:ncol(data))
-    if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
   mf1 <- model.frame(formula = l1_formula, data = data)
   mf2 <- model.frame(formula = l2_formula, data = data)
+  # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
+  for (i in 1:ncol(data)){
+    if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+    response_name <- attr(mf1,"names")[attr(attr(mf1, "terms"),"response")]
+    if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
+      data[,i] = data[,i] - mean(data[,i])
+  }
+  
   n <- nrow(data)
   uni_id <- unique(id)
   num_id <- length(uni_id)
@@ -14,12 +19,12 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin = 1000, sample =
     new_id[i] <- which(uni_id == id[i])
   id <- new_id
   dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id)
-  JAGS.model <- JAGSgen.normalNormal(dMatrice$X, dMatrice$Z)
+  JAGS.model <- JAGSgen.normalNormal(dMatrice$X, dMatrice$Z, l1_hyper, l2_hyper, conv_speedup)
   JAGS.data <- dump.format(list(n = n, id = id, M = num_id, y = dMatrice$y, X = dMatrice$X, Z = dMatrice$Z))
   result <- run.jags (model = JAGS.model$sModel, data = JAGS.data, inits = JAGS.model$inits, n.chains = 1,
                       monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters), 
-                      burnin = burnin, sample = sample, thin = thin, adapt = 0, jags = jags, summarise = FALSE, 
-                      check.stochastic = FALSE, method="rjags")
+                      burnin = burnin, sample = sample, thin = thin, adapt = adapt, jags = jags, summarise = FALSE, 
+                      method="rjags")
   samples <- result$mcmc[[1]]
   # find the correct samples, in case the order of monitors is shuffled by JAGS
   n_p_l2 <- length(JAGS.model$monitorl2.parameters)
@@ -46,7 +51,12 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, burnin = 1000, sample =
                                     attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1)
   pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 
                                l2_names = attr(dMatrice$Z, 'varNames'))
+  conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X), colnames(dMatrice$Z))
+  class(conv) <- 'conv.diag'
+  cat('Done...\n')
   return(list(anova.table = anova.table,
               coef.tables = coef.tables,
-              pvalue.table = pvalue.table, dMatrice = dMatrice, samples_l2_param = samples_l2_param, data = data, mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel))
+              pvalue.table = pvalue.table, 
+              conv = conv,
+              dMatrice = dMatrice, samples_l2_param = samples_l2_param, data = data, mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel))
 }

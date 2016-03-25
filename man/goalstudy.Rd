@@ -29,7 +29,7 @@ Etkin, J. and Ratner, R. (2012) \emph{The Dynamic Impact of Variety among Means 
 data(goalstudy)
 
 res1 <- BANOVA.Normal(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
-burnin = 10, sample = 10, thin = 1) 
+burnin = 1000, sample = 1000, thin = 1) 
 
 if(0){
 conv.diag(res1)
@@ -39,10 +39,10 @@ trace.plot(res1)
 table.means(res1)
 
 res1_t <- BANOVA.T(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
-burnin = 10, sample = 10, thin = 1) 
+burnin = 1000, sample = 1000, thin = 1) 
 
 res2 <- BANOVA.ordMultinomial (perceivedsim~1, ~goalprogress*varmeans,  goalstudy,
-goalstudy$id, burnin = 10, sample = 10, thin = 1)
+goalstudy$id, burnin = 1000, sample = 1000, thin = 1)
 
 summary(res2)
 table.means(res2)

@@ -9,8 +9,8 @@
 }
 \usage{
 BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
-  dataX, dataZ, y, id, burnin = 500, sample = 1000, thin = 1, 
-  jags = runjags.getOption('jagspath'))
+  dataX, dataZ, y, id, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, 
+  thin = 1, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Multinomial}(object, ...)
 \method{predict}{BANOVA.Multinomial}(object, Xsamples = NULL, Zsamples = NULL,...)
 \method{print}{BANOVA.Multinomial}(x, ...)
@@ -30,11 +30,17 @@ BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
 
   \item{id}{subject id}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm. Note that the number of adaptive iterations (see \link[runjags]{run.jags}) is set to 0, thus, there is a NOTE. But this wouldn't affect the simulation.}
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
+  
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  
+  \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
+  
+  \item{conv_speedup}{whether to speedup convergence, default F}
   
   \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
   
@@ -54,8 +60,8 @@ BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
 }
 \details{
 Level 1 model: \cr
-\eqn{P(y_i = k) = \frac{exp(\eta_{ik})}{\sum_{k=1}^K exp(\eta_{ik})}} \cr
-where \eqn{\eta_{ik} = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^{k,p} \beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}, see \code{\link{BANOVA-package}}. \eqn{X_{i,j}^{k,p}} is the design matrix corresponding to each class \eqn{k(k=1,.,K)} of \eqn{y_i}. 
+\eqn{P(y_i = \ell) = \frac{exp(\eta_{i\ell})}{\sum_{\ell=1}^L exp(\eta_{i\ell})}} \cr
+where \eqn{\eta_{i\ell} = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^{k,p} \beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}, see \code{\link{BANOVA-package}}. \eqn{X_{i,j}^{k,p}} is the design matrix corresponding to each class \eqn{\ell(\ell=1,.,L)} of \eqn{y_i}. 
 The first level of the response is the base level, thus the intercept corresponding to this level will not be included.
 }
 
@@ -90,6 +96,6 @@ for (i in 1:nrow(choicedata)){
 dataZ <- choicedata[,9:13]
 if(0){
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, 
-  choicedata$choice, choicedata$hhid, burnin = 10, sample = 10, thin = 1)
+  choicedata$choice, choicedata$hhid, burnin = 1000, sample = 1000, thin = 1)
 }
 }
