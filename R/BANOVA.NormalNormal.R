@@ -3,10 +3,20 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
   cat('Model initializing...\n')
   mf1 <- model.frame(formula = l1_formula, data = data)
   mf2 <- model.frame(formula = l2_formula, data = data)
+  
+  # check y, if it is numeric
+  y <- model.response(mf1)
+  if (class(y) != 'numeric'){
+    warning("The response variable must be numeric (data class also must be 'numeric')..")
+    y <- as.numeric(y)
+    warning("The response variable has been converted to numeric..")
+  }
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
   for (i in 1:ncol(data)){
     if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
     response_name <- attr(mf1,"names")[attr(attr(mf1, "terms"),"response")]
+    # checking missing predictors
+    if(i != which(colnames(data) == response_name) & sum(is.na(data[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
     if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
       data[,i] = data[,i] - mean(data[,i])
   }

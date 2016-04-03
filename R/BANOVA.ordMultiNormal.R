@@ -19,6 +19,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
   for (i in 1:ncol(data)){
     if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
     response_name <- attr(mf1,"names")[attr(attr(mf1, "terms"),"response")]
+    # checking missing predictors
+    if(i != which(colnames(data) == response_name) & sum(is.na(data[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
     if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
       data[,i] = data[,i] - mean(data[,i])
   }

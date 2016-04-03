@@ -21,7 +21,8 @@
 
 \references{ 
 
-Wedel, M. and Pieters, R. \emph{The Role of Color Schemes when Advertising Exposures are Brief and Blurred}. Working paper, Robert H. Smith School of Business, University of Maryland, May 2014.
+Wedel, M and R. Pieters (2015). 
+\emph{The Buffer Effect: The Role of Color when Advertising Exposures are Brief and Blurred}, Marketing Science, Vol. 34, No. 1, pp. 134-143.
 
 }
 

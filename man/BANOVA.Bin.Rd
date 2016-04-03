@@ -10,7 +10,7 @@
 }
 \usage{
 BANOVA.Bin(l1_formula = "NA", l2_formula = "NA", data,
-  id, num_trails, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, 
+  id, num_trials, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, 
   thin = 1, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Bin}(object, ...)
 \method{predict}{BANOVA.Bin}(object, newdata = NULL,...)
@@ -26,7 +26,7 @@ BANOVA.Bin(l1_formula = "NA", l2_formula = "NA", data,
 
   \item{id}{subject ID of each response unit}
 
-  \item{num_trails}{the number of trails of each
+  \item{num_trials}{the number of trials of each
   observation(=1, if it is bernoulli), the type is forced to be 'integer'}
 
   \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
@@ -55,8 +55,8 @@ BANOVA.Bin(l1_formula = "NA", l2_formula = "NA", data,
 
 \details{
 Level 1 model: \cr
-  \eqn{y_i} {~} \eqn{Binomial(ntrails,p_i)}, \eqn{p_i = logit^{-1}(\eta_i)} \cr
-  where ntrails is the binomial total for each record i, \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}. see \code{\link{BANOVA-package}}
+  \eqn{y_i} {~} \eqn{Binomial(ntrials,p_i)}, \eqn{p_i = logit^{-1}(\eta_i)} \cr
+  where ntrials is the binomial total for each record i, \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of response \eqn{i}. see \code{\link{BANOVA-package}}
   
 }
 \value{

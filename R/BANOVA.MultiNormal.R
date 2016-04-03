@@ -14,12 +14,16 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
   for (i in 1:ncol(dataZ)){
     if(class(dataZ[,i]) != 'factor' && class(dataZ[,i]) != 'numeric' && class(dataZ[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+    # checking missing predictors
+    if(sum(is.na(dataZ[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
     if(class(dataZ[,i]) == 'numeric')
       dataZ[,i] = dataZ[,i] - mean(dataZ[,i])
   }
   for (i in 1:n_categories)
     for (j in 1:ncol(dataX[[i]])){
       if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+      # checking missing predictors
+      if(sum(is.na(dataX[[i]][,j])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
       if(class(dataX[[i]][,j]) == 'numeric')
         dataX[[i]][,j] = dataX[[i]][,j] - mean(dataX[[i]][,j])
     }

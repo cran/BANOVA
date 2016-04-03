@@ -12,20 +12,22 @@ This package include several hierarchical Bayes Analysis of Variance models. The
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 0.4\cr
-Date: \tab 2016-03-21\cr
+Version: \tab 0.5\cr
+Date: \tab 2016-04-02\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
   \eqn{E(y_i) = g^{-1}(\eta_i)} \cr
-  where \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of data response \eqn{i}. The within-subject factors and their interactions are indexed by \eqn{p (p = 1,2,.,P)}. Each index \eqn{p} represents a batch of \eqn{J_p} coefficients: \eqn{\beta_{j,s}^p, j = 1,.,J_p};\eqn{s = 1,.,S} indexes subjects. Note that if the subject-level covariate is continuous, \eqn{J_p=1}, so that ANCOVA models are also accommodated (relaxing their "constant slope" assumption).  \cr
+  where \eqn{\eta_i = \sum_{p = 0}^{P}\sum_{j=1}^{J_p}X_{i,j}^p\beta_{j,s_i}^p}, \eqn{s_i} is the subject id of data response \eqn{i}. Missing values (NAs) of \eqn{y_i} are allowed. The within-subjects factors and their interactions are indexed by \eqn{p (p = 1,2,.,P)}. Each index \eqn{p} represents a batch of \eqn{J_p} coefficients: \eqn{\beta_{j,s}^p, j = 1,.,J_p};\eqn{s = 1,.,S} indexes subjects. Note that if the subject-level covariate is continuous, \eqn{J_p=1}, so that ANCOVA models are also accommodated (relaxing their "constant slope" assumption).  \cr
   
-  The population-level model allows for heterogeneity among subjects, because the subject-level coefficients \eqn{\beta_{j,s}^p} are assumed to follow a multivariate normal distribution.The between-subject factors and their interactions are indexed by \eqn{q,(q = 1,2,.,Q)}, \eqn{q = 0} denotes the constant term. The population-level ANOVA can be written as: \cr
+  The population-level model allows for heterogeneity among subjects, because the subject-level coefficients \eqn{\beta_{j,s}^p} are assumed to follow a multivariate normal distribution.The between-subjects factors and their interactions are indexed by \eqn{q,(q = 1,2,.,Q)}, \eqn{q = 0} denotes the constant term. The population-level ANOVA can be written as: \cr
   \eqn{\beta_{j,s}^p = \sum_{q = 0}^Q \theta_{j,k_s^q}^{pq} + \delta_{j,s}^p} \cr
   
-  The population-level ANCOVA model can be expressed as a linear model with a design matrix \eqn{Z} that contains all between-subject factors and their interactions and a constant term: \cr
+  The population-level ANCOVA model can be expressed as a linear model with a design matrix \eqn{Z} that contains all between-subjects factors and their interactions and a constant term: \cr
   \eqn{\beta_{j,s}^p = \sum_{k = 1}^Q Z_{s,k}\theta_{j,k}^{p} + \delta_{j,s}^p} \cr
-  where \eqn{Z_{s,k} }is an element of \eqn{Z}, a \eqn{S \times Q} matrix of covariates. \eqn{\theta_{j,k}^p} is a hyperparameter which captures the effects of between-subject factor \eqn{q} on the parameter \eqn{\beta_{j,s}^p} of within-subject factor p. The error \eqn{\delta_{j,s}^p} is assumed to be normal: \eqn{\delta_{j,s}^p} {~} \eqn{N(0,\sigma_p^{-2} )}. Proper, but diffuse priors are assumed: \eqn{\theta_{j,k}^p} {~} \eqn{N(0,s)}, and \eqn{\sigma_p^{-2}} {~} \eqn{Gamma(a,b)}, where \eqn{s,a,b} are hyper-parameters. The default setting is \eqn{s = 10^{-4}, a = 1, b = 1}.
+  where \eqn{Z_{s,k} }is an element of \eqn{Z}, a \eqn{S \times Q} matrix of covariates. \eqn{\theta_{j,k}^p} is a hyperparameter which captures the effects of between-subjects factor \eqn{q} on the parameter \eqn{\beta_{j,s}^p} of within-subjects factor p. The error \eqn{\delta_{j,s}^p} is assumed to be normal: \eqn{\delta_{j,s}^p} {~} \eqn{N(0,\sigma_p^{-2} )}. Proper, but diffuse priors are assumed: \eqn{\theta_{j,k}^p} {~} \eqn{N(0,s)}, and \eqn{\sigma_p^{-2}} {~} \eqn{Gamma(a,b)}, where \eqn{s,a,b} are hyper-parameters. The default setting is \eqn{s = 10^{-4}, a = 1, b = 1}. \cr
+  
+  Note that missing values of independent variables are currently not allowed in the package.
 }
 \author{
 Chen Dong;
@@ -42,7 +44,7 @@ McCullagh, P., Nelder, JA. (1989)
 \emph{Generalized linear models}, New York, NY: Chapman and Hall.
 
 Gelman, A. (2005)
-\emph{Analysis of variance-why it is more important than ever}, Ann. Statist. Vol. 33, No. 1, 1-53.
+\emph{Analysis of variance-why it is more important than ever}, Ann. Statist. Vol. 33, No. 1, pp. 1-53.
 
 Rossi, P., Allenby,G., McCulloch, R. (2005)
 \emph{Bayesian Statistics and Marketing}, John Wiley and Sons.
