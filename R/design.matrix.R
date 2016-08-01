@@ -12,7 +12,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id){
   y <- model.response(mf1)
   if (length(y) == 0) stop('The response variable is not found!')
   X <- model.matrix(attr(mf1,'terms'), data = mf1)
-  if (sum(is.na(X)) > 0) stop('Missing values in level 1 features!')
+  if (sum(is.na(X)) > 0) stop('Missing/NA values in level 1 features!')
   if (dim(X)[2] == 0) stop('No variables in level 1 model! Please add an intercept at least.')
   if (attr(attr(mf1,'terms'),'intercept') != 0) # for tables in outputs
     attr(X,'varNames') <- c('(Intercept)',attr(attr(mf1,'terms'),'term.labels')) 
@@ -25,18 +25,20 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id){
   attr(X,'interactions_index') <- temp$index
   # find index of numeric variables (covariates) in X
   numeric_index <- which(attr(X,'dataClasses') == 'numeric' | attr(X,'dataClasses') == 'integer')
+  numeric_index <- c(numeric_index, temp$numeric_index) # add interactions including at least one numeric variable
   numeric_index_in_X <- array(NA, dim = c(1,length(numeric_index)))
   if (length(numeric_index) > 0){
     for (i in 1:length(numeric_index)){
       numeric_index_in_X[i] <- which(attr(X,'assign') == numeric_index[i])
     }
-    #X[,numeric_index_in_X] <- mean.center(X[,numeric_index_in_X])
+    X[,numeric_index_in_X] <- mean.center(X[,numeric_index_in_X])
+    warning("level 1 numeric variables have been mean centered.\n", call. = F, immediate. = T)
   }
   attr(X,'numeric_index') <- numeric_index_in_X
   
   mf2 <- model.frame(formula = l2_formula, data = data)
   Z_full <- model.matrix(attr(mf2,'terms'), data = mf2)
-  if (sum(is.na(Z_full)) > 0) stop('Missing values in level 2 features!')
+  if (sum(is.na(Z_full)) > 0) stop('Missing/NA values in level 2 features!')
   if (dim(Z_full)[2] == 0) stop('No variables in level 2 model! Please add an intercept at least.')
   if (attr(attr(mf2,'terms'),'response') == 1) stop("level 2 model shouldn't include the response! Start with the '~'.")
   #convert Z from long format to short format, using the first row of each id
@@ -65,13 +67,15 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id){
   attr(Z,"contrasts") <- attr(Z_full,"contrasts")
   # find index of numeric variables (covariates) in Z
   numeric_index <- which(attr(Z,'dataClasses') == 'numeric' | attr(Z,'dataClasses') == 'integer')
+  numeric_index <- c(numeric_index, temp$numeric_index) # add interactions including at least one numeric variable
   numeric_index_in_Z <- array(NA, dim = c(1,length(numeric_index)))
   if (length(numeric_index) > 0){
     numeric_index_in_Z <- array(NA, dim = c(1,length(numeric_index)))
     for (i in 1:length(numeric_index)){
       numeric_index_in_Z[i] <- which(attr(Z,'assign') == numeric_index[i])
     }
-    #Z[,numeric_index_in_Z] <- mean.center(Z[,numeric_index_in_Z])
+    Z[,numeric_index_in_Z] <- mean.center(Z[,numeric_index_in_Z])
+    warning("level 2 numeric variables have been mean centered.\n", call. = F, immediate. = T)
   }
   attr(Z,'numeric_index') <- numeric_index_in_Z
   attr(Z_full,'numeric_index') <- numeric_index_in_Z

@@ -12,8 +12,8 @@ This package include several hierarchical Bayes Analysis of Variance models. The
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 0.5\cr
-Date: \tab 2016-04-02\cr
+Version: \tab 0.6\cr
+Date: \tab 2016-07-31\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
@@ -38,7 +38,7 @@ Maintainer: Chen Dong <cdong@math.umd.edu>
 }
 \references{
 Dong, C. and Wedel, M. (2016) 
-\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, under review. 
+\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, accepted. 
 
 McCullagh, P., Nelder, JA. (1989)
 \emph{Generalized linear models}, New York, NY: Chapman and Hall.

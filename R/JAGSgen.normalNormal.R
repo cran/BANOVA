@@ -13,7 +13,7 @@ function (X, Z, l1_hyper, l2_hyper, conv_speedup){
   sModel <- paste(sModel,"
   for (i in 1:n){
     y[i] ~ dnorm(y.hat[i],tau.y)
-","	y.hat[i] <-")
+    y.hat[i] <-")
   for (i in 1:num_l1_v){
     if (i != num_l1_v)
       sModel <- paste(sModel,"beta",i,"[id[i]]","*","X[i,",i,"]+",sep="")

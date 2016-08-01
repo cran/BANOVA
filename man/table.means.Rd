@@ -2,7 +2,7 @@
 \alias{table.means}
 \title{Function to print the table of means}
 \description{
-Output of this function is a table of means for the categorical predictors at either level-1 or level-2. Statistics of interest such as credible intervals and standard deviations of the means are also computed. 
+Output of this function is a table of means for the categorical predictors (and their interactions) at either within- or between- subjects level. Statistics of interest such as credible intervals and standard deviations of the means are also computed. Means of numeric variables and their interactions will not be computed.
 }
 \usage{
 table.means(x)

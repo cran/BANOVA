@@ -14,18 +14,18 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
   for (i in 1:ncol(dataZ)){
     if(class(dataZ[,i]) != 'factor' && class(dataZ[,i]) != 'numeric' && class(dataZ[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
-    # checking missing predictors
-    if(sum(is.na(dataZ[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
-    if(class(dataZ[,i]) == 'numeric')
-      dataZ[,i] = dataZ[,i] - mean(dataZ[,i])
+    # checking missing predictors, already checked in design matrix
+    # if(sum(is.na(dataZ[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
+    #if(class(dataZ[,i]) == 'numeric')
+    #  dataZ[,i] = dataZ[,i] - mean(dataZ[,i])
   }
   for (i in 1:n_categories)
     for (j in 1:ncol(dataX[[i]])){
       if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
-      # checking missing predictors
-      if(sum(is.na(dataX[[i]][,j])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
-      if(class(dataX[[i]][,j]) == 'numeric')
-        dataX[[i]][,j] = dataX[[i]][,j] - mean(dataX[[i]][,j])
+      # checking missing predictors, already checked in design matrix
+      # if(sum(is.na(dataX[[i]][,j])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
+      #if(class(dataX[[i]][,j]) == 'numeric')
+      #  dataX[[i]][,j] = dataX[[i]][,j] - mean(dataX[[i]][,j])
     }
   n <- nrow(dataZ)
   uni_id <- unique(id)
@@ -58,7 +58,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
     samples_l2_param <- result$mcmc[[1]][,index_l2_param]
   else
     samples_l2_param <- matrix(result$mcmc[[1]][,index_l2_param], ncol = 1)
-  
+  colnames(samples_l2_param) <- colnames(result$mcmc[[1]])[index_l2_param]
   n_p_l1 <- length(JAGS.model$monitorl1.parameters)
   index_l1_param<- array(0,dim = c(n_p_l1,1))
   for (i in 1:n_p_l1)
@@ -67,6 +67,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
     samples_l1_param <- result$mcmc[[1]][,index_l1_param]
   else
     samples_l1_param <- matrix(result$mcmc[[1]][,index_l1_param], ncol = 1)
+  colnames(samples_l1_param) <- colnames(result$mcmc[[1]])[index_l1_param]
   
   #anova.table <- table.ANOVA(samples_l1_param, dMatrice$X_full[[1]], dMatrice$Z) # only need the colnames of X
   cat('Constructing ANOVA/ANCOVA tables...\n')

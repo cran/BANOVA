@@ -3,6 +3,8 @@ function (n_choice, interaction_factors = list(), assign = array(dim = 0),
                                        main_eff_index = array(dim = 0), index_inter_factor = NA, 
                                        numeric_index = array(dim = 0)){
   result <- list()
+# old method, hard coded
+if(0){
   # two way interactions
   if (length(interaction_factors) == 2){
     factor1 <- interaction_factors[[1]]
@@ -38,4 +40,39 @@ function (n_choice, interaction_factors = list(), assign = array(dim = 0),
     result <- NA
   }
   return(result)
+}
+  
+# new method including higher number (>= 2) of interactions
+  
+  if (length(interaction_factors) >= 2){
+    num_inter = length(interaction_factors)
+    levels_inter = list()
+    names_inter = list()
+    for (i in 1:num_inter){
+      names_inter[[i]] = attr(interaction_factors[[i]], 'var_names')
+      levels_inter[[attr(interaction_factors[[i]], 'var_names')]] = levels(interaction_factors[[i]])
+    }
+    factors_inter = expand.grid(levels_inter)
+    factors_inter_factor = as.data.frame(lapply(factors_inter, as.factor))
+    formula_inter = paste(names_inter, collapse = '*')
+    eval(parse(text = paste('effect_matrix <- model.matrix(~',formula_inter,', data = factors_inter_factor)', sep='')))
+    for (n_c in 1: n_choice){
+      if (n_c > 1){
+        intercept_name = paste('choice', n_c,'_Intercept', sep = "")
+        temp <- colnames(effect_matrix)
+        temp[grep('Intercept', temp)] <- intercept_name
+        temp_m <- effect_matrix
+        colnames(temp_m) <- temp
+      }else{
+        # remove choice 1 intercept, identification problem
+        #temp_m <- effect_matrix[-grep('Intercept', effect_matrix)]
+      }
+      attr(temp_m, 'levels') = as.matrix(factors_inter)
+      result[[n_c]] <- temp_m
+    }
+  }else{
+    result = NA
+  }
+  return(result)
+  
 }

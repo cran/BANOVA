@@ -10,8 +10,8 @@ function (samples_l2_param, X_names, Z_names){
   sol_converge <- geweke.diag(as.mcmc(samples_l2_param),0.2,0.5)
   p_values_converge <- 2*pnorm(-abs(sol_converge$z)) 
   decision_conerge <- array(NA,length(p_values_converge)) 
-  decision_conerge[p_values_converge>=0.001] <- 'Passed' 
-  decision_conerge[p_values_converge<0.001] <- 'Failed' 
+  decision_conerge[p_values_converge>=0.001] <- 'passed' 
+  decision_conerge[p_values_converge<0.001] <- 'failed' 
   if (sum(p_values_converge<0.001) > 0) pass_ind <- F
   sol_geweke <- cbind(decision_conerge,round(p_values_converge,4))
   rownames(sol_geweke) <- row_names
@@ -19,11 +19,16 @@ function (samples_l2_param, X_names, Z_names){
   
   hddata <- samples_l2_param
   colnames(hddata) <- row_names
-  sol_heidel <- heidel.diag(as.mcmc(hddata))  
-  sol_heidel[,3] <- round(sol_heidel[,3],4)
+  sol_heidel <- heidel.diag(as.mcmc(hddata))
+  #print(sol_heidel)
+  #sol_heidel[,3] <- round(sol_heidel[,3],4)
+  #sol_heidel[,3] <- round(sol_heidel[,3],4)
+  #sol_heidel[,5] <- round(sol_heidel[,5],4)
+  #sol_heidel[,6] <- round(sol_heidel[,6],4)
+
   if (sum(sol_heidel[,1]<1) > 0) pass_ind <- F
-  sol_heidel[which(sol_heidel[,1]==1),1]<-'Passed'
-  sol_heidel[which(sol_heidel[,1]<1),1]<-'Failed'
-  
+  #sol_heidel[which(sol_heidel[,1]==1),1]<-'Passed'
+  #sol_heidel[which(sol_heidel[,1]<1),1]<-'Failed'
+
   sol <- list(sol_geweke = sol_geweke, sol_heidel = sol_heidel, pass_ind = pass_ind)
 }

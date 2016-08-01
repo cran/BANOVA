@@ -18,11 +18,11 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
   for (i in 1:ncol(data)){
     if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
-    response_name <- attr(mf1,"names")[attr(attr(mf1, "terms"),"response")]
-    # checking missing predictors
-    if(i != which(colnames(data) == response_name) & sum(is.na(data[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
-    if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
-      data[,i] = data[,i] - mean(data[,i])
+    #response_name <- attr(mf1,"names")[attr(attr(mf1, "terms"),"response")]
+    # checking missing predictors, already checked in design matrix
+    # if(i != which(colnames(data) == response_name) & sum(is.na(data[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
+    #if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
+    #  data[,i] = data[,i] - mean(data[,i])
   }
   n <- nrow(data)
   uni_id <- unique(id)
@@ -48,7 +48,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     samples_l2_param <- result$mcmc[[1]][,index_l2_param]
   else
     samples_l2_param <- matrix(result$mcmc[[1]][,index_l2_param], ncol = 1)
-  
+  colnames(samples_l2_param) <- colnames(result$mcmc[[1]])[index_l2_param]
   n_p_l1 <- length(JAGS.model$monitorl1.parameters)
   index_l1_param<- array(0,dim = c(n_p_l1,1))
   for (i in 1:n_p_l1)
@@ -57,6 +57,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     samples_l1_param <- result$mcmc[[1]][,index_l1_param]
   else
     samples_l1_param <- matrix(result$mcmc[[1]][,index_l1_param], ncol = 1)
+  colnames(samples_l1_param) <- colnames(result$mcmc[[1]])[index_l1_param]
   
   n_p_cutp <- length(JAGS.model$monitor.cutp)
   index_cutp_param<- array(0,dim = c(n_p_cutp,1))

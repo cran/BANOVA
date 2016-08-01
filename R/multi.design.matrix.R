@@ -81,12 +81,15 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, id){
   
     attr(X,'dataClasses') <-  attr(attr(mf1,'terms'),'dataClasses')
     numeric_index <- which(attr(X,'dataClasses') == 'numeric' | attr(X,'dataClasses') == 'integer')
+    tmp <- get.interactions(mf1)
+    numeric_index <- c(numeric_index, tmp$numeric_index) # add interactions including at least one numeric variable
     numeric_index_in_X <- array(NA, dim = c(1,length(numeric_index)))
     if (length(numeric_index) > 0){
       for (j in 1:length(numeric_index)){
         numeric_index_in_X[j] <- which(attr(X,'assign') == numeric_index[j])
       }
-      #X[,numeric_index_in_X] <- mean.center(X[,numeric_index_in_X]) # mean center numeric variables (covariates) in X
+      X[,numeric_index_in_X] <- mean.center(X[,numeric_index_in_X]) # mean center numeric variables (covariates) in X
+      warning("level 1 numeric variables have been mean centered.\n", call. = F, immediate. = T)
     }
     
     # then col bind the intercept matrix
@@ -108,7 +111,6 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, id){
     temp <- get.interactions(mf1, n_choice - 1)
     attr(X_new,'interactions') <- temp$results
     attr(X_new,'interactions_index') <- temp$index
-    
     
     X_full[[i]] <- X_new
   }
@@ -148,13 +150,15 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, id){
   attr(Z,"contrasts") <- attr(Z_full,"contrasts")
   # find index of numeric variables (covariates) in Z
   numeric_index <- which(attr(Z,'dataClasses') == 'numeric' | attr(Z,'dataClasses') == 'integer')
+  numeric_index <- c(numeric_index, temp$numeric_index) # add interactions including at least one numeric variable
   numeric_index_in_Z <- array(NA, dim = c(1,length(numeric_index)))
   if (length(numeric_index) > 0){
     numeric_index_in_Z <- array(NA, dim = c(1,length(numeric_index)))
     for (i in 1:length(numeric_index)){
       numeric_index_in_Z[i] <- which(attr(Z,'assign') == numeric_index[i])
     }
-    #Z[,numeric_index_in_Z] <- mean.center(Z[,numeric_index_in_Z])
+    Z[,numeric_index_in_Z] <- mean.center(Z[,numeric_index_in_Z])
+    warning("level 2 numeric variables have been mean centered.\n", call. = F, immediate. = T)
   }
   attr(Z,'numeric_index') <- numeric_index_in_Z
   attr(Z_full,'numeric_index') <- numeric_index_in_Z

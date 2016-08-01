@@ -4,7 +4,7 @@ function(x, ...){
   print(as.table(x$sol_geweke))
   cat('\n')
   cat("Heidelberger and Welch's Diag.\n")
-  print(as.table(x$sol_heidel[,1:3]))
+  print(x$sol_heidel)
   if(x$pass_ind){
     cat('\n')
     cat("The Chain has converged.\n")
