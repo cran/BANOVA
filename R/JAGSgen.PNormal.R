@@ -6,14 +6,14 @@ function (X, Z, l2_hyper, conv_speedup){
   inits <- new.env() # store initial values for BUGS model
   monitorl1.parameters <- character()  # store monitors for level 1 parameters, which will be used in the computation of sum of squares
   monitorl2.parameters <- character()  # store monitors for level 2 parameters
-  
+  monitorl2.sigma.parameters <- character()
   ### generate the code for BUGS model
   sModel <- paste("model{", sep="")
   ### level 1 likelihood 
   sModel <- paste(sModel,"
   for (i in 1:n){
     y[i] ~ dpois(y.hat[i])
-","	log(y.hat[i]) <-")
+    log(y.hat[i]) <-")
   for (i in 1:num_l1_v){
     if (i != num_l1_v)
       sModel <- paste(sModel,"beta",i,"[id[i]]","*","X[i,",i,"]+",sep="")
@@ -22,14 +22,14 @@ function (X, Z, l2_hyper, conv_speedup){
     for (j in 1:num_id)
       monitorl1.parameters<-c(monitorl1.parameters, paste("beta",i,"[",j,"]",sep=""))
   }
-  sModel <- paste(sModel,"+epsilon[i]
-    epsilon[i] ~ dnorm(0,tau.eps)", sep = "")
+  #sModel <- paste(sModel,"#+epsilon[i]
+  #  #epsilon[i] ~ dnorm(0,tau.eps)", sep = "")
   sModel <- paste(sModel,"
-  }
-  tau.eps <- pow(sigma.eps, -2)
-  sigma.eps ~ dgamma(1, 1)",sep="")
-  inits$epsilon <- rnorm(nrow(X))
-  inits$sigma.eps <- 1
+  }",sep="")
+  #tau.eps ~ dgamma(1, 1)
+  #sigma.eps <- pow(tau.eps, -0.5)",sep="")
+  #inits$epsilon <- rnorm(nrow(X))
+  #inits$sigma.eps <- 1
   
   ### level 2 likelihood
   for (i in 1:num_l1_v){
@@ -49,7 +49,7 @@ function (X, Z, l2_hyper, conv_speedup){
     sModel <- paste(sModel,"
   tau.beta",i,"~dgamma(", l2_hyper[1],",", l2_hyper[2],")
   sigma.beta",i,"<-pow(tau.beta",i,",-0.5)",sep="")
-    
+    monitorl2.sigma.parameters <- c(monitorl2.sigma.parameters, paste("sigma.beta",i,sep=""))
     # generate inits for betas
     s <- paste("inits$","beta",i,"<-rep(",1/max(X[,i]), ",", num_id,")",sep="")
     s1 <- paste("inits$","tau.beta",i,"<-runif(",1,")",sep="")
@@ -74,7 +74,7 @@ function (X, Z, l2_hyper, conv_speedup){
   xi",i,"~dunif(0, 100)
   tau.beta",i,".raw~dgamma(", l2_hyper[1],",", l2_hyper[2],")
   sigma.beta",i,"<-xi",i,"*pow(tau.beta",i,".raw,-0.5)",sep="")
-      
+      monitorl2.sigma.parameters <- c(monitorl2.sigma.parameters, paste("sigma.beta",i,sep=""))
       # generate inits for betas
       s <- paste("inits$","beta",i,".raw<-rep(",1/max(X[,i]), ",", num_id,")",sep="")
       s1 <- paste("inits$","tau.beta",i,".raw<-runif(",1,")",sep="")
@@ -98,6 +98,8 @@ function (X, Z, l2_hyper, conv_speedup){
   
   sol.inits <- dump.format(as.list(inits))
   results <- list(inits = sol.inits, monitorl1.parameters = monitorl1.parameters, 
-                  monitorl2.parameters = monitorl2.parameters, sModel = sModel)
+                  monitorl2.parameters = monitorl2.parameters, 
+                  monitorl2.sigma.parameters = monitorl2.sigma.parameters, 
+                  sModel = sModel)
   return(results)
 }

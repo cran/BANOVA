@@ -1,10 +1,10 @@
 print.conv.diag <-
 function(x, ...){
-  cat('Geweke Diag.\n')
-  print(as.table(x$sol_geweke))
-  cat('\n')
-  cat("Heidelberger and Welch's Diag.\n")
-  print(x$sol_heidel)
+  cat("Geweke Diag. & Heidelberger and Welch's Diag.\n")
+  #print(x$sol_geweke)
+  #cat("Heidelberger and Welch's Diag.\n")
+  #print(x$sol_heidel)
+  print(format(cbind(x$sol_geweke, x$sol_heidel), nsmall = 4))
   if(x$pass_ind){
     cat('\n')
     cat("The Chain has converged.\n")

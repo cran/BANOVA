@@ -1,0 +1,19 @@
+BANOVA v0.7 (Release date: 2016-08-24)
+==============
+* Exclude numeric variables for predictions
+* Change the format of convergence diag.
+* Change the calculations in the table of means and predictions to exp(mu + sigma^2/2) instead of exp(mu) for the Poisson model
+* Table of means is now included in the summary
+* Use 4 digits for the outputs in the summary except the table of means
+* Median is changed to mean in the output of table of means
+* Predictors that have 3 levels or fewer will be automatically considered as factors
+
+
+BANOVA v0.6 (Release date: 2016-08-01)
+==============
+* Check missing data for independent variables
+* Fix typos
+* Add warnings for mean centering of numeric variables
+* Print full convergence diag. for the Heidelberg and Welch diagnostic.
+* Table of means can now print any level of interactions
+

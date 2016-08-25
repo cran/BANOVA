@@ -18,6 +18,11 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     # if(i != which(colnames(data) == response_name) & sum(is.na(data[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
     #if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
     #  data[,i] = data[,i] - mean(data[,i])
+    # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
+    if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+      data[,i] <- as.factor(data[,i])
+      warning("Variables(levels <= 3) have been converted to factors")
+    }
   }
   n <- nrow(data)
   uni_id <- unique(id)
@@ -30,7 +35,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
   JAGS.model <- JAGSgen.PNormal(dMatrice$X, dMatrice$Z, l2_hyper, conv_speedup)
   JAGS.data <- dump.format(list(n = n, id = id, M = num_id, y = y, X = dMatrice$X, Z = dMatrice$Z))
   result <- run.jags (model = JAGS.model$sModel, data = JAGS.data, inits = JAGS.model$inits, n.chains = 1,
-                      monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters), 
+                      monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters, JAGS.model$monitorl2.sigma.parameters), 
                       burnin = burnin, sample = sample, thin = thin, adapt = adapt, jags = jags, summarise = FALSE, 
                       method="rjags")
   samples <- result$mcmc[[1]]
@@ -53,6 +58,16 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
   else
     samples_l1_param <- matrix(result$mcmc[[1]][,index_l1_param], ncol = 1)
   colnames(samples_l1_param) <- colnames(result$mcmc[[1]])[index_l1_param]
+  # for table of means
+  n_p_l2_sigma <- length(JAGS.model$monitorl2.sigma.parameters)
+  index_l2_sigma_param<- array(0,dim = c(n_p_l2_sigma,1))
+  for (i in 1:n_p_l2_sigma)
+    index_l2_sigma_param[i] <- which(colnames(result$mcmc[[1]]) == JAGS.model$monitorl2.sigma.parameters[i])
+  if (length(index_l2_sigma_param) > 1)
+    samples_l2_sigma_param <- result$mcmc[[1]][,index_l2_sigma_param]
+  else
+    samples_l2_sigma_param <- matrix(result$mcmc[[1]][,index_l2_sigma_param], ncol = 1)
+  colnames(samples_l2_sigma_param) <- colnames(result$mcmc[[1]])[index_l2_sigma_param]
   
   #anova.table <- table.ANOVA(samples_l1_param, dMatrice$X, dMatrice$Z)
   cat('Constructing ANOVA/ANCOVA tables...\n')
@@ -68,5 +83,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
               coef.tables = coef.tables,
               pvalue.table = pvalue.table, 
               conv = conv,
-              dMatrice = dMatrice, samples_l2_param = samples_l2_param, data = data, mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel))
+              dMatrice = dMatrice, 
+              samples_l2_param = samples_l2_param, 
+              samples_l2_sigma_param = samples_l2_sigma_param, 
+              data = data, mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel))
 }

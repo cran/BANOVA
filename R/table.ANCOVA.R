@@ -5,7 +5,7 @@ function(samples_l1_param, X, Z){
     num_l2_v <- length(attr(Z, 'varNames')) - 1    
     num_id <- nrow(Z)
     ancova_table <- matrix(NA, nrow = num_l1_v, ncol = num_l2_v+2) 
-    rownames(ancova_table) <- colnames(X)
+    rownames(ancova_table) <- colnames(X) #attr(X, 'varNames')
     colnames(ancova_table) <- c(attr(Z, 'varNames')[-1], 'Residuals', 'Total') 
     assign <- attr(Z, 'assign')
     Z_factor_index <- 1:num_l2_v
@@ -21,10 +21,10 @@ function(samples_l1_param, X, Z){
       #}
       y <- t(as.matrix(samples_l1_param)[1:n_samples,((i-1)*num_id +1) : (i*num_id)])
       SS <- ssquares(y, Z, assign, Z_factor_index)
-      SS_temp <- round(c(SS$factor_SS, SS$SSE, SS$SS_TO), digits = 3)
+      SS_temp <- round(c(SS$factor_SS, SS$SSE, SS$SS_TO), digits = 4)
       SS_res <- array(NA, dim = c(1, length(SS_temp)))
       for (n_sstemp in 1:(length(SS_temp) - 2))
-        SS_res[n_sstemp] <- paste(SS_temp[n_sstemp], ' (', round((SS_temp[n_sstemp])/SS_temp[length(SS_temp)]*100, digits = 2), '%)', sep="")
+        SS_res[n_sstemp] <- paste(format(SS_temp[n_sstemp], nsmall = 4), ' (', round((SS_temp[n_sstemp])/SS_temp[length(SS_temp)]*100, digits = 2), '%)', sep="")
       SS_res[(length(SS_temp)-1):length(SS_temp)] = SS_temp[(length(SS_temp)-1):length(SS_temp)]
       ancova_table[i,] <- SS_res
     }

@@ -15,4 +15,7 @@ function(x, ...){
   cat('\nTable of coefficients: \n')
   printCoefmat(x$coef.table)
   
+  cat('\nTable of means: \n')
+  table.means(x$full_object)
+  
 }

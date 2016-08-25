@@ -1,5 +1,5 @@
 predict.means <-
-function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_cutp_param = NA, model){
+function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_cutp_param = NA, model = NA, l2_sd = NA){
   if(is.null(samples)) samples <- data
   if (is.vector(samples)) samples <- matrix(samples,  nrow  = 1)
   if (is.vector(X)) X <- matrix(X,  ncol = 1)
@@ -19,6 +19,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_c
     link_inv <- identity
   }else if (model == 'PoissonNormal'){
     link_inv <- exp
+    l2_var <- l2_sd^2
   }else if (model == 'BernNormal' || model == 'MultinomialordNormal'){
     link_inv <- function(x) return(exp(x)/(exp(x) + 1))
   }
@@ -63,22 +64,36 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_c
         l1_vector <- X[index_row, ]
         l2_vector <- Z_full[index_row, ]
       }
-      if (length(l1_numeric_index_in_data) > 0)
-        for (i in 1:length(l1_numeric_index_in_data))
-          l1_vector[attr(X, 'numeric_index')[i]] <- samples[n_sample,l1_numeric_index_in_data[i]]
+      # no numeric variables included in prediction
+      #if (length(l1_numeric_index_in_data) > 0)
+      #  for (i in 1:length(l1_numeric_index_in_data))
+      #    l1_vector[attr(X, 'numeric_index')[i]] <- samples[n_sample,l1_numeric_index_in_data[i]]
       
-      if (length(l2_numeric_index_in_data) > 0)
-        for (i in 1:length(l2_numeric_index_in_data))
-          l2_vector[attr(Z_full, 'numeric_index')[i]] <- samples[n_sample,l2_numeric_index_in_data[i]]
-      for (n_i in 1:n_iter){
-        if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
-          if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
-          if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
-          est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1))
-        }else{
-          est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% est_matrix[,,n_i] %*% t(matrix(l2_vector, nrow = 1))
+      #if (length(l2_numeric_index_in_data) > 0)
+      #  for (i in 1:length(l2_numeric_index_in_data))
+      #    l2_vector[attr(Z_full, 'numeric_index')[i]] <- samples[n_sample,l2_numeric_index_in_data[i]]
+      if (sum(is.na(l2_sd)) > 0){
+        for (n_i in 1:n_iter){
+          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+            if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
+            if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
+            est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1))
+          }else{
+            est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% est_matrix[,,n_i] %*% t(matrix(l2_vector, nrow = 1))
+          }
+        }
+      }else{
+        for (n_i in 1:n_iter){
+          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+            if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
+            if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
+            est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1)) + sum(l2_var[n_i,])/2
+          }else{
+            est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% est_matrix[,,n_i] %*% t(matrix(l2_vector, nrow = 1)) + sum(l2_var[n_i,])/2
+          }
         }
       }
+      
       means <- apply(est_samples, 1, median)
       quantile_025 <- apply(est_samples, 1, quantile, probs = 0.025, type = 3, na.rm = FALSE)
       quantile_975 <- apply(est_samples, 1, quantile, probs = 0.975, type = 3, na.rm = FALSE)
@@ -102,13 +117,16 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_c
         l1_vector <- X[index_row, ]
         l2_vector <- Z_full[index_row, ]
       }
-      if (length(l1_numeric_index_in_data) > 0)
-        for (i in 1:length(l1_numeric_index_in_data))
-          l1_vector[attr(X, 'numeric_index')[i]] <- samples[n_sample,l1_numeric_index_in_data[i]]
       
-      if (length(l2_numeric_index_in_data) > 0)
-        for (i in 1:length(l2_numeric_index_in_data))
-          l2_vector[attr(Z_full, 'numeric_index')[i]] <- samples[n_sample,l2_numeric_index_in_data[i]]
+      # no numeric variables included in prediction
+      #if (length(l1_numeric_index_in_data) > 0)
+      #  for (i in 1:length(l1_numeric_index_in_data))
+      #    l1_vector[attr(X, 'numeric_index')[i]] <- samples[n_sample,l1_numeric_index_in_data[i]]
+      
+      #if (length(l2_numeric_index_in_data) > 0)
+      #  for (i in 1:length(l2_numeric_index_in_data))
+      #    l2_vector[attr(Z_full, 'numeric_index')[i]] <- samples[n_sample,l2_numeric_index_in_data[i]]
+      
       for (y in 1:(n.cut + 1)){
         for (n_i in 1:n_iter){
           if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector

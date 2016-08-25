@@ -7,9 +7,9 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
   # check y, if it is numeric
   y <- model.response(mf1)
   if (class(y) != 'numeric'){
-    warning("The response variable must be numeric (data class also must be 'numeric')..")
+    warning("The response variable must be numeric (data class also must be 'numeric')")
     y <- as.numeric(y)
-    warning("The response variable has been converted to numeric..")
+    warning("The response variable has been converted to numeric")
   }
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
   for (i in 1:ncol(data)){
@@ -19,6 +19,11 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
     # if(i != which(colnames(data) == response_name) & sum(is.na(data[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
     #if(i != which(colnames(data) == response_name) & class(data[,i]) == 'numeric')
     #  data[,i] = data[,i] - mean(data[,i])
+    # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
+    if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+      data[,i] <- as.factor(data[,i])
+      warning("Variables(levels <= 3) have been converted to factors")
+    }
   }
   
   n <- nrow(data)

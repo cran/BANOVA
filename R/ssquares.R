@@ -15,7 +15,7 @@ function (y, design_matrix, assign, factor_index){
   #SS_TO <- sum((y - mean(y))^2) # total sum of squares for vectors
   centered.y <- scale(y, scale = F)
   SS_TO <- colSums(centered.y^2)
-  full <- lsfit(newdesign_matrix, y, intercept = FALSE)
+  full <- lsfit(newdesign_matrix, y, intercept = F)
   SSE <- colSums((full$residuals)^2)
   SS_full <- SS_TO - SSE # sum of squares of the full model
   if (n_f == 1){
@@ -25,7 +25,7 @@ function (y, design_matrix, assign, factor_index){
     for (i in 1:n_f){
       factor_index_i <- which(newassign == factor_index[i])
       design_matrix_i <- newdesign_matrix[, -factor_index_i]
-      model_i <- lsfit(design_matrix_i, y, intercept = FALSE)
+      model_i <- lsfit(design_matrix_i, y, intercept = F)
       SS_i <- SS_TO - colSums((model_i$residuals)^2)
       factor_SS[i] <- round(mean(SS_full - SS_i), digits = 5)
         #paste(round(SS_full - SS_i, digits = 5), ' (',round((SS_full - SS_i)/SS_TO*100, digits = 2),'%)',sep = '')
