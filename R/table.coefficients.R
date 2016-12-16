@@ -42,6 +42,7 @@ function (samples_l2_param, l2_parameters, X_names, Z_names, X_assign, Z_assign,
       rn_cutpresults[i] <-  paste('Cutpoint[',i+1,']', sep="")
     cutpresults <- matrix(NA,nrow = ncol(samples_cutp_param), ncol = 6)
     rownames(cutpresults) <- rn_cutpresults
+    colnames(cutpresults) <- colnames(result_table)
     for (i in 1:ncol(samples_cutp_param)){
       cutpresults[i,1] <- round(mean(samples_cutp_param[,i]),4)
       cutpresults[i,2] <- round(sd(samples_cutp_param[,i]),4)

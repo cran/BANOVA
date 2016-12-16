@@ -71,13 +71,12 @@ Level 1 model: \cr
   \item{JAGSmodel}{JAGS model}
 }
 \examples{
-
+if(0){
 # Use the ipadstudy data set
 data(ipadstudy)
 res <- BANOVA.T(attitude~1, ~owner + age + gender + selfbrand*conspic, ipadstudy,
 ipadstudy$id, burnin = 1000, sample = 1000, thin = 1)
-
 summary(res)
-
+}
 }
 

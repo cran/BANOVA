@@ -64,7 +64,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
   
   #anova.table <- table.ANOVA(samples_l1_param, dMatrice$X, dMatrice$Z)
   cat('Constructing ANOVA/ANCOVA tables...\n')
-  anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z) # for ancova models
+  anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param) # for ancova models
   coef.tables <- table.coefficients(samples_l2_param, JAGS.model$monitorl2.parameters, colnames(dMatrice$X), colnames(dMatrice$Z), 
                                     attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1)
   pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 

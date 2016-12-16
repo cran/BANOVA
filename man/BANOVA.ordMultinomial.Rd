@@ -81,11 +81,11 @@ Level 1 model: \cr
 \examples{
 if(0){
 data(goalstudy)
-res <- BANOVA.ordMultinomial (perceivedsim~1, ~goalprogress*varmeans,  goalstudy,
+res <- BANOVA.ordMultinomial (perceivedsim~1, ~progress*prodvar,  goalstudy,
 goalstudy$id, burnin = 1000, sample = 1000, thin = 1)
 summary(res)
 # BAnova(res)
-# table.means(res)
+# table.predictions(res)
 # predict(res, goalstudy[1:5,])
 }
 

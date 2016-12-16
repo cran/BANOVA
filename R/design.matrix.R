@@ -23,6 +23,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id){
   temp <- get.interactions(mf1)
   attr(X,'interactions') <- temp$results
   attr(X,'interactions_index') <- temp$index
+  attr(X,'interactions_num') <- temp$results_num
+  attr(X,'interactions_numeric_index') <- temp$numeric_index
   # find index of numeric variables (covariates) in X
   numeric_index <- which(attr(X,'dataClasses') == 'numeric' | attr(X,'dataClasses') == 'integer')
   numeric_index <- c(numeric_index, temp$numeric_index) # add interactions including at least one numeric variable
@@ -63,6 +65,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id){
   temp <- get.interactions(mf2)
   attr(Z,'interactions') <- temp$results
   attr(Z,'interactions_index') <- temp$index
+  attr(Z,'interactions_num') <- temp$results_num
+  attr(Z,'interactions_numeric_index') <- temp$numeric_index
   attr(Z,"assign") <- attr(Z_full,"assign")
   attr(Z,"contrasts") <- attr(Z_full,"contrasts")
   # find index of numeric variables (covariates) in Z

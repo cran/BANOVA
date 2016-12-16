@@ -76,15 +76,14 @@ res1 <- BANOVA.Poisson(PIC_FIX ~ AD_ID + PIC_SIZE+ PAGE_NUM
 + PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 10, 
 sample = 10, thin = 1)
 summary(res1)
-}
 
 # use the goalstudy dataset
 data(goalstudy)
 goalstudy$bid <- as.integer(goalstudy$bid + 0.5)
-res2<-BANOVA.Poisson(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
+res2<-BANOVA.Poisson(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1)
 summary(res2)
-
+}
 }
 
 

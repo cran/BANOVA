@@ -79,7 +79,7 @@ data(bernlogtime)
 res <- BANOVA.Bern(response~typical, ~blur + color, bernlogtime,
 bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)
 summary(res)
-# table.means(res)
+# table.predictions(res)
 }
 
 }

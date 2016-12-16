@@ -45,6 +45,6 @@ if(0){
 res <- BANOVA.ordMultinomial(apple_dl~1, ~owner + age + gender + selfbrand*conspic, 
 ipadstudy, ipadstudy$id, burnin = 100, sample = 100, thin = 2 )
 summary(res)
-table.means(res)
+table.predictions(res)
 }
 }

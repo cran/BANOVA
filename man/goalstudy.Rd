@@ -7,14 +7,14 @@
 }
 \usage{data(goalstudy)}
 \format{
-  This R object contains between-subjects variables: goalprogress, which denotes the progress toward a goal (1:low , 2: high ); varmeans, which denotes the amount of variety within the means to goal attainment (1:low , 2:high); perceivedsim, which is a seven-point scale dependent variable measuring the perceived similarity of the set of products (1 = not at all similar, 7 = very similar); and bid which denotes the amount that subjects would be willing to pay for the products . 
+  This R object contains between-subjects variables: progress, which denotes the progress toward a goal (1:low , 2: high ); prodvar, which denotes the amount of variety within the means to goal attainment (1:low , 2:high); perceivedsim, which is a seven-point scale dependent variable measuring the perceived similarity of the set of products (1 = not at all similar, 7 = very similar); and bid which denotes the amount that subjects would be willing to pay for the products . 
 
  
  \$ goalstudy: 'data.frame':  105 obs. of  5 variables:\cr
  \ldots\$ id            : int  1 2 3 4 5 6 7 8 9 10 ...\cr
  \ldots\$ perceivedsim  : int  5 7 2 2 5 5 5 4 5 7 ... \cr
- \ldots\$ goalprogress  : Factor w/ 2 levels "1","2": 1 1 2 2 2 1 2 1 2 1 ... \cr
- \ldots\$ varmeans      : Factor w/ 2 levels "1","2": 2 1 2 1 1 1 1 2 1 1 ...\cr
+ \ldots\$ progress      : Factor w/ 2 levels "1","2": 1 1 2 2 2 1 2 1 2 1 ... \cr
+ \ldots\$ prodvar      : Factor w/ 2 levels "1","2": 2 1 2 1 1 1 1 2 1 1 ...\cr
  \ldots\$ bid         : num  5 0 1 15 3 10 5 4.5 3 0.75 ...\cr
  
 }
@@ -28,7 +28,7 @@ Etkin, J. and Ratner, R. (2012) \emph{The Dynamic Impact of Variety among Means 
 \examples{
 data(goalstudy)
 
-res1 <- BANOVA.Normal(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
+res1 <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
 
 if(0){
@@ -36,16 +36,16 @@ conv.diag(res1)
 BAnova(res1)
 table.pvalues(res1)
 trace.plot(res1)
-table.means(res1)
+table.predictions(res1)
 
-res1_t <- BANOVA.T(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
+res1_t <- BANOVA.T(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
 
-res2 <- BANOVA.ordMultinomial (perceivedsim~1, ~goalprogress*varmeans,  goalstudy,
+res2 <- BANOVA.ordMultinomial (perceivedsim~1, ~progress*prodvar,  goalstudy,
 goalstudy$id, burnin = 1000, sample = 1000, thin = 1)
 
 summary(res2)
-table.means(res2)
+table.predictions(res2)
 # print JAGS code
 cat(res2$JAGSmodel)
 }

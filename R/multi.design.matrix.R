@@ -111,7 +111,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, id){
     temp <- get.interactions(mf1, n_choice - 1)
     attr(X_new,'interactions') <- temp$results
     attr(X_new,'interactions_index') <- temp$index
-    
+    attr(X_new,'interactions_num') <- temp$results_num
+    attr(X_new,'interactions_numeric_index') <- temp$numeric_index
     X_full[[i]] <- X_new
   }
   # check dimensions of each matrix for each choice
@@ -146,6 +147,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, id){
   temp <- get.interactions(mf2)
   attr(Z,'interactions') <- temp$results
   attr(Z,'interactions_index') <- temp$index
+  attr(Z,'interactions_num') <- temp$results_num
+  attr(Z,'interactions_numeric_index') <- temp$numeric_index
   attr(Z,"assign") <- attr(Z_full,"assign")
   attr(Z,"contrasts") <- attr(Z_full,"contrasts")
   # find index of numeric variables (covariates) in Z

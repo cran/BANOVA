@@ -46,7 +46,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     cat(round(link_inv(mean(samples_l2_param[, 'beta1_1'] + p_indicator*rowSums(l2_var)/2)), digits = 4))
     cat('\n')
     #sol_tables[['Grand mean: \n']] <- as.table(link_inv(matrix(coeff_table[1,2:3] + mean(rowSums(l2_var))/2, nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))))
-    sol_tables[['Grand mean: \n']] <- as.table(link_inv(matrix(quantile(samples_l2_param[, 'beta1_1'] + p_indicator * rowSums(l2_var)/2, c(0.025, 0.975)), nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))))
+    sol_tables[['Grand mean: \n']] <- as.table(round(link_inv(matrix(quantile(samples_l2_param[, 'beta1_1'] + p_indicator * rowSums(l2_var)/2, c(0.025, 0.975)), nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))), digits = 4))
     print(sol_tables[['Grand mean: \n']])
     
     # means of main effect in level 1 and 2
@@ -160,6 +160,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       l1_inter_matrix <- list()
       index <- 1
       for (i in 1:length(l1_interactions)){
+        # y var is also included in l1_values, l1_interactions has considered this
         temp1 <- l1_values[l1_interactions[[i]]]
         if (length(temp1) >= 2){
           #temp2 <- list()
@@ -337,6 +338,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         cat('Means for factors at level 1: \n')
         l1_matrix <- list()
         for (i in 1:length(l1_factors)){
+          # y var is also included in l1_values
           l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X)
           # Compute median and quantile
           est_l1mean <- 0
@@ -435,6 +437,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       l1_inter_matrix <- list()
       index <- 1
       for (i in 1:length(l1_interactions)){
+        # y var is also included in l1_values, l1_interactions has considered this
         temp1 <- l1_values[l1_interactions[[i]]]
         if (length(temp1) >= 2){
           #temp2 <- list()
@@ -602,6 +605,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
           l1_matrix <- list()
           #l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
           for (i in 1:length(l1_factors)){
+            # y var is also included in l1_values
             l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X)
             #means <- l1_matrix[[i]] %*% est_matrix_mean %*% l2_v
             #quantile_025 <- l1_matrix[[i]] %*% est_matrix_025 %*% l2_v
@@ -697,6 +701,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l1_inter_matrix <- list()
         index <- 1
         for (i in 1:length(l1_interactions)){
+          # y var is also included in l1_values, l1_interactions has considered this
           temp1 <- l1_values[l1_interactions[[i]]]
           if (length(temp1) >= 2){
             #temp2 <- list()

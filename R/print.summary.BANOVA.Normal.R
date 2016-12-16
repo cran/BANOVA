@@ -6,7 +6,6 @@ function(x, ...){
   cat('\nConvergence diagnostics:\n')
   print(x$conv)
   
-  cat('\nTable of sum of squares and effect sizes (Bayesian ANOVA/ANCOVA):\n')
   print(x$anova.table)
   
   cat('\nTable of p-values (Multidimensional): \n')
@@ -15,7 +14,7 @@ function(x, ...){
   cat('\nTable of coefficients: \n')
   printCoefmat(x$coef.table)
   
-  cat('\nTable of means: \n')
-  table.means(x$full_object)
+  cat('\nTable of predictions: \n')
+  table.predictions(x$full_object)
   
 }

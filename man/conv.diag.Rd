@@ -47,7 +47,7 @@ Opns. Res., Vol. 30, No.3, pp. 569-590.
 
 data(goalstudy)
 
-res1 <- BANOVA.Normal(bid~1, ~goalprogress*varmeans,  goalstudy, goalstudy$id, 
+res1 <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
 
 conv.diag(res1)

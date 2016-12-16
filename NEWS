@@ -1,3 +1,10 @@
+BANOVA v0.8 (Release date: 2016-12-12)
+==============
+* change the name 'table of means' to 'table of predictions'
+* column names of the data goalstudy are changed to make more sense
+* add floodlight analysis
+* add mediation analysis (single mediator, multiple moderators)
+
 BANOVA v0.7 (Release date: 2016-08-24)
 ==============
 * Exclude numeric variables for predictions

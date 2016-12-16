@@ -29,17 +29,17 @@ Wedel, M and R. Pieters (2015).
 \examples{
 data(bernlogtime)
 
+if(0){
 # model using the dependent variable : log of the response time(logtime) 
 res1 <- BANOVA.Normal(logtime~typical, ~blur + color, bernlogtime, 
 bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)
 summary(res1)
-# table.means(res1)
+# table.predictions(res1)
 
-if(0){
 # model using the dependent variable : response
 res2 <- BANOVA.Bern(response~typical, ~blur + color, bernlogtime, 
 bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)
 summary(res2)
-# table.means(res2)
+# table.predictions(res2)
 }
 }

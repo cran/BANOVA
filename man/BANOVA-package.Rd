@@ -6,14 +6,14 @@
 BANOVA: Hierarchical Bayesian ANOVA Models
 }
 \description{
-This package include several hierarchical Bayes Analysis of Variance models. These models are suited for the analysis of experimental designs in which both within- and between- subjects factors are manipulated, and account for a wide variety of distributions of the dependent variable.
+This package includes several hierarchical Bayes Analysis of Variance models. These models are suited for the analysis of experimental designs in which both within- and between- subjects factors are manipulated, and account for a wide variety of distributions of the dependent variable. Floodlight analysis and mediation analysis basaed on these models are also provided.
 }
 \details{
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 0.7\cr
-Date: \tab 2016-08-23\cr
+Version: \tab 0.8\cr
+Date: \tab 2016-12-12\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
@@ -38,7 +38,7 @@ Maintainer: Chen Dong <cdong@math.umd.edu>
 }
 \references{
 Dong, C. and Wedel, M. (2016) 
-\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, accepted. 
+\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, forthcoming. 
 
 McCullagh, P., Nelder, JA. (1989)
 \emph{Generalized linear models}, New York, NY: Chapman and Hall.
@@ -54,6 +54,8 @@ Gill, J. (2007)
 
 Gelman, A., Carlin, J., Stern, H. and Dunson, D. (2013)
 \emph{Bayesian Data Analysis}, London: Chapman and Hall.
+
+Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Consumer Research}. Submitted.
 
 }
 %Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation ~~
