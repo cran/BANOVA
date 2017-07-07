@@ -4,7 +4,10 @@ function (samples_l2_param, X_names, Z_names){
   for (i in 1:length(X_names))
     for (j in 1:length(Z_names)){
       temp <- (i - 1)*length(Z_names) + j
-      row_names[temp] <- paste(X_names[i]," : ", Z_names[j])
+      if (X_names[i] == " ")
+        row_names[temp] <- Z_names[j]
+      else
+        row_names[temp] <- paste(X_names[i]," : ", Z_names[j])
     }
   pass_ind <- T
   sol_converge <- geweke.diag(as.mcmc(samples_l2_param),0.2,0.5)

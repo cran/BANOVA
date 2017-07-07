@@ -53,6 +53,9 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
       l2_matrix <- model.matrix(~1)
       l2_matrix <- rbind(l2_matrix, c(1))
       attr(l2_matrix, "levels") <- l2_matrix
+      if (sol_1$single_level){
+        colnames(l2_matrix) <- c(" ")
+      }
     }else{
       l2_matrix <- effect.matrix.mediator(interaction_factors = l2_values, matrix_formula=formula(attr(sol_1$mf2, 'terms')), xvar=xvar)
     }
@@ -61,14 +64,13 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
       mediator_interaction_effect_matrix <- list()
       for (i in 1:length(mediator_interaction_list)){
         # l1 matrix
-        # TODO check:
+        # TO check:
         # y var is also included in l1_values, interaction_list has considered this
         mediator_interaction_effect_matrix[[i]] <- effect.matrix.mediator(interaction_factors = l1_values[mediator_interaction_list[[i]]], mediator=mediator, xvar=xvar)
         est_samples <- array(0, dim = c(nrow(mediator_interaction_effect_matrix[[i]]), nrow(l2_matrix), n_sample))
         for (n_s in 1:n_sample)
           est_samples[,,n_s] <- mediator_interaction_effect_matrix[[i]] %*% est_matrix[colnames(mediator_interaction_effect_matrix[[i]]), colnames(l2_matrix), n_s] %*% t(l2_matrix)
         
-        #TODO use a list to store
         table_m <- construct.table(est_samples, attr(mediator_interaction_effect_matrix[[i]], 'levels'), attr(l2_matrix, 'levels'))
         table_list[[table_list_index]] <- table_m
         table_list_index = table_list_index + 1
@@ -77,7 +79,7 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
     }else{
       l1_values <- attr(sol_1$dMatrice$X, 'varValues')
       # no interaction with the mediator in level 1, only select the mediator
-      # TODO check:
+      # TO check:
       # y var is also included in l1_values, interaction_list has considered this
       l1_matrix <- effect.matrix.mediator(l1_values[mediator_assign], mediator=mediator)
       est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(l2_matrix), n_sample))

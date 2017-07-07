@@ -1,10 +1,13 @@
 multi.predict.means <-
 function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2, Xsamples = NULL, Zsamples = NULL){
-  if(is.null(Xsamples) || is.null(Zsamples)){ 
+  if(is.null(Xsamples)){ 
     Xsamples <- dataX
+  }  
+  if(is.null(Zsamples)){ 
     Zsamples <- dataZ
   }
-  if (length(Xsamples) != nrow(Zsamples)) stop('X, Z samples dimension mismatch.')
+  if(!is.null(mf2))
+    if (length(Xsamples) != nrow(Zsamples)) stop('X, Z samples dimension mismatch.')
   if (class(Xsamples) != 'list') stop('Xsamples must be a list of features data.')
   for (i in 1:length(Xsamples))
     if (ncol(Xsamples[[i]]) != ncol(dataX[[1]]) || nrow(Xsamples[[i]]) != nrow(dataX[[1]]))
@@ -12,11 +15,16 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   #if (is.vector(samples)) samples <- matrix(samples,  nrow  = 1)
   #if (is.vector(X)) X <- matrix(X,  ncol = 1)
   if (is.vector(Z_full)) Z_full <- matrix(Z_full,  ncol = 1)
-  if (ncol(Zsamples) != ncol(dataZ)) stop('level 2 samples dimension mismatch!')
+  if(!is.null(mf2))
+    if (ncol(Zsamples) != ncol(dataZ)) stop('level 2 samples dimension mismatch!')
   
   n_iter <- nrow(samples_l2_param)
   num_l1 <- ncol(X[[1]])
-  num_l2 <- ncol(Z_full)
+  if(is.null(mf2)){
+    num_l2 <- 1
+  }else{
+    num_l2 <- ncol(Z_full)
+  }
   est_matrix <- array(0 , dim = c(num_l1, num_l2, n_iter))
   for (i in 1:num_l1){
     for (j in 1:n_iter)
@@ -24,7 +32,11 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   }
   
   l1_names <- attr(mf1, 'names')
-  l2_names <- attr(mf2, 'names')
+  if(is.null(mf2)){
+    l2_names <- c(" ")
+  }else{
+    l2_names <- attr(mf2, 'names')
+  }
   l1_index_in_data <- which(colnames(dataX[[1]]) %in% l1_names)
   l2_index_in_data <- which(colnames(dataZ) %in% l2_names)
   # find index of level 1 factors and numeric variables
@@ -86,7 +98,7 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
         if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
           if (length(l1_vector[[n_c]]) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
           if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
-          print(l1_vector[[n_c]])
+          #print(l1_vector[[n_c]])
           est_samples[n_c, n_i] <- exp(matrix(l1_vector[[n_c]], nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1)))
           
         }else{

@@ -1,5 +1,44 @@
 JAGSgen.normalNormal <-
 function (X, Z, l1_hyper, l2_hyper, conv_speedup){
+if (is.null(Z)){
+  # one level model
+  num_l1_v <- ncol(X)
+  inits <- new.env() # store initial values for BUGS model
+  monitorl1.parameters <- character()  # store monitors for level 1 parameters, which will be used in the computation of sum of squares
+  monitorl2.parameters <- NULL  # store monitors for level 2 parameters, NULL for one level models
+  
+  ### generate the code for BUGS model
+  sModel <- paste("
+model{", sep="")
+  ### level 1 likelihood 
+  sModel <- paste(sModel,"
+  for (i in 1:n){
+    y[i] ~ dnorm(y.hat[i],tau.y)
+    y.hat[i] <-")
+  for (i in 1:num_l1_v){
+    if (i != num_l1_v)
+      sModel <- paste(sModel,"beta",i,"*","X[i,",i,"]+",sep="")
+    else
+      sModel <- paste(sModel,"beta",i,"*","X[i,",i,"]",sep="")
+    
+    monitorl1.parameters<-c(monitorl1.parameters, paste("beta",i,sep=""))
+  }
+  sModel <- paste(sModel,"
+  }
+  tau.y ~ dgamma(", l1_hyper[1],",", l1_hyper[2],")
+  sigma.y <- pow(tau.y, -0.5)",sep="")
+  inits$tau.y <- 1
+  
+  for (j in 1:num_l1_v){
+    sModel <- paste(sModel,"
+  beta",j,"~dnorm(0,",l1_hyper[3],")",sep="")
+    s<-paste("inits$","beta",j,"<-rnorm(1)",sep="")
+    eval(parse(text=s))
+  }
+  sModel<- paste(sModel,"
+}")
+    
+}else{
   num_l1_v <- ncol(X)
   num_l2_v <- ncol(Z)
   num_id <- nrow(Z)
@@ -92,8 +131,9 @@ function (X, Z, l1_hyper, l2_hyper, conv_speedup){
   }
   sModel<- paste(sModel,"
 }")
-  
+}
   sol.inits <- dump.format(as.list(inits))
+
   results <- list(inits = sol.inits, monitorl1.parameters = monitorl1.parameters, 
                   monitorl2.parameters = monitorl2.parameters, sModel = sModel)
   return(results)

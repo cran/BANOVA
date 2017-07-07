@@ -46,10 +46,10 @@ Opns. Res., Vol. 30, No.3, pp. 569-590.
 \examples{
 
 data(goalstudy)
-
-res1 <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
-burnin = 1000, sample = 1000, thin = 1) 
-
+if(0){
+res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", data = goalstudy, 
+id = goalstudy$id, iter = 100, thin = 1) 
 conv.diag(res1)
-
+# might need pairs() to confirm the convergence
+}
 }

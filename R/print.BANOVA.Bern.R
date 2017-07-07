@@ -1,4 +1,4 @@
-print.BANOVA.Bern <-
+print.BANOVA.Bernoulli <-
 function(x, ...){
   cat('Call:\n')
   print(x$call)

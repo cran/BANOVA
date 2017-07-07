@@ -97,5 +97,9 @@ dataZ <- choicedata[,9:13]
 if(0){
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, 
   choicedata$choice, choicedata$hhid, burnin = 1000, sample = 1000, thin = 1)
+# or use BANOVA.run based on Stan
+res <- BANOVA.run(~ logP, ~ college, dataX = dataX, dataZ = dataZ, 
+                    model_name = 'Multinomial', y_value = choicedata$choice, 
+                    id = choicedata$hhid, iter = 100, thin = 1, chains = 2)
 }
 }

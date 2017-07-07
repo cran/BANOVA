@@ -1,14 +1,19 @@
 predict.means <-
-function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_cutp_param = NA, model = NA, l2_sd = NA){
+function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, samples_cutp_param = NA, model = NA, l2_sd = NA){
   if(is.null(samples)) samples <- data
   if (is.vector(samples)) samples <- matrix(samples,  nrow  = 1)
   if (is.vector(X)) X <- matrix(X,  ncol = 1)
   if (is.vector(Z_full)) X <- matrix(Z_full,  ncol = 1)
-  if (ncol(samples) != ncol(data)) stop('Samples dimension mismatch!')
+  if (ncol(samples) != ncol(data)) stop("Samples' dimension mismatch!")
   
   n_iter <- nrow(samples_l2_param)
   num_l1 <- ncol(X)
-  num_l2 <- ncol(Z_full)
+  if(is.null(mf2) || is.null(Z_full)){
+    num_l2 <- 1
+  }else{
+    num_l2 <- ncol(Z_full)
+  }
+  
   est_matrix <- array(0 , dim = c(num_l1, num_l2, n_iter))
   for (i in 1:num_l1){
     for (j in 1:n_iter)
@@ -25,7 +30,11 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_c
   }
   
   l1_names <- attr(mf1, 'names')[-1] # exclude y
-  l2_names <- attr(mf2, 'names')
+  if (is.null(mf2)){
+    l2_names <- c(" ")
+  }else{
+    l2_names <- attr(mf2, 'names')
+  }
   l1_index_in_data <- which(colnames(data) %in% l1_names)
   l2_index_in_data <- which(colnames(data) %in% l2_names)
   # find index of level 1 factors and numeric variables
@@ -62,7 +71,8 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_c
         index_row <- rowMatch(samples[n_sample, l12_factor_index], data[, l12_factor_index])    
         if (is.na(index_row)) stop('Bad samples provided! Could not find matching factors!')
         l1_vector <- X[index_row, ]
-        l2_vector <- Z_full[index_row, ]
+        if (!is.null(Z_full))
+          l2_vector <- Z_full[index_row, ]
       }
       # no numeric variables included in prediction
       #if (length(l1_numeric_index_in_data) > 0)
@@ -115,7 +125,8 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2, samples = NULL, samples_c
         index_row <- rowMatch(samples[n_sample, l12_factor_index], data[, l12_factor_index])    
         if (is.na(index_row)) stop('Bad samples provided! Could not find matching factors!')
         l1_vector <- X[index_row, ]
-        l2_vector <- Z_full[index_row, ]
+        if (!is.null(Z_full))
+          l2_vector <- Z_full[index_row, ]
       }
       
       # no numeric variables included in prediction

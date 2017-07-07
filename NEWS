@@ -1,3 +1,10 @@
+BANOVA v0.9 (Release date: 2017-06-27)
+==============
+* BANOVA uses Stan!
+* all two-level models are moved into a simple function call: BANOVA.run 
+* old two-level models (e.g. BANOVA.Normal, BANOVA.Bin, etc.) are still kept, but will be removed gradually
+* single level models are included
+
 BANOVA v0.8 (Release date: 2016-12-12)
 ==============
 * change the name 'table of means' to 'table of predictions'

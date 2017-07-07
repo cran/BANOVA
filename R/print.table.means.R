@@ -2,7 +2,7 @@ print.table.means <-
 function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_classes = character(0), Z_names, Z_assign = array(dim = 0), Z_classes = character(0), 
                                l1_values = list(), l1_interactions = list(), l1_interactions_index = array(dim = 0), 
                                l2_values = list(), l2_interactions = list(), l2_interactions_index = array(dim = 0), 
-                               numeric_index_in_X, numeric_index_in_Z, samples_cutp_param = NA, model = NA, l2_sd = NA){
+                               numeric_index_in_X, numeric_index_in_Z, samples_cutp_param = NA, model = NA, l2_sd = NULL){
   sol_tables <- list()
   
   if (length(X_assign) == 1 && length(Z_assign) == 1) coeff_table <- matrix(coeff_table, nrow = 1) # the case that there is only one intercept 
@@ -11,7 +11,6 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
   # convert the coeff_table to three matrices, mean, 2.5% and 97.5%, used in the table of means computation
   num_l1 <- length(X_assign)
   num_l2 <- length(Z_assign)
-
   #est_matrix_mean <- matrix(0, nrow = num_l1, ncol = num_l2)
   #est_matrix_025 <- matrix(0, nrow = num_l1, ncol = num_l2)
   #est_matrix_975 <- matrix(0, nrow = num_l1, ncol = num_l2)
@@ -33,8 +32,10 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     }else if (model == 'PoissonNormal'){
       link_inv <- exp
       p_indicator <- 1
-      l2_var <- l2_sd^2
-      colnames(l2_var) <- X_names
+      if (!is.null(l2_sd)){
+        l2_var <- l2_sd^2
+        colnames(l2_var) <- X_names
+      }
     }else if (model == 'BernNormal'){
       link_inv <- function(x) return(exp(x)/(exp(x) + 1))
       p_indicator <- 0
@@ -42,11 +43,23 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     # Grand mean
     cat('\n')
     cat('Grand mean: \n')
-    #cat(link_inv(coeff_table[1,1] + mean(rowSums(l2_sd^2))/2))
-    cat(round(link_inv(mean(samples_l2_param[, 'beta1_1'] + p_indicator*rowSums(l2_var)/2)), digits = 4))
-    cat('\n')
-    #sol_tables[['Grand mean: \n']] <- as.table(link_inv(matrix(coeff_table[1,2:3] + mean(rowSums(l2_var))/2, nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))))
-    sol_tables[['Grand mean: \n']] <- as.table(round(link_inv(matrix(quantile(samples_l2_param[, 'beta1_1'] + p_indicator * rowSums(l2_var)/2, c(0.025, 0.975)), nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))), digits = 4))
+    # TOFIX: 'beta2_1_1' is hard coded here
+    if ('beta2_1_1' %in% colnames(samples_l2_param)){
+      cat(round(link_inv(mean(samples_l2_param[, 'beta2_1_1'] + p_indicator*rowSums(l2_var)/2)), digits = 4))
+      cat('\n')
+      #sol_tables[['Grand mean: \n']] <- as.table(link_inv(matrix(coeff_table[1,2:3] + mean(rowSums(l2_var))/2, nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))))
+      sol_tables[['Grand mean: \n']] <- as.table(round(link_inv(matrix(quantile(samples_l2_param[, 'beta2_1_1'] + p_indicator * rowSums(l2_var)/2, c(0.025, 0.975)), nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))), digits = 4))
+    }else if('beta1_1' %in% colnames(samples_l2_param)){
+      cat(round(link_inv(mean(samples_l2_param[, 'beta1_1'] + p_indicator*rowSums(l2_var)/2)), digits = 4))
+      cat('\n')
+      #sol_tables[['Grand mean: \n']] <- as.table(link_inv(matrix(coeff_table[1,2:3] + mean(rowSums(l2_var))/2, nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))))
+      sol_tables[['Grand mean: \n']] <- as.table(round(link_inv(matrix(quantile(samples_l2_param[, 'beta1_1'] + p_indicator * rowSums(l2_var)/2, c(0.025, 0.975)), nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))), digits = 4))
+    }else{
+      cat(round(link_inv(mean(samples_l2_param[, 'beta1'] + p_indicator*rowSums(l2_var)/2)), digits = 4))
+      cat('\n')
+      #sol_tables[['Grand mean: \n']] <- as.table(link_inv(matrix(coeff_table[1,2:3] + mean(rowSums(l2_var))/2, nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))))
+      sol_tables[['Grand mean: \n']] <- as.table(round(link_inv(matrix(quantile(samples_l2_param[, 'beta1'] + p_indicator * rowSums(l2_var)/2, c(0.025, 0.975)), nrow = 1, ncol = 2, dimnames = list('',c('2.5%','97.5%')))), digits = 4))
+    }
     print(sol_tables[['Grand mean: \n']])
     
     # means of main effect in level 1 and 2
@@ -54,7 +67,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       l1_factors <- which(X_classes == 'factor')
       if (length(l1_factors) != 0){
         cat('\n')
-        cat('Means for factors at level 1: \n')
+        #cat('Means for factors at level 1: \n')
         l1_matrix <- list()
         l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
         for (i in 1:length(l1_factors)){
@@ -89,7 +102,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       l2_factors <- which(Z_classes == 'factor')
       if (length(l2_factors) != 0){
         cat('\n')
-        cat('Means for factors at level 2: \n')
+        #cat('Means for factors at level 2: \n')
         l2_matrix <- list()
         l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
         for (i in 1:length(l2_factors)){
@@ -122,7 +135,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     if (length(X_classes) != 0 && length(Z_classes) != 0){
       if (length(l1_factors) != 0 && length(l2_factors) != 0){
         cat('\n')
-        cat('Means for interactions between level 1 and level 2 factors: \n')
+        #cat('Means for interactions between level 1 and level 2 factors: \n')
         for (i in 1:length(l1_factors)){
           for (j in 1:length(l2_factors)){
             #means <- l1_matrix[[i]] %*% est_matrix_mean %*% t(l2_matrix[[j]])
@@ -156,7 +169,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     # means of interactions in level 1 or 2
     if (length(l1_interactions) > 0){
       cat('\n')
-      cat('Means for interactions at level 1: \n')
+      #cat('Means for interactions at level 1: \n')
       l1_inter_matrix <- list()
       index <- 1
       for (i in 1:length(l1_interactions)){
@@ -194,7 +207,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             l2_factors <- which(Z_classes == 'factor')
             if (length(l2_factors) != 0){
               cat('\n')
-              cat('Means for interactions between level 1 interactions and level 2 factors: \n')
+              #cat('Means for interactions between level 1 interactions and level 2 factors: \n')
               for (j in 1:length(l2_factors)){
                 #means <- l1_inter_matrix[[index]] %*% est_matrix_mean %*% t(l2_matrix[[j]])
                 #quantile_025 <- l1_inter_matrix[[index]] %*% est_matrix_025 %*% t(l2_matrix[[j]])
@@ -231,7 +244,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       
     if (length(l2_interactions) > 0){
       cat('\n')
-      cat('Means for interactions at level 2: \n')
+      #cat('Means for interactions at level 2: \n')
       l2_inter_matrix <- list()
       index <- 1
       for (i in 1:length(l2_interactions)){
@@ -269,7 +282,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             l1_factors <- which(X_classes == 'factor')
             if (length(l1_factors) != 0){
               cat('\n')
-              cat('Means for interactions between level 2 interactions and level 1 factors: \n')
+              #cat('Means for interactions between level 2 interactions and level 1 factors: \n')
               for (j in 1:length(l1_factors)){
                 #means <- l1_matrix[[j]] %*% est_matrix_mean %*% t(l2_inter_matrix[[index]])
                 #quantile_025 <- l1_matrix[[j]] %*% est_matrix_025 %*% t(l2_inter_matrix[[index]])
@@ -335,7 +348,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       l1_factors <- which(X_classes == 'factor')
       if (length(l1_factors) != 0){
         cat('\n')
-        cat('Means for factors at level 1: \n')
+        #cat('Means for factors at level 1: \n')
         l1_matrix <- list()
         for (i in 1:length(l1_factors)){
           # y var is also included in l1_values
@@ -368,7 +381,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       l2_factors <- which(Z_classes == 'factor')
       if (length(l2_factors) != 0){
         cat('\n')
-        cat('Means for factors at level 2: \n')
+        #cat('Means for factors at level 2: \n')
         l2_matrix <- list()
         #l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
         for (i in 1:length(l2_factors)){
@@ -400,7 +413,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     if (length(X_classes) != 0 && length(Z_classes) != 0){
       if (length(l1_factors) != 0 && length(l2_factors) != 0){
         cat('\n')
-        cat('Means for interactions between level 1 and level 2 factors: \n')
+        #cat('Means for interactions between level 1 and level 2 factors: \n')
         for (i in 1:length(l1_factors)){
           for (j in 1:length(l2_factors)){
             est_l1l2mean <- 0
@@ -433,7 +446,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     # means of interactions in level 1 or 2
     if (length(l1_interactions) > 0){
       cat('\n')
-      cat('Means for interactions at level 1: \n')
+      #cat('Means for interactions at level 1: \n')
       l1_inter_matrix <- list()
       index <- 1
       for (i in 1:length(l1_interactions)){
@@ -470,7 +483,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             l2_factors <- which(Z_classes == 'factor')
             if (length(l2_factors) != 0){
               cat('\n')
-              cat('Means for interactions between level 1 interactions and level 2 factors: \n')
+              #cat('Means for interactions between level 1 interactions and level 2 factors: \n')
               for (j in 1:length(l2_factors)){
                 est_l1inl2mean <- 0
                 for (y in 1:(n.cut + 1)){
@@ -506,7 +519,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
     
     if (length(l2_interactions) > 0){
       cat('\n')
-      cat('Means for interactions at level 2: \n')
+      #cat('Means for interactions at level 2: \n')
       l2_inter_matrix <- list()
       index <- 1
       for (i in 1:length(l2_interactions)){
@@ -541,7 +554,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             l1_factors <- which(X_classes == 'factor')
             if (length(l1_factors) != 0){
               cat('\n')
-              cat('Means for interactions between level 2 interactions and level 1 factors: \n')
+              #cat('Means for interactions between level 2 interactions and level 1 factors: \n')
               for (j in 1:length(l1_factors)){
                 est_l2inl1mean <- 0
                 for (y in 1:(n.cut + 1)){
@@ -601,7 +614,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l1_factors <- which(X_classes == 'factor')
         if (length(l1_factors) != 0){
           cat('\n')
-          cat('Means for factors at level 1: \n')
+          #cat('Means for factors at level 1: \n')
           l1_matrix <- list()
           #l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
           for (i in 1:length(l1_factors)){
@@ -634,7 +647,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l2_factors <- which(Z_classes == 'factor')
         if (length(l2_factors) != 0){
           cat('\n')
-          cat('Means for factors at level 2: \n')
+          #cat('Means for factors at level 2: \n')
           l2_matrix <- list()
           #l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
           for (i in 1:length(l2_factors)){
@@ -665,7 +678,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       if (length(X_classes) != 0 && length(Z_classes) != 0){
         if (length(l1_factors) != 0 && length(l2_factors) != 0){
           cat('\n')
-          cat('Means for interactions between level 1 and level 2 factors: \n')
+          #cat('Means for interactions between level 1 and level 2 factors: \n')
           for (i in 1:length(l1_factors)){
             for (j in 1:length(l2_factors)){
               #means <- l1_matrix[[i]] %*% est_matrix_mean %*% t(l2_matrix[[j]])
@@ -697,7 +710,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       # means of interactions in level 1 or 2
       if (length(l1_interactions) > 0){
         cat('\n')
-        cat('Means for interactions at level 1: \n')
+        #cat('Means for interactions at level 1: \n')
         l1_inter_matrix <- list()
         index <- 1
         for (i in 1:length(l1_interactions)){
@@ -733,7 +746,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
               l2_factors <- which(Z_classes == 'factor')
               if (length(l2_factors) != 0){
                 cat('\n')
-                cat('Means for interactions between level 1 interactions and level 2 factors: \n')
+                #cat('Means for interactions between level 1 interactions and level 2 factors: \n')
                 for (j in 1:length(l2_factors)){
                   #means <- l1_inter_matrix[[index]] %*% est_matrix_mean %*% t(l2_matrix[[j]])
                   #quantile_025 <- l1_inter_matrix[[index]] %*% est_matrix_025 %*% t(l2_matrix[[j]])
@@ -768,7 +781,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
       
       if (length(l2_interactions) > 0){
         cat('\n')
-        cat('Means for interactions at level 2: \n')
+        #cat('Means for interactions at level 2: \n')
         l2_inter_matrix <- list()
         index <- 1
         for (i in 1:length(l2_interactions)){
@@ -802,7 +815,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
               l1_factors <- which(X_classes == 'factor')
               if (length(l1_factors) != 0){
                 cat('\n')
-                cat('Means for interactions between level 2 interactions and level 1 factors: \n')
+                #cat('Means for interactions between level 2 interactions and level 1 factors: \n')
                 for (j in 1:length(l1_factors)){
                   #means <- l1_matrix[[j]] %*% est_matrix_mean %*% t(l2_inter_matrix[[index]])
                   #quantile_025 <- l1_matrix[[j]] %*% est_matrix_025 %*% t(l2_inter_matrix[[index]])

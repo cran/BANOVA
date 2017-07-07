@@ -32,7 +32,7 @@ if(0){
 data(colorad)
 # mean center blur
 colorad$blur <- colorad$blur - mean(colorad$blur)
-res <- BANOVA.Bin(y ~ typic, ~ color + blur + color*blur, colorad, colorad$id, 
+res <- BANOVA.Binomial(y ~ typic, ~ color + blur + color*blur, colorad, colorad$id, 
 as.integer(16), burnin = 1000, sample = 1000, thin = 1)
 res
 summary(res)

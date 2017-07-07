@@ -1,20 +1,20 @@
-\name{BANOVA.Bin}
-\alias{BANOVA.Bin}
-\alias{predict.BANOVA.Bin}
-\alias{print.BANOVA.Bin}
-\alias{summary.BANOVA.Bin}
+\name{BANOVA.Binomial}
+\alias{BANOVA.Binomial}
+\alias{predict.BANOVA.Binomial}
+\alias{print.BANOVA.Binomial}
+\alias{summary.BANOVA.Binomial}
 \title{Estimation of BANOVA with a Binomial dependent variable}
 \description{
-\code{BANOVA.Bin} implements a Hierarchical Bayesian ANOVA for a binomial response variable using a logit link and a normal heterogeneity distribution.
+\code{BANOVA.Binomial} implements a Hierarchical Bayesian ANOVA for a binomial response variable using a logit link and a normal heterogeneity distribution.
 
 }
 \usage{
-BANOVA.Bin(l1_formula = "NA", l2_formula = "NA", data,
+BANOVA.Binomial(l1_formula = "NA", l2_formula = "NA", data,
   id, num_trials, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, 
   thin = 1, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
-\method{summary}{BANOVA.Bin}(object, ...)
-\method{predict}{BANOVA.Bin}(object, newdata = NULL,...)
-\method{print}{BANOVA.Bin}(x, ...)
+\method{summary}{BANOVA.Binomial}(object, ...)
+\method{predict}{BANOVA.Binomial}(object, newdata = NULL,...)
+\method{print}{BANOVA.Binomial}(x, ...)
 }
 \arguments{
  \item{l1_formula}{formula for level 1 e.g. 'Y~X1+X2'}
@@ -60,7 +60,7 @@ Level 1 model: \cr
   
 }
 \value{
-  \code{BANOVA.Bin} returns an object of class \code{"BANOVA.Bin"}. The returned object is a list containing:
+  \code{BANOVA.Binomial} returns an object of class \code{"BANOVA.Bin"}. The returned object is a list containing:
   
   \item{anova.table}{table of effect sizes \code{\link{BAnova}}}
   \item{coef.tables}{table of estimated coefficients}
@@ -79,13 +79,16 @@ if(0){
 data(colorad)
 # mean center Blur for effect coding
 colorad$blur <- colorad$blur - mean(colorad$blur)
-res <- BANOVA.Bin(y~typic, ~color*blur, colorad, colorad$id, as.integer(16), 
+res <- BANOVA.Binomial(y~typic, ~color*blur, colorad, colorad$id, as.integer(16), 
 burnin = 1000, sample = 1000, thin = 1)
 summary(res)
+# or use BANOVA.run
+res0 <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
+id = colorad$id, num_trials = as.integer(16), iter = 100, thin = 1, chains = 2)
+summary(res0)
 # table.predictions(res)
-# use the the first row of data to predict, 
 # only the in-model variables data will be used, the others will be ignored
-predict(res, c(1, 0, 8, 2, 1, 0.03400759))
+predict(res0, c(1, 0, 8, 2, 1, 0.03400759))
 }
 
 }

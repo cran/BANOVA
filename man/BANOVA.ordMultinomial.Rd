@@ -87,6 +87,10 @@ summary(res)
 # BAnova(res)
 # table.predictions(res)
 # predict(res, goalstudy[1:5,])
+# or use BANOVA.run based on Stan
+res <- BANOVA.run(perceivedsim~1, ~progress*prodvar, data = goalstudy, 
+model_name = 'ordMultinomial', id = goalstudy$id, iter = 100, thin = 1, chains = 2)
+
 }
 
 }

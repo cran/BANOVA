@@ -4,7 +4,7 @@
 floodlight.analysis <- 
 function (numeric_name, 
           factor_name, 
-          samples_l2_param, X, Z, data){
+          samples_l2_param, X, Z, data = NULL, dataX = NULL, dataZ = NULL){
   
   numeric_name <- trimws(numeric_name)
   factor_name <- trimws(factor_name)
@@ -37,7 +37,20 @@ function (numeric_name,
   if (!level1_fac && !level2_fac) stop("The categorical variable isn't included in the model." )
   
   ## find the range of numeric values
-  num_value <- data[,which(colnames(data) == numeric_name)]
+  if (!is.null(data)){
+    num_value <- data[,which(colnames(data) == numeric_name)]
+  }else{
+    if(level1_num){
+      index_num_X <- which(colnames(dataX[[1]]) == numeric_name)
+      num_value <- c()
+      for (i in 1:length(dataX)){
+        num_value <- c(num_value, dataX[[i]][, index_num_X])
+      }
+    }else{
+      index_num_Z <- which(colnames(dataZ) == numeric_name)
+      num_value <- dataZ[, index_num_Z]
+    }
+  }
   num_range <- range(num_value)
   
   if (level1_num && level1_fac){

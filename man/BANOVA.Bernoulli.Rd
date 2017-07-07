@@ -1,20 +1,20 @@
-\name{BANOVA.Bern}
-\alias{BANOVA.Bern}
-\alias{predict.BANOVA.Bern}
-\alias{print.BANOVA.Bern}
-\alias{summary.BANOVA.Bern}
+\name{BANOVA.Bernoulli}
+\alias{BANOVA.Bernoulli}
+\alias{predict.BANOVA.Bernoulli}
+\alias{print.BANOVA.Bernoulli}
+\alias{summary.BANOVA.Bernoulli}
 \title{Estimation of BANOVA with a Bernoulli dependent variable}
 \description{
-\code{BANOVA.Bern} implements a Bayesian ANOVA for binary dependent variable, using a logit link and a normal heterogeneity distribution.
+\code{BANOVA.Bernoulli} implements a Bayesian ANOVA for binary dependent variable, using a logit link and a normal heterogeneity distribution.
 }
 \usage{
-BANOVA.Bern(l1_formula = "NA", l2_formula = "NA", data,
+BANOVA.Bernoulli(l1_formula = "NA", l2_formula = "NA", data,
   id, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, thin = 1, 
   adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 
-\method{summary}{BANOVA.Bern}(object, ...)
-\method{predict}{BANOVA.Bern}(object, newdata = NULL,...)
-\method{print}{BANOVA.Bern}(x, ...)
+\method{summary}{BANOVA.Bernoulli}(object, ...)
+\method{predict}{BANOVA.Bernoulli}(object, newdata = NULL,...)
+\method{print}{BANOVA.Bernoulli}(x, ...)
 }
 \arguments{
   \item{l1_formula}{formula for level 1 e.g. 'Y~X1+X2'}
@@ -57,7 +57,7 @@ Level 1 model: \cr
   
 }
 \value{
-  \code{BANOVA.Bern} returns an object of class \code{"BANOVA.Bern"}. The returned object is a list containing:
+  \code{BANOVA.Bernoulli} returns an object of class \code{"BANOVA.Bernoulli"}. The returned object is a list containing:
   
   \item{anova.table}{table of effect sizes \code{\link{BAnova}}}
   \item{coef.tables}{table of estimated coefficients}
@@ -73,12 +73,15 @@ Level 1 model: \cr
 \examples{
 
 if(0){
-# use the data in bernlogtime
 data(bernlogtime)
 # model with the dependent variable : response
-res <- BANOVA.Bern(response~typical, ~blur + color, bernlogtime,
+res <- BANOVA.Bernoulli(response~typical, ~blur + color, bernlogtime,
 bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)
 summary(res)
+# or use BANOVA.run
+res0 <- BANOVA.run(response~typical, ~blur + color, data = bernlogtime, 
+model_name = 'Bernoulli',id = bernlogtime$subject, iter = 100, thin = 1, chains = 2)
+summary(res0)
 # table.predictions(res)
 }
 

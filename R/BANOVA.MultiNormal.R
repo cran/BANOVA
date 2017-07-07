@@ -1,6 +1,8 @@
 BANOVA.MultiNormal <-
 function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, burnin, sample, thin, adapt, conv_speedup, jags){
   cat('Model initializing...\n')
+  # TODO one level model
+  
   # check y, if it is integers
   if (class(y) != 'integer'){
     warning("The response variable must be integers (data class also must be 'integer')..")
@@ -24,7 +26,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
       warning("Between-subject variables(levels <= 3) have been converted to factors")
     }
   }
-  for (i in 1:n_categories)
+  for (i in 1:length(dataX))
     for (j in 1:ncol(dataX[[i]])){
       if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
       # checking missing predictors, already checked in design matrix
@@ -96,5 +98,5 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
               pvalue.table = pvalue.table, 
               conv = conv,
               dMatrice = dMatrice, samples_l2_param = samples_l2_param, dataX = dataX, dataZ = dataZ,
-              mf1 = mf1, mf2 = mf2, n_categories = n_categories,JAGSmodel = JAGS.model$sModel))
+              mf1 = mf1, mf2 = mf2, n_categories = n_categories,JAGSmodel = JAGS.model$sModel, single_level = F, model_name = "BANOVA.Multinomial"))
 }

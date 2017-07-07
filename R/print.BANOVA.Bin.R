@@ -1,4 +1,4 @@
-print.BANOVA.Bin <-
+print.BANOVA.Binomial <-
 function(x, ...){
   cat('Call:\n')
   print(x$call)

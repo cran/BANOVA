@@ -31,16 +31,27 @@ Wedel, M and R. Pieters (2015).
 
 data(colorad2)
 # factor C is effect coded
-res1 <- BANOVA.Bin(Y1 ~ 1, ~ C + B + C*B, colorad2, colorad2$id, as.integer(25), 
+if(0){
+model_bin <- BANOVA.model('Binomial')
+stanmodel_bin <- BANOVA.build(model_bin)
+res0 <- BANOVA.run(Y1 ~ 1, ~ C + B + C*B, fit = stanmodel_bin, 
+data = colorad2, id = colorad2$id, num_trials = as.integer(25), 
+iter = 1000, thin = 1, chains = 4)
+res0
+}
+# or use BANOVA.Binomial
+res1 <- BANOVA.Binomial(Y1 ~ 1, ~ C + B + C*B, colorad2, colorad2$id, as.integer(25), 
 burnin = 1000, sample = 1000, thin = 1) 
 # or use dummy variables 
-# res1 <- BANOVA.Bin(Y1 ~ 1, ~ C1 + B + C2 + C1*B + C2*B, colorad2, colorad2$ID, as.integer(25))
+# res1 <- BANOVA.Binomial(Y1 ~ 1, ~ C1 + B + C2 + C1*B + C2*B, 
+# colorad2, colorad2$ID, as.integer(25))
 res1
 # summary(res1)
 # table.predictions(res1)
 
 # second model
-# res2 <- BANOVA.Bin(Y2 ~ 1, ~ C + B + C*B, colorad2, colorad2$id, colorad2$Y1)
+# res2 <- BANOVA.Binomial(Y2 ~ 1, ~ C + B + C*B, 
+# colorad2, colorad2$id, colorad2$Y1)
 # summary(res2)
 # table.means(res2)
 

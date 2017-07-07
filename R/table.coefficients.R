@@ -6,7 +6,11 @@ function (samples_l2_param, l2_parameters, X_names, Z_names, X_assign, Z_assign,
   for (i in 1:length(X_names))
     for (j in 1:length(Z_names)){
       temp <- (i - 1)*length(Z_names) + j
-      row_names[temp] <- paste(X_names[i]," : ", Z_names[j])
+      if (X_names[i] == " "){
+        row_names[temp] <- Z_names[j]
+      }else{
+        row_names[temp] <- paste(X_names[i]," : ", Z_names[j])
+      }
       row_indices[temp, 1] <- X_assign[i]
       row_indices[temp, 2] <- Z_assign[j]
     }

@@ -30,13 +30,15 @@ Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Co
 \examples{
 data(condstudy)
 if(0){
-out2 <- BANOVA.Normal(att~cond+pict, ~type, condstudy, condstudy$id, 
-burnin = 5000, sample = 1000, thin = 20)      
+model <- BANOVA.model('Normal')
+stanmodel <- BANOVA.build(model)
+out2 <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
+                  id = condstudy$id, iter = 500, thin = 1, chains = 2)    
 conv.diag(out2)
 summary(out2) 
 table.predictions(out2)  
 BANOVA.floodlight(out2, var_factor = 'type', var_numeric = 'pict')
-cat(out2$JAGSmodel)
+cat(out2$model_code)
 
 out3 <- BANOVA.Normal(pict~cond, ~type, condstudy, condstudy$id, 
 burnin = 5000, sample = 1000, thin = 20)

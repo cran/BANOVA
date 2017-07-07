@@ -9,6 +9,6 @@ function(x, ...){
     cat('\n')
     cat("The Chain has converged.\n")
   }else{
-    warning("The Chain may not have converged. Consider a longer burn-in, speeding up the convergence by setting conv_speedup = T, or modification of the model.\n", call. = F, immediate. = T)
+    warning("The Chain may not have converged. Consider a longer burn-in/warmup, speeding up the convergence by setting conv_speedup = T, or modification of the model.\n", call. = F, immediate. = T)
   }
 }

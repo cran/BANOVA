@@ -3,8 +3,8 @@
 ###
 BANOVA.mediation <-
   function(sol_1, sol_2, xvar, mediator){
-    if(!(class(sol_1) %in% c('BANOVA.Normal', 'BANOVA.T', 'BANOVA.Poisson', 'BANOVA.Bern', 'BANOVA.Bin', 'BANOVA.ordMultinomial', 'BANOVA.Multinomial'))) stop('Model is not recognized')
-    if(class(sol_2) != 'BANOVA.Normal') stop('The mediator must follow the Normal distribution, use BANOVA.Normal instead.')
+    if(!(class(sol_1) %in% c('BANOVA', 'BANOVA.Normal', 'BANOVA.T', 'BANOVA.Poisson', 'BANOVA.Bern', 'BANOVA.Bin', 'BANOVA.ordMultinomial', 'BANOVA.Multinomial'))) stop('Model is not recognized')
+    if(sol_2$model_name != 'BANOVA.Normal') stop('The mediator must follow the Normal distribution, use BANOVA Normal models instead.')
     
     X_names = colnames(sol_1$dMatrice$X)
     Z_names = colnames(sol_1$dMatrice$Z)
@@ -12,7 +12,10 @@ BANOVA.mediation <-
     Z_assign = attr(sol_1$dMatrice$Z, 'assign')
     num_l1 <- length(X_assign)
     num_l2 <- length(Z_assign)
-    samples_l2_param <- sol_1$samples_l2_param
+    if (sol_1$single_level)
+      samples_l2_param <- sol_1$samples_l1_param
+    else
+      samples_l2_param <- sol_1$samples_l2_param
     n_sample <- nrow(samples_l2_param)
     est_matrix <- array(0 , dim = c(num_l1, num_l2, n_sample), dimnames = list(X_names, Z_names, NULL))
     for (i in 1:num_l1){
@@ -27,7 +30,10 @@ BANOVA.mediation <-
     Z_assign_m = attr(sol_2$dMatrice$Z, 'assign')
     num_l1_m <- length(X_assign_m)
     num_l2_m <- length(Z_assign_m)
-    samples_l2_param_m <- sol_2$samples_l2_param
+    if (sol_2$single_level)
+      samples_l2_param_m <- sol_2$samples_l1_param
+    else
+      samples_l2_param_m <- sol_2$samples_l2_param
     n_sample_m <- nrow(samples_l2_param_m)
     est_matrix_m <- array(0 , dim = c(num_l1_m, num_l2_m, n_sample_m), dimnames = list(X_names_m, Z_names_m, NULL))
     for (i in 1:num_l1_m){
