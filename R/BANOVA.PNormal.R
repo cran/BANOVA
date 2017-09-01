@@ -9,11 +9,13 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     y <- model.response(mf1)
     if (class(y) != 'integer'){
       warning("The response variable must be integers (data class also must be 'integer')..")
-      y <- as.integer(y)
+      y <- as.integer(as.character(y))
       warning("The response variable has been converted to integers..")
     }
   }
+  single_level = F
   if (l2_formula == 'NA'){
+    single_level = T
     # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
     for (i in 1:ncol(data)){
       if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
@@ -53,14 +55,16 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     attr(dMatrice$Z, 'assign') <- 0
     attr(dMatrice$Z, 'varNames') <- " "
     samples_l2_param <- NULL
+    samples_l2_sigma_param = 0
     anova.table <- NULL # for ancova models
-    coef.tables <- table.coefficients(samples_l2_param, JAGS.model$monitorl2.parameters, colnames(dMatrice$X), colnames(dMatrice$Z), 
-                                      attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1)
-    pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 
-                                 l2_names = attr(dMatrice$Z, 'varNames'))
-    conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X), colnames(dMatrice$Z))
+    coef.tables <- table.coefficients(samples_l1_param, JAGS.model$monitorl1.parameters, colnames(dMatrice$Z), colnames(dMatrice$X), 
+                                      attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X, 'assign') + 1)
+    pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$Z, 'varNames'), 
+                                 l2_names = attr(dMatrice$X, 'varNames'))
+    conv <- conv.geweke.heidel(samples_l1_param, colnames(dMatrice$Z), colnames(dMatrice$X))
+    mf2 <- NULL
     class(conv) <- 'conv.diag'
-    cat('Done...\n')
+    cat('Done.\n')
     
   }else{
     mf2 <- model.frame(formula = l2_formula, data = data)
@@ -119,7 +123,6 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
       samples_l2_sigma_param <- matrix(result$mcmc[[1]][,index_l2_sigma_param], ncol = 1)
     colnames(samples_l2_sigma_param) <- colnames(result$mcmc[[1]])[index_l2_sigma_param]
     
-    #anova.table <- table.ANOVA(samples_l1_param, dMatrice$X, dMatrice$Z)
     cat('Constructing ANOVA/ANCOVA tables...\n')
     anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param) # for ancova models
     coef.tables <- table.coefficients(samples_l2_param, JAGS.model$monitorl2.parameters, colnames(dMatrice$X), colnames(dMatrice$Z), 
@@ -135,7 +138,8 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
               pvalue.table = pvalue.table, 
               conv = conv,
               dMatrice = dMatrice, 
+              samples_l1_param = samples_l1_param,
               samples_l2_param = samples_l2_param, 
               samples_l2_sigma_param = samples_l2_sigma_param, 
-              data = data, mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel, single_level = F, model_name = "BANOVA.Poisson"))
+              data = data, mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel, single_level = single_level, model_name = "BANOVA.Poisson"))
 }

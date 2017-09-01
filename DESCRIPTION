@@ -1,8 +1,8 @@
 Package: BANOVA
 Type: Package
 Title: Hierarchical Bayesian ANOVA Models
-Version: 0.9
-Date: 2017-06-25
+Version: 0.9.1
+Date: 2017-08-26
 Author: Chen Dong, Michel Wedel
 SystemRequirements: JAGS >= 4.1.0 (http://mcmc-jags.sourceforge.net)
 Maintainer: Chen Dong <cdong@math.umd.edu>
@@ -12,6 +12,6 @@ Description: It covers several Bayesian Analysis of Variance (BANOVA) models use
 License: GPL (>= 2)
 URL: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460286
 NeedsCompilation: yes
-Packaged: 2017-07-01 22:43:36 UTC; CDONG
+Packaged: 2017-09-01 04:23:07 UTC; CDONG
 Repository: CRAN
-Date/Publication: 2017-07-07 05:09:43 UTC
+Date/Publication: 2017-09-01 16:49:45 UTC

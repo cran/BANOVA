@@ -2,7 +2,7 @@
 \alias{table.pvalues}
 \title{Function to print the table of p-values}
 \description{
-Computes the Baysian p-values for the test concerning the level 2 parameters: \cr
+Computes the Baysian p-values for the test concerning all coefficients/parameters: \cr
 
 For \eqn{p = 1,...,P} \cr
 \eqn{H_0:\theta_{j,k}^{p,q}=0} \cr

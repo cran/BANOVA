@@ -2,7 +2,7 @@
 \alias{BAnova}
 \title{Function to print the table of effect sizes}
 \description{
-The analysis of variance is performed at level 2 equation of the Bayesian ANOVA see \code{\link{BANOVA-package}}. This makes it possible to capture the effects of level-2 variables on the heterogeneity distribution of subjects, and compute sums of squares and effect sizes.
+The analysis of variance is performed at level 1 (for the single level model) and level 2 equation of the Bayesian ANOVA see \code{\link{BANOVA-package}}. This makes it possible to capture the effects of level-1 or level-2 variables on the heterogeneity distribution of subjects, and compute sums of squares and effect sizes.
 
 }
 \usage{

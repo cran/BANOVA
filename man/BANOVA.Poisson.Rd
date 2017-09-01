@@ -9,7 +9,7 @@
 }
 \usage{
 BANOVA.Poisson(l1_formula = "NA", l2_formula = "NA",
-  data, id, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, thin = 1, 
+  data, id, l2_hyper = c(1, 1, 0.0001), burnin = 5000, sample = 2000, thin = 10, 
   adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Poisson}(object, ...)
 \method{predict}{BANOVA.Poisson}(object, newdata = NULL,...)
@@ -19,19 +19,19 @@ BANOVA.Poisson(l1_formula = "NA", l2_formula = "NA",
   \item{l1_formula}{formula for level 1 e.g. 'Y~X1+X2'}
 
   \item{l2_formula}{formula for level 2 e.g. '~Z1+Z2',
-  response variable must not be included}
+  response variable must not be included, if missing, the single level model will be generated}
 
   \item{data}{a data.frame in long format including all features in level 1 and level 2(covariates and categorical factors) and responses}
 
   \item{id}{subject ID of each response unit}
   
-  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, \eqn{\gamma}), default c(1,1,0.0001)}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 5000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 2000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 10}
   
   \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
   
@@ -74,15 +74,15 @@ if(0){
 data(bpndata)
 # within-subjects model using the dependent variable : PIC_FIX 
 res1 <- BANOVA.Poisson(PIC_FIX ~ AD_ID + PIC_SIZE+ PAGE_NUM 
-+ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 10, 
-sample = 10, thin = 1)
++ PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 500, 
+sample = 200, thin = 5)
 summary(res1)
 
 # use the goalstudy dataset
 data(goalstudy)
 goalstudy$bid <- as.integer(goalstudy$bid + 0.5)
 res2<-BANOVA.Poisson(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
-burnin = 1000, sample = 1000, thin = 1)
+burnin = 5000, sample = 2000, thin = 10)
 summary(res2)
 
 # or use the BANOVA.run based on Stan

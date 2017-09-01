@@ -12,10 +12,10 @@ function(mf, ncol_intercepts = 0){
       index_inter <- which(factor_matrix[,col_index_inter[i]] == 1) # order matters
       # exclude/include the case that the interaction include a numeric variable
       if (sum(attr(attr(mf,'terms'),'dataClasses')[index_inter] != 'factor') == 0){ 
-        results[[i]] <- index_inter + ncol_intercepts
+        results[[length(results) + 1]] <- index_inter + ncol_intercepts
         col_chosen_inter <- c(col_chosen_inter, col_index_inter[i] + ncol_intercepts)
       }else{
-        results_num[[i]] <- index_inter + ncol_intercepts
+        results_num[[length(results_num) + 1]] <- index_inter + ncol_intercepts
         col_chosen_inter_numeric <- c(col_chosen_inter_numeric, col_index_inter[i] + ncol_intercepts)
       }
       

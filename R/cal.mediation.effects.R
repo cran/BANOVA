@@ -30,7 +30,7 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
   if (mediator_in_l1){
     # find if there are moderators interacts with the mediator
     mediator_assign <- which (rownames(model1_level1_var_matrix) == mediator)
-    interaction_list <- attr(sol_1$dMatrice$X, "interactions_num")
+    interaction_list <- attr(sol_1$dMatrice$X, "interactions_num") # if the mediator is numeric 
     interaction_list_index <- attr(sol_1$dMatrice$X, "interactions_numeric_index")
     mediator_interaction_list <- list()
     mediator_interaction_list_index <- array()
@@ -39,11 +39,23 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
       for (i in 1:length(interaction_list)){
         if (mediator_assign %in% interaction_list[[i]]){
           mediator_interaction_list[[j]] = interaction_list[[i]]
-          mediator_interaction_list_index[j] = interaction_list_index[j]
+          mediator_interaction_list_index[j] = interaction_list_index[i]
           j = j + 1
         }
       }
     }
+    interaction_list <- attr(sol_1$dMatrice$X, "interactions") # if the mediator is not numeric 
+    interaction_list_index <- attr(sol_1$dMatrice$X, "interactions_index")
+    if (length(interaction_list) > 0){
+      for (i in 1:length(interaction_list)){
+        if (mediator_assign %in% interaction_list[[i]]){
+          mediator_interaction_list[[j]] = interaction_list[[i]]
+          mediator_interaction_list_index[j] = interaction_list_index[i]
+          j = j + 1
+        }
+      }
+    }
+    
     # for each interaction in mediator_interaction_list create a moderated mediation table (exclude main effects)
     # calculate l2 matrix first using all params but xvar, also using l2 formula
     # TOFIX: what about the case only intercept included
@@ -70,7 +82,6 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
         est_samples <- array(0, dim = c(nrow(mediator_interaction_effect_matrix[[i]]), nrow(l2_matrix), n_sample))
         for (n_s in 1:n_sample)
           est_samples[,,n_s] <- mediator_interaction_effect_matrix[[i]] %*% est_matrix[colnames(mediator_interaction_effect_matrix[[i]]), colnames(l2_matrix), n_s] %*% t(l2_matrix)
-        
         table_m <- construct.table(est_samples, attr(mediator_interaction_effect_matrix[[i]], 'levels'), attr(l2_matrix, 'levels'))
         table_list[[table_list_index]] <- table_m
         table_list_index = table_list_index + 1
@@ -105,7 +116,18 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
       for (i in 1:length(interaction_list)){
         if (mediator_assign %in% interaction_list[[i]]){
           mediator_interaction_list[[j]] = interaction_list[[i]]
-          mediator_interaction_list_index[j] = interaction_list_index[j]
+          mediator_interaction_list_index[j] = interaction_list_index[i]
+          j = j + 1
+        }
+      }
+    }
+    interaction_list <- attr(sol_1$dMatrice$Z, "interactions") # if the mediator is not numeric 
+    interaction_list_index <- attr(sol_1$dMatrice$Z, "interactions_index")
+    if (length(interaction_list) > 0){
+      for (i in 1:length(interaction_list)){
+        if (mediator_assign %in% interaction_list[[i]]){
+          mediator_interaction_list[[j]] = interaction_list[[i]]
+          mediator_interaction_list_index[j] = interaction_list_index[i]
           j = j + 1
         }
       }
@@ -165,7 +187,7 @@ function (est_samples, row_name, col_name){
                          dimnames = list(NULL, c('est_samples_row_index', 'est_samples_col_index')))
   for (k1 in 1:nrow(row_name)){
     temp <- ((k1-1) * nrow(col_name) + 1):((k1-1) * nrow(col_name) + nrow(col_name))
-    table_m[temp, 1:ncol(row_name)] <- rep(row_name[k1, ], nrow(col_name))
+    table_m[temp, 1:ncol(row_name)] <- t(replicate(nrow(col_name), row_name[k1, ]))
     table_m[temp, (ncol(row_name) + 1) : (ncol(row_name) + ncol(col_name))] <- col_name
     table_m_index[temp,1] <- k1 
     table_m_index[temp,2] <- 1:nrow(col_name)
@@ -173,6 +195,7 @@ function (est_samples, row_name, col_name){
     table_m[temp, ncol(row_name) + ncol(col_name) + 2] <- pmin(round(quantile_025[k1,], digits = 4), round(quantile_975[k1,], digits = 4))
     table_m[temp, ncol(row_name) + ncol(col_name) + 3] <- pmax(round(quantile_025[k1,], digits = 4), round(quantile_975[k1,], digits = 4))
   }
+  # reorder table_m column names, sort values column by column, keep the order of table_m_index
   table_mediator <- list(table_m = table_m, index_name = table_m[, 1: (ncol(row_name) + ncol(col_name)), drop = F], index = table_m_index, samples = est_samples)
   return(table_mediator )
   

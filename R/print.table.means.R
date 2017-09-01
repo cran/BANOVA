@@ -182,12 +182,9 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
           l1_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = X_assign, 
                                                                 l1_interactions[[i]] - 1, index_inter_factor = l1_interactions_index[i], 
                                                                 numeric_index_in_X) #'-1' exclude the 'y'
-          #means <- l1_inter_matrix[[index]] %*% est_matrix_mean %*% l2_v
-          #quantile_025 <- l1_inter_matrix[[index]] %*% est_matrix_025 %*% l2_v
-          #quantile_975 <- l1_inter_matrix[[index]] %*% est_matrix_975 %*% l2_v
           est_samples <- matrix(0, nrow = nrow(l1_inter_matrix[[index]]), ncol = n_sample)
           for (n_s in 1:n_sample)
-            est_samples[ ,n_s] <- l1_inter_matrix[[index]] %*% est_matrix[colnames(l1_inter_matrix[[index]]),,n_s] %*% l2_v + p_indicator * sum(l2_var[n_s,])/2 #sum(l2_var[n_s,c('(Intercept)',colnames(l1_inter_matrix[[index]]))])/2
+            est_samples[ ,n_s] <- l1_inter_matrix[[index]] %*% est_matrix[colnames(l1_inter_matrix[[index]]),,n_s] %*% t(l2_v) + p_indicator * sum(l2_var[n_s,])/2 #sum(l2_var[n_s,c('(Intercept)',colnames(l1_inter_matrix[[index]]))])/2
           means <- apply(est_samples, 1, mean)
           quantile_025 <- apply(est_samples, 1, quantile, probs = 0.025, type = 3, na.rm = FALSE)
           quantile_975 <- apply(est_samples, 1, quantile, probs = 0.975, type = 3, na.rm = FALSE)

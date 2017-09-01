@@ -9,7 +9,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     y <- model.response(mf1)
     if (class(y) != 'integer'){
       warning("The response variable must be integers (data class also must be 'integer')..")
-      y <- as.integer(y)
+      y <- as.integer(as.character(y))
       warning("The response variable has been converted to integers..")
     }
   }

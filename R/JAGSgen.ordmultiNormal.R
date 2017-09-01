@@ -1,10 +1,18 @@
 JAGSgen.ordmultiNormal <-
-function (X, Z, n.cut, l2_hyper, conv_speedup){
+function (X, Z, n.cut, l1_hyper = NULL, l2_hyper = NULL, conv_speedup){
 if (is.null(Z)){
   num_l1_v <- ncol(X)
   inits <- new.env() # store initial values for BUGS model
   monitorl1.parameters <- character()  # store monitors for level 1 parameters, which will be used in the computation of sum of squares
   monitorl2.parameters <- NULL # store monitors for level 2 parameters
+  # check l1_hyper
+  if(is.null(l1_hyper)){
+    l1_hyper = c(0.0001, 10)
+  }else{
+    if (length(l1_hyper) != 2){
+      stop("l1_hyper must be of length 2 for single level models!")
+    }
+  }
   ### generate the code for BUGS model
   sModel <- paste("model{", sep="")
   ### level 1 likelihood 
@@ -32,7 +40,7 @@ if (is.null(Z)){
   }",sep="")
   for (j in 1:num_l1_v){
     sModel <- paste(sModel,"
-  beta",j,"~dnorm(0,",l2_hyper[3],")",sep="")
+  beta",j,"~dnorm(0,",l1_hyper[1],")",sep="")
     s<-paste("inits$","beta",j,"<-rnorm(1)",sep="")
     eval(parse(text=s))
   }
@@ -40,7 +48,7 @@ if (is.null(Z)){
   for (i.cut in 1: n.cut) {
     cutp0[i.cut] ~ dnorm(0,tau.cut)
   }
-  tau.cut ~ dunif(0,",l2_hyper[4],")
+  tau.cut ~ dunif(0,",l1_hyper[2],")
   cutp[1:n.cut] <- sort(cutp0)",sep="")
   
   sModel<- paste(sModel,"

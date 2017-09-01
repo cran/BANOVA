@@ -34,5 +34,5 @@ predict.BANOVA <- function(object, newdata = NULL, Xsamples = NULL, Zsamples = N
                                  mf1 = object$mf1, mf2 = object$mf2, Xsamples, Zsamples)
     }
   }
-  print(sol)
+  return(sol)
 }

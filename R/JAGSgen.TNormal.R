@@ -28,7 +28,7 @@ if (is.null(Z)){
   inits$df <- 1
   for (j in 1:num_l1_v){
     sModel <- paste(sModel,"
-  beta",j,"~dnorm(0,",l1_hyper[3],")",sep="")
+  beta",j,"~dnorm(0,",l1_hyper[4],")",sep="")
     s<-paste("inits$","beta",j,"<-rnorm(1)",sep="")
     eval(parse(text=s))
   }

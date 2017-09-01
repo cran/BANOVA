@@ -12,8 +12,8 @@ This package includes several hierarchical Bayes Analysis of Variance models. Th
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 0.9\cr
-Date: \tab 2017-06-25\cr
+Version: \tab 0.9.1\cr
+Date: \tab 2017-08-26\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
@@ -25,7 +25,7 @@ Model: \cr
   
   The population-level ANCOVA model can be expressed as a linear model with a design matrix \eqn{Z} that contains all between-subjects factors and their interactions and a constant term: \cr
   \eqn{\beta_{j,s}^p = \sum_{k = 1}^Q Z_{s,k}\theta_{j,k}^{p} + \delta_{j,s}^p} \cr
-  where \eqn{Z_{s,k} }is an element of \eqn{Z}, a \eqn{S \times Q} matrix of covariates. \eqn{\theta_{j,k}^p} is a hyperparameter which captures the effects of between-subjects factor \eqn{q} on the parameter \eqn{\beta_{j,s}^p} of within-subjects factor p. The error \eqn{\delta_{j,s}^p} is assumed to be normal: \eqn{\delta_{j,s}^p} {~} \eqn{N(0,\sigma_p^{-2} )}. Proper, but diffuse priors are assumed: \eqn{\theta_{j,k}^p} {~} \eqn{N(0,s)}, and \eqn{\sigma_p^{-2}} {~} \eqn{Gamma(a,b)}, where \eqn{s,a,b} are hyper-parameters. The default setting is \eqn{s = 10^{-4}, a = 1, b = 1}. \cr
+  where \eqn{Z_{s,k} }is an element of \eqn{Z}, a \eqn{S \times Q} matrix of covariates. \eqn{\theta_{j,k}^p} is a hyperparameter which captures the effects of between-subjects factor \eqn{q} on the parameter \eqn{\beta_{j,s}^p} of within-subjects factor p. The error \eqn{\delta_{j,s}^p} is assumed to be normal: \eqn{\delta_{j,s}^p} {~} \eqn{N(0,\sigma_p^{-2} )}. Proper, but diffuse priors are assumed: \eqn{\theta_{j,k}^p} {~} \eqn{N(0,\gamma)}, and \eqn{\sigma_p^{-2}} {~} \eqn{Gamma(a,b)}, where \eqn{\gamma,a,b} are hyper-parameters. The default setting is \eqn{\gamma = 10^{-4}, a = 1, b = 1}. \cr
   
   Note that missing values of independent variables are currently not allowed in the package.
 }

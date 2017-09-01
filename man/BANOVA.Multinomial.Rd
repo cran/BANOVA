@@ -9,8 +9,8 @@
 }
 \usage{
 BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
-  dataX, dataZ, y, id, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, 
-  thin = 1, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
+  dataX, dataZ, y, id, l2_hyper = c(1, 1, 0.0001), burnin = 5000, sample = 2000, 
+  thin = 10, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Multinomial}(object, ...)
 \method{predict}{BANOVA.Multinomial}(object, Xsamples = NULL, Zsamples = NULL,...)
 \method{print}{BANOVA.Multinomial}(x, ...)
@@ -30,13 +30,13 @@ BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
 
   \item{id}{subject id}
 
-  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, \eqn{\gamma}), default c(1,1,0.0001)}
   
-  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 5000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 2000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 10}
   
   \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
   
@@ -96,7 +96,7 @@ for (i in 1:nrow(choicedata)){
 dataZ <- choicedata[,9:13]
 if(0){
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, 
-  choicedata$choice, choicedata$hhid, burnin = 1000, sample = 1000, thin = 1)
+  choicedata$choice, choicedata$hhid, burnin = 5000, sample = 2000, thin = 10)
 # or use BANOVA.run based on Stan
 res <- BANOVA.run(~ logP, ~ college, dataX = dataX, dataZ = dataZ, 
                     model_name = 'Multinomial', y_value = choicedata$choice, 

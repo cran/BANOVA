@@ -2,7 +2,7 @@
 \alias{trace.plot}
 \title{Function to plot the trace of parameters}
 \description{
-Function to plot the trace of all level-2 parameters. The plots can be saved as a pdf file.
+Function to plot the trace of all coefficients/parameters. The plots can be saved as a pdf file.
 }
 \usage{
 trace.plot(x, save = FALSE)

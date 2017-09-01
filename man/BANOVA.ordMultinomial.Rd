@@ -11,8 +11,9 @@
 
 \usage{
 BANOVA.ordMultinomial(l1_formula = "NA",
-  l2_formula = "NA", data, id, l2_hyper = c(1, 1, 0.0001, 100), burnin = 1000, 
-  sample = 1000, thin = 1, adapt = 0, conv_speedup = F, 
+  l2_formula = "NA", data, id, l1_hyper = c(0.0001, 100), 
+  l2_hyper = c(1, 1, 0.0001, 100), burnin = 5000, 
+  sample = 2000, thin = 10, adapt = 0, conv_speedup = F, 
   jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.ordMultinomial}(object, ...)
 \method{predict}{BANOVA.ordMultinomial}(object, newdata = NULL,...)
@@ -22,19 +23,21 @@ BANOVA.ordMultinomial(l1_formula = "NA",
   \item{l1_formula}{formula for level 1 e.g. 'Y~X1+X2'}
 
   \item{l2_formula}{formula for level 2 e.g. '~Z1+Z2',
-  response variable must not be included}
+  response variable must not be included, if missing, the single level model will be generated}
 
   \item{data}{a data frame}
 
   \item{id}{subject ID of each response unit}
   
-  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s, d), default c(1,1,0.0001,100)}
+  \item{l1_hyper}{level 1 hyperparameters for single level models, default c(0.0001,100)}
+  
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, \eqn{\gamma}, d), default c(1,1,0.0001,100)}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 5000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 2000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 10}
   
   \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
   
@@ -82,7 +85,7 @@ Level 1 model: \cr
 if(0){
 data(goalstudy)
 res <- BANOVA.ordMultinomial (perceivedsim~1, ~progress*prodvar,  goalstudy,
-goalstudy$id, burnin = 1000, sample = 1000, thin = 1)
+goalstudy$id, burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # BAnova(res)
 # table.predictions(res)

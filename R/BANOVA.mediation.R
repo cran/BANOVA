@@ -182,14 +182,20 @@ combine.effects <- function (mediator_l1_effects, mediator_xvar_effects){
   temp_table_index <- merge(table_2_names_index.df, table_1_names_index.df, by = intersect(colnames(table_1_names), colnames(table_2_names)), all.x = T)
   table_1_est_sample_index <- temp_table_index[,colnames(temp_1)]
   table_2_est_sample_index <- temp_table_index[,colnames(temp_2)]
-  result_table <- array('1', dim = c(nrow(temp_table_index), ncol(temp_table_index) - 4 + 3), dimnames = list(rep("",nrow(temp_table_index)), c(union(colnames(table_1_names), colnames(table_2_names)), 'mean', '2.5%', '97.5%')))
-  for (nm in union(colnames(table_1_names), colnames(table_2_names)))
-  result_table[, nm] <- as.character(temp_table_index[[nm]])
+  # standardize the names of this table, so that the output table looks consistant, direct vs indirect, e.g. sort the column names
+  union_names <- union(colnames(table_1_names), colnames(table_2_names))
+  union_names <- union_names[order(union_names)]
+  result_table <- array('1', dim = c(nrow(temp_table_index), ncol(temp_table_index) - 4 + 3), dimnames = list(rep("",nrow(temp_table_index)), c(union_names, 'mean', '2.5%', '97.5%')))
+  for (nm in union_names)
+    result_table[, nm] <- as.character(temp_table_index[[nm]])
   for (ind in 1:nrow(table_1_est_sample_index)){
     common_n_sample <- min(dim(mediator_l1_effects$samples)[3], dim(mediator_xvar_effects$samples)[3])
     m_samples <- mediator_l1_effects$samples[table_1_est_sample_index[ind,1], table_1_est_sample_index[ind,2], 1:common_n_sample] * mediator_xvar_effects$samples[table_2_est_sample_index[ind,1], table_2_est_sample_index[ind,2], 1:common_n_sample]
     result_table[ind,'mean'] <- round(mean(m_samples), 4)
     result_table[ind,c('2.5%', '97.5%')] <- round(quantile(m_samples, probs = c(0.025, 0.975)),4)
   }
+  #sort values column by column
+  result_table <- data.frame(result_table, check.names=FALSE)
+  result_table <- result_table[do.call(order, result_table), ]
   return(result_table)
 }

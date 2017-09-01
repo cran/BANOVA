@@ -9,7 +9,7 @@
 }
 \usage{
 BANOVA.Bernoulli(l1_formula = "NA", l2_formula = "NA", data,
-  id, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, thin = 1, 
+  id, l2_hyper = c(1, 1, 0.0001), burnin = 5000, sample = 2000, thin = 10, 
   adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 
 \method{summary}{BANOVA.Bernoulli}(object, ...)
@@ -26,13 +26,13 @@ BANOVA.Bernoulli(l1_formula = "NA", l2_formula = "NA", data,
 
   \item{id}{subject ID of each response unit}
   
-  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, \eqn{\gamma}), default c(1,1,0.0001)}
 
-  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 5000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 2000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 10}
   
   \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
   
@@ -76,7 +76,7 @@ if(0){
 data(bernlogtime)
 # model with the dependent variable : response
 res <- BANOVA.Bernoulli(response~typical, ~blur + color, bernlogtime,
-bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)
+bernlogtime$subject, burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # or use BANOVA.run
 res0 <- BANOVA.run(response~typical, ~blur + color, data = bernlogtime, 

@@ -10,8 +10,8 @@
 }
 \usage{
 BANOVA.Binomial(l1_formula = "NA", l2_formula = "NA", data,
-  id, num_trials, l2_hyper = c(1, 1, 0.0001), burnin = 1000, sample = 1000, 
-  thin = 1, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
+  id, num_trials, l2_hyper = c(1, 1, 0.0001), burnin = 5000, sample = 2000, 
+  thin = 10, adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
 \method{summary}{BANOVA.Binomial}(object, ...)
 \method{predict}{BANOVA.Binomial}(object, newdata = NULL,...)
 \method{print}{BANOVA.Binomial}(x, ...)
@@ -29,13 +29,13 @@ BANOVA.Binomial(l1_formula = "NA", l2_formula = "NA", data,
   \item{num_trials}{the number of trials of each
   observation(=1, if it is bernoulli), the type is forced to be 'integer'}
 
-  \item{l2_hyper}{level 2 hyperparameters, c(a, b, s), default c(1,1,0.0001)}
+  \item{l2_hyper}{level 2 hyperparameters, c(a, b, \eqn{\gamma}), default c(1,1,0.0001)}
   
-  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 1000}
+  \item{burnin}{the number of burn in draws in the MCMC algorithm, default 5000}
 
-  \item{sample}{target samples in the MCMC algorithm after thinning, default 1000}
+  \item{sample}{target samples in the MCMC algorithm after thinning, default 2000}
 
-  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 1}
+  \item{thin}{the number of samples in the MCMC algorithm that needs to be thinned, default 10}
   
   \item{adapt}{the number of adaptive iterations, default 0 (see \link[runjags]{run.jags})}
   
@@ -80,7 +80,7 @@ data(colorad)
 # mean center Blur for effect coding
 colorad$blur <- colorad$blur - mean(colorad$blur)
 res <- BANOVA.Binomial(y~typic, ~color*blur, colorad, colorad$id, as.integer(16), 
-burnin = 1000, sample = 1000, thin = 1)
+burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # or use BANOVA.run
 res0 <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',

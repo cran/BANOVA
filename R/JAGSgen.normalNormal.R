@@ -1,12 +1,19 @@
 JAGSgen.normalNormal <-
-function (X, Z, l1_hyper, l2_hyper, conv_speedup){
+function (X, Z, l1_hyper = NULL, l2_hyper = NULL, conv_speedup = F){
 if (is.null(Z)){
   # one level model
   num_l1_v <- ncol(X)
   inits <- new.env() # store initial values for BUGS model
   monitorl1.parameters <- character()  # store monitors for level 1 parameters, which will be used in the computation of sum of squares
   monitorl2.parameters <- NULL  # store monitors for level 2 parameters, NULL for one level models
-  
+  # check l1_hyper
+  if(is.null(l1_hyper)){
+    l1_hyper = c(1, 1, 0.0001)
+  }else{
+    if (length(l1_hyper) != 3){
+      stop("l1_hyper must be of length 3 for single level models!")
+    }
+  }
   ### generate the code for BUGS model
   sModel <- paste("
 model{", sep="")

@@ -13,8 +13,10 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
       warning("The response variable has been converted to numeric..")
     }
   }
-  
+  single_level = F
   if (l2_formula == 'NA'){
+    # one level models
+    single_level = T
     # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
     for (i in 1:ncol(data)){
       if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
@@ -49,6 +51,20 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
     else
       samples_l1_param <- matrix(result$mcmc[[1]][,index_l1_param], ncol = 1)
     colnames(samples_l1_param) <- colnames(result$mcmc[[1]])[index_l1_param]
+    cat('Constructing ANOVA/ANCOVA tables...\n')
+    dMatrice$Z <-  array(1, dim = c(1,1), dimnames = list(NULL, ' '))
+    attr(dMatrice$Z, 'assign') <- 0
+    attr(dMatrice$Z, 'varNames') <- " "
+    samples_l2_param <- NULL
+    anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1))) # for ancova models
+    coef.tables <- table.coefficients(samples_l1_param, JAGS.model$monitorl1.parameters, colnames(dMatrice$Z), colnames(dMatrice$X), 
+                                      attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X, 'assign') + 1)
+    pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$Z, 'varNames'), 
+                                 l2_names = attr(dMatrice$X, 'varNames'))
+    conv <- conv.geweke.heidel(samples_l1_param, colnames(dMatrice$Z), colnames(dMatrice$X))
+    mf2 <- NULL
+    class(conv) <- 'conv.diag'
+    cat('Done...\n')
     
   }else{
     mf2 <- model.frame(formula = l2_formula, data = data)
@@ -117,5 +133,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, bur
               coef.tables = coef.tables,
               pvalue.table = pvalue.table, 
               conv = conv,
-              dMatrice = dMatrice, samples_l2_param = samples_l2_param, data = data, mf1 = mf1, mf2 = mf2,JAGSmodel = JAGS.model$sModel, single_level = F, model_name = "BANOVA.T"))
+              dMatrice = dMatrice, samples_l1_param = samples_l1_param, 
+              samples_l2_param = samples_l2_param, data = data, mf1 = mf1, mf2 = mf2,
+              JAGSmodel = JAGS.model$sModel, single_level = single_level, model_name = "BANOVA.T"))
 }

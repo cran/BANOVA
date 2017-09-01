@@ -9,7 +9,7 @@ BANOVA.BinNormal <-
       y <- model.response(mf1)
       if (class(y) != 'integer'){
         warning("The response variable must be integers (data class also must be 'integer')..")
-        y <- as.integer(y)
+        y <- as.integer(as.character(y))
         warning("The response variable has been converted to integers..")
       }
     }
@@ -114,7 +114,6 @@ BANOVA.BinNormal <-
         samples_l1_param <- matrix(result$mcmc[[1]][,index_l1_param], ncol = 1)
       colnames(samples_l1_param) <- colnames(result$mcmc[[1]])[index_l1_param]
       
-      #anova.table <- table.ANOVA(samples_l1_param, dMatrice$X, dMatrice$Z)
       cat('Constructing ANOVA/ANCOVA tables...\n')
       anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param) # for ancova models
       coef.tables <- table.coefficients(samples_l2_param, JAGS.model$monitorl2.parameters, colnames(dMatrice$X), colnames(dMatrice$Z), 

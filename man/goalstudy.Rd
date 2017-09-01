@@ -36,7 +36,7 @@ if(0){
 res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", 
 data = goalstudy, id = goalstudy$id, iter = 1000, thin = 1, chains = 2) 
 conv.diag(res1)
-# using pairs, it shows that the chains are not converged acutually
+# using pairs, it shows that the chains are not converged
 # the level 1 and level 2 variances are not identified since the data 
 # has only one obervation per subject, it is better to use single level models
 pairs(res1, pars = c("beta1[1,1]", "beta2[1,1]", "tau_ySq", "tau_beta1Sq"))

@@ -1,5 +1,5 @@
 BANOVA.ordMultiNormal <-
-function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sample, thin, adapt, conv_speedup, jags){
+function(l1_formula = 'NA', l2_formula = 'NA', data, id, l1_hyper, l2_hyper, burnin, sample, thin, adapt, conv_speedup, jags){
   cat('Model initializing...\n')
   if (l1_formula == 'NA'){
     stop("Formula in level 1 is missing or not correct!")
@@ -9,11 +9,13 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     # check y, if it is integers
     if (class(y) != 'integer'){
       warning("The response variable must be integers (data class also must be 'integer')..")
-      y <- as.integer(y)
+      y <- as.integer(as.character(y))
       warning("The response variable has been converted to integers..")
     }
   }
+  single_level = F
   if (l2_formula == 'NA'){
+    single_level = T
     DV_sort <- sort(unique(y))
     n_categories <- length(DV_sort)
     if (n_categories < 3) stop('The number of categories must be greater than 2!')
@@ -36,7 +38,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
       new_id[i] <- which(uni_id == id[i])
     id <- new_id
     dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id)
-    JAGS.model <- JAGSgen.ordmultiNormal(dMatrice$X, dMatrice$Z, n.cut, l2_hyper, conv_speedup)
+    JAGS.model <- JAGSgen.ordmultiNormal(dMatrice$X, dMatrice$Z, n.cut, l1_hyper, l2_hyper, conv_speedup)
     JAGS.data <- dump.format(list(n = n, y = y, X = dMatrice$X, n.cut = n.cut))
     result <- run.jags (model = JAGS.model$sModel, data = JAGS.data, inits = JAGS.model$inits, n.chains = 1,
                         monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters, JAGS.model$monitor.cutp), 
@@ -62,6 +64,20 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
       samples_cutp_param <- result$mcmc[[1]][,index_cutp_param]
     else
       samples_cutp_param <- matrix(result$mcmc[[1]][,index_cutp_param], ncol = 1)
+    cat('Constructing ANOVA/ANCOVA tables...\n')
+    dMatrice$Z <-  array(1, dim = c(1,1), dimnames = list(NULL, ' '))
+    attr(dMatrice$Z, 'assign') <- 0
+    attr(dMatrice$Z, 'varNames') <- " "
+    samples_l2_param <- NULL
+    anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, error = pi^2/6) # for ancova models
+    coef.tables <- table.coefficients(samples_l1_param, JAGS.model$monitorl1.parameters, colnames(dMatrice$Z), colnames(dMatrice$X), 
+                                      attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X, 'assign') + 1, samples_cutp_param)
+    pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$Z, 'varNames'), 
+                                 l2_names = attr(dMatrice$X, 'varNames'))
+    conv <- conv.geweke.heidel(samples_l1_param, colnames(dMatrice$Z), colnames(dMatrice$X))
+    mf2 <- NULL
+    class(conv) <- 'conv.diag'
+    cat('Done.\n')
   
   }else{
     mf2 <- model.frame(formula = l2_formula, data = data)
@@ -92,7 +108,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
       new_id[i] <- which(uni_id == id[i])
     id <- new_id
     dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id)
-    JAGS.model <- JAGSgen.ordmultiNormal(dMatrice$X, dMatrice$Z, n.cut, l2_hyper, conv_speedup)
+    JAGS.model <- JAGSgen.ordmultiNormal(dMatrice$X, dMatrice$Z, n.cut, l2_hyper = l2_hyper, conv_speedup = conv_speedup)
     JAGS.data <- dump.format(list(n = n, id = id, M = num_id, y = y, X = dMatrice$X, Z = dMatrice$Z, n.cut = n.cut))
     result <- run.jags (model = JAGS.model$sModel, data = JAGS.data, inits = JAGS.model$inits, n.chains = 1,
                         monitor = c(JAGS.model$monitorl1.parameters, JAGS.model$monitorl2.parameters, JAGS.model$monitor.cutp), 
@@ -143,6 +159,6 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
               coef.tables = coef.tables,
               pvalue.table = pvalue.table, 
               conv = conv,
-              dMatrice = dMatrice, samples_l2_param = samples_l2_param, samples_cutp_param = samples_cutp_param, data = data, 
-              mf1 = mf1, mf2 = mf2,JAGSmodel = JAGS.model$sModel, single_level = F, model_name = "BANOVA.ordMultinomial"))
+              dMatrice = dMatrice, samples_l1_param = samples_l1_param, samples_l2_param = samples_l2_param, samples_cutp_param = samples_cutp_param, data = data, 
+              mf1 = mf1, mf2 = mf2,JAGSmodel = JAGS.model$sModel, single_level = single_level, model_name = "BANOVA.ordMultinomial"))
 }
