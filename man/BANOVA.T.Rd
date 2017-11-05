@@ -39,7 +39,7 @@ adapt = 0, conv_speedup = F, jags = runjags.getOption('jagspath'))
   
   \item{conv_speedup}{whether to speedup convergence, default F}
   
-  \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
+  \item{jags}{the system call or path for activating 'JAGS'. Default calls findjags() to attempt to locate 'JAGS' on your system}
   
   \item{object}{object of class \code{BANOVA.T} (returned by \code{BANOVA.T})}
 
@@ -68,17 +68,22 @@ Level 1 model: \cr
   \item{data}{original data.frame}
   \item{mf1}{model.frame of level 1}
   \item{mf2}{model.frame of level 2}
-  \item{JAGSmodel}{JAGS model}
+  \item{JAGSmodel}{'JAGS' model}
 }
 \examples{
-if(0){
+\dontshow{
+data(ipadstudy)
+res <- BANOVA.T(attitude~1, ~owner + age + gender + selfbrand*conspic, ipadstudy,
+ipadstudy$id, burnin = 5, sample = 5, thin = 1)
+}
+\donttest{
 # Use the ipadstudy data set
 data(ipadstudy)
 res <- BANOVA.T(attitude~1, ~owner + age + gender + selfbrand*conspic, ipadstudy,
 ipadstudy$id, burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 
-# or use BANOVA.run based on Stan
+# or use BANOVA.run based on 'Stan'
 res19 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
 data = ipadstudy, model_name = 'T', id = ipadstudy$id, iter = 100, 
 thin = 1, chains = 2)

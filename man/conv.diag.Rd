@@ -44,9 +44,8 @@ Opns. Res., Vol. 30, No.3, pp. 569-590.
 
 }
 \examples{
-
 data(goalstudy)
-if(0){
+\donttest{
 res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", data = goalstudy, 
 id = goalstudy$id, iter = 100, thin = 1) 
 conv.diag(res1)

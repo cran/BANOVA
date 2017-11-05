@@ -117,7 +117,7 @@ BANOVA.run <- function (l1_formula = 'NA',
       stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
       ### find samples ###
       # beta1 J
-      fit_beta <- rstan::extract(stan.fit)
+      fit_beta <- rstan::extract(stan.fit, permuted = T)
       beta1_dim <- dim(fit_beta$beta1)
       beta1_names <- c()
       for (i in 1:beta1_dim[2]) #J
@@ -193,7 +193,7 @@ BANOVA.run <- function (l1_formula = 'NA',
       stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
       ### find samples ###
       # beta1 J
-      fit_beta <- rstan::extract(stan.fit)
+      fit_beta <- rstan::extract(stan.fit, permuted = T)
       beta1_dim <- dim(fit_beta$beta1)
       beta1_names <- c()
       for (i in 1:beta1_dim[2]) #J
@@ -354,7 +354,7 @@ BANOVA.run <- function (l1_formula = 'NA',
     ### find samples ###
     # beta1 JxM
     # beta2 KxJ
-    fit_beta <- rstan::extract(stan.fit)
+    fit_beta <- rstan::extract(stan.fit, permuted = T)
     beta1_dim <- dim(fit_beta$beta1)
     beta2_dim <- dim(fit_beta$beta2)
     beta1_names <- c()

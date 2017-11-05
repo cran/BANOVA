@@ -9,7 +9,7 @@ function(l1_formula = 'NA',
          sample, 
          thin, 
          adapt, 
-         conv_speedup, 
+         conv_speedup,
          jags){
   cat('Model initializing...\n')
   if (l1_formula == 'NA'){

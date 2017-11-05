@@ -5,7 +5,7 @@
 \alias{summary.BANOVA}
 \title{Estimation of BANOVA models}
 \description{
-\code{BANOVA.run} implements Hierarchical Bayesian ANOVA models using Stan
+\code{BANOVA.run} implements Hierarchical Bayesian ANOVA models using 'Stan'
 }
 \usage{
 BANOVA.run(l1_formula = "NA", l2_formula = "NA", fit = NULL, model_name = 'NA', 
@@ -36,7 +36,7 @@ num_trials = 0, ...)
   
   \item{y_value}{choice responses, 1,2,3..., for the Multinomial model only, default NULL}
 
-  \item{iter}{target samples in the Stan algorithm after thinning, default 1000}
+  \item{iter}{target samples in the 'Stan' algorithm after thinning, default 1000}
   
   \item{num_trials}{the number of trials of each
   observation(=1, if it is bernoulli), the type is forced to be 'integer', for the Binomial model only, default 0}
@@ -49,7 +49,7 @@ num_trials = 0, ...)
   data frame. It must have the same format with the original data (the same column number)}
   \item{Xsamples}{a list of sample data frames(each corresponds to the choice set of each observation) that includes all covariates and factors, for the Multinomial model only, default NULL}
   \item{Zsamples}{a data frame(long format) that includes all level 2 covariates and factors, for the Multinomial model only, default NULL}
-  \item{\dots}{additional arguments, for \code{BANOVA.run}, it can include standard Stan arguments, e.g. warmup, thin, chains, etc., see \link[rstan]{sampling} for more details, for other functions, ignored currently}
+  \item{\dots}{additional arguments, for \code{BANOVA.run}, it can include standard 'Stan' arguments, e.g. warmup, thin, chains, etc., see \link[rstan]{sampling} for more details, for other functions, ignored currently}
 }
 
 \value{
@@ -66,7 +66,7 @@ num_trials = 0, ...)
   \item{data}{original data.frame}
   \item{mf1}{model.frame of level 1}
   \item{mf2}{model.frame of level 2}
-  \item{model_code}{Stan code}
+  \item{model_code}{'Stan' code}
   \item{single_level}{if this is a single level model}
   \item{stan_fit}{fitted samples}
   \item{model_name}{the name of the model}
@@ -75,7 +75,7 @@ num_trials = 0, ...)
 \examples{
 # Use the ipadstudy data set
 data(ipadstudy)
-if(0){
+\donttest{
 # build the BANOVA model first so that it can be reused
 model <- BANOVA.model('Normal', single_level = FALSE)
 banova_model <- BANOVA.build(model)

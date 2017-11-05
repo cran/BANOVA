@@ -169,7 +169,10 @@ if (is.null(Z)){
   for (i in 2:n.cut)
     monitor.cutp <-c(monitor.cutp, paste('cutp[',i,']',sep=""))
 }
-  sol.inits <- dump.format(as.list(inits))
+  tmp <- as.list(inits)
+  tmp$.RNG.name = "base::Super-Duper"
+  tmp$.RNG.seed = sample(.Machine$integer.max, 1)
+  sol.inits <- dump.format(tmp)
   results <- list(inits = sol.inits, monitorl1.parameters = monitorl1.parameters, 
                   monitorl2.parameters = monitorl2.parameters, monitor.cutp = monitor.cutp, sModel = sModel)
   return(results)

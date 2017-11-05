@@ -42,7 +42,7 @@ BANOVA.Multinomial(l1_formula = "NA", l2_formula = "NA",
   
   \item{conv_speedup}{whether to speedup convergence, default F}
   
-  \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
+  \item{jags}{the system call or path for activating 'JAGS'. Default calls findjags() to attempt to locate 'JAGS' on your system}
   
   \item{object}{object of class \code{BANOVA.Multinomial}(returned by \code{BANOVA.Multinomial}) }
 
@@ -78,7 +78,7 @@ The first level of the response is the base level, thus the intercept correspond
   \item{mf1}{model.frame of level 1}
   \item{mf2}{model.frame of level 2}
   \item{n_categories}{the number of categories of the response}
-  \item{JAGSmodel}{JAGS model}
+  \item{JAGSmodel}{'JAGS' model}
 }
 
 \examples{
@@ -92,12 +92,11 @@ for (i in 1:nrow(choicedata)){
   # all numeric variables must be mean centered
   dataX[[i]] <- as.data.frame(logP) - mean(logP)
 }
-
 dataZ <- choicedata[,9:13]
-if(0){
+\donttest{
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, 
   choicedata$choice, choicedata$hhid, burnin = 5000, sample = 2000, thin = 10)
-# or use BANOVA.run based on Stan
+# or use BANOVA.run based on 'Stan'
 res <- BANOVA.run(~ logP, ~ college, dataX = dataX, dataZ = dataZ, 
                     model_name = 'Multinomial', y_value = choicedata$choice, 
                     id = choicedata$hhid, iter = 100, thin = 1, chains = 2)

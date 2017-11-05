@@ -27,8 +27,7 @@ Wedel, M and R. Pieters (2015).
 }
 
 \examples{ 
-
-if(0){
+\donttest{
 data(colorad)
 # mean center blur
 colorad$blur <- colorad$blur - mean(colorad$blur)

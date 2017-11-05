@@ -1,3 +1,7 @@
+BANOVA v1.0.0 (Release date: 2017-11-02)
+==============
+* add seeds for replications 
+
 BANOVA v0.9.1 (Release date: 2017-08-26)
 ==============
 * single level models are supported for old models except Binomial and Bernoulli

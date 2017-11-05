@@ -44,14 +44,11 @@ This equation is evaluated at each draw of the parameters, which allows for the 
 \examples{
 
 data(goalstudy)
-
 res1 <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 2) 
-
 BAnova(res1)
-
-if(0){
-# or use BANOVA.run based on Stan
+\donttest{
+# or use BANOVA.run based on 'Stan'
 res2 <- BANOVA.run(bid~1, ~progress*prodvar,  model_name = 'Normal', 
 data = goalstudy, id = goalstudy$id, iter = 1000, chains = 2)
 BAnova(res2)

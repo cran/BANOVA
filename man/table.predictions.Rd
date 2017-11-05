@@ -14,16 +14,13 @@ table.predictions(x)
 \examples{
 
 data(goalstudy)
-
 res <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
-
-if(0){
-# or use BANOVA.run based on Stan
+\donttest{
+# or use BANOVA.run based on 'Stan'
 res <- BANOVA.run(bid~progress*prodvar, model_name = "Normal", 
 data = goalstudy, id = goalstudy$id, iter = 1000, thin = 1, chains = 2) 
 }
-
 table.predictions(res)
 
 }

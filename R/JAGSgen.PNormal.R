@@ -128,7 +128,10 @@ if (is.null(Z)){
   sModel<- paste(sModel,"
 }")
 }  
-  sol.inits <- dump.format(as.list(inits))
+  tmp <- as.list(inits)
+  tmp$.RNG.name = "base::Super-Duper"
+  tmp$.RNG.seed = sample(.Machine$integer.max, 1)
+  sol.inits <- dump.format(tmp)
   results <- list(inits = sol.inits, monitorl1.parameters = monitorl1.parameters, 
                   monitorl2.parameters = monitorl2.parameters, 
                   monitorl2.sigma.parameters = monitorl2.sigma.parameters, 

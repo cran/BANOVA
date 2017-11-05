@@ -37,7 +37,7 @@ BANOVA.Poisson(l1_formula = "NA", l2_formula = "NA",
   
   \item{conv_speedup}{whether to speedup convergence, default F}
   
-  \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
+  \item{jags}{the system call or path for activating 'JAGS'. Default calls findjags() to attempt to locate 'JAGS' on your system}
   
   \item{object}{object of class \code{BANOVA.Poisson} (returned by \code{BANOVA.Poisson})}
 
@@ -65,11 +65,11 @@ Level 1 model: \cr
   \item{data}{original data.frame}
   \item{mf1}{model.frame of level 1}
   \item{mf2}{model.frame of level 2}
-  \item{JAGSmodel}{JAGS model}
+  \item{JAGSmodel}{'JAGS' model}
 }
 
 \examples{
-if(0){
+\donttest{
 # use the bpndata dataset
 data(bpndata)
 # within-subjects model using the dependent variable : PIC_FIX 
@@ -85,7 +85,7 @@ res2<-BANOVA.Poisson(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id,
 burnin = 5000, sample = 2000, thin = 10)
 summary(res2)
 
-# or use the BANOVA.run based on Stan
+# or use the BANOVA.run based on 'Stan'
 res3 <- BANOVA.run(bid~1, ~progress*prodvar, data = goalstudy, 
 model_name = 'Poisson', id = goalstudy$id, iter = 100, thin = 1, chains = 2)
 

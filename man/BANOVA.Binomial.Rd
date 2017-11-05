@@ -41,7 +41,7 @@ BANOVA.Binomial(l1_formula = "NA", l2_formula = "NA", data,
   
   \item{conv_speedup}{whether to speedup convergence, default F}
   
-  \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
+  \item{jags}{the system call or path for activating 'JAGS'. Default calls findjags() to attempt to locate 'JAGS' on your system}
   
   \item{object}{object of class \code{BANOVA.Bin} (returned by \code{BANOVA.Bin})}
 
@@ -70,13 +70,12 @@ Level 1 model: \cr
   \item{data}{original data.frame}
   \item{mf1}{model.frame of level 1}
   \item{mf2}{model.frame of level 2}
-  \item{JAGSmodel}{JAGS model}
+  \item{JAGSmodel}{'JAGS' model}
 }
 
 \examples{
-
-if(0){
 data(colorad)
+\donttest{
 # mean center Blur for effect coding
 colorad$blur <- colorad$blur - mean(colorad$blur)
 res <- BANOVA.Binomial(y~typic, ~color*blur, colorad, colorad$id, as.integer(16), 
@@ -86,7 +85,7 @@ summary(res)
 res0 <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
 id = colorad$id, num_trials = as.integer(16), iter = 100, thin = 1, chains = 2)
 summary(res0)
-# table.predictions(res)
+table.predictions(res)
 # only the in-model variables data will be used, the others will be ignored
 predict(res0, c(1, 0, 8, 2, 1, 0.03400759))
 }

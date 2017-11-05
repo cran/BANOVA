@@ -6,14 +6,14 @@
 BANOVA: Hierarchical Bayesian ANOVA Models
 }
 \description{
-This package includes several hierarchical Bayes Analysis of Variance models. These models are suited for the analysis of experimental designs in which both within- and between- subjects factors are manipulated, and account for a wide variety of distributions of the dependent variable. Floodlight analysis and mediation analysis basaed on these models are also provided. The package uses Stan and JAGS as the computational platform.
+This package includes several hierarchical Bayes Analysis of Variance models. These models are suited for the analysis of experimental designs in which both within- and between- subjects factors are manipulated, and account for a wide variety of distributions of the dependent variable. Floodlight analysis and mediation analysis basaed on these models are also provided. The package uses 'Stan' and 'JAGS' as the computational platform.
 }
 \details{
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 0.9.1\cr
-Date: \tab 2017-08-26\cr
+Version: \tab 1.0.0\cr
+Date: \tab 2017-11-02\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
@@ -37,14 +37,14 @@ Maintainer: Chen Dong <cdong@math.umd.edu>
 
 }
 \references{
-Dong, C. and Wedel, M. (2016) 
-\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, forthcoming. 
+Dong, C. and Wedel, M. (2017) 
+\emph{BANOVA: An R Package for Hierarchical Bayesian ANOVA}, Journal of Statistical Software, Vol. 81, No.9, pp. 1-46. 
 
 McCullagh, P., Nelder, JA. (1989)
 \emph{Generalized linear models}, New York, NY: Chapman and Hall.
 
 Gelman, A. (2005)
-\emph{Analysis of variance-why it is more important than ever}, Ann. Statist. Vol. 33, No. 1, pp. 1-53.
+\emph{Analysis of variance-why it is more important than ever}, Ann. Statist., Vol. 33, No. 1, pp. 1-53.
 
 Rossi, P., Allenby,G., McCulloch, R. (2005)
 \emph{Bayesian Statistics and Marketing}, John Wiley and Sons.

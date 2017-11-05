@@ -31,8 +31,8 @@ data(goalstudy)
 res1 <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
 
-if(0){
-# use BANOVA.run based on Stan
+\donttest{
+# use BANOVA.run based on 'Stan'
 res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", 
 data = goalstudy, id = goalstudy$id, iter = 1000, thin = 1, chains = 2) 
 conv.diag(res1)
@@ -56,7 +56,7 @@ goalstudy$id, burnin = 1000, sample = 1000, thin = 1)
 
 summary(res2)
 table.predictions(res2)
-# print JAGS code
+# print 'JAGS' code
 cat(res2$JAGSmodel)
 }
 }

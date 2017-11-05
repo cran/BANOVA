@@ -14,14 +14,14 @@ BANOVA.build(BANOVA_model)
 \value{
   \code{BANOVA.build} returns an object of class \code{"BANOVA.build"}. The returned object is a list containing:
   
-  \item{stanmodel}{the compiled Stan model}
+  \item{stanmodel}{the compiled 'Stan' model}
   \item{model_name}{the model name}
   \item{single_level}{if the model is a single level model}
 
 }
 
 \examples{
-if(0){
+\donttest{
 model <- BANOVA.model('Poisson', single_level = FALSE) 
 Poisson_model <- BANOVA.build(model)
 # visualize the model

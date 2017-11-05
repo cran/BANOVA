@@ -38,7 +38,7 @@ BANOVA.Bernoulli(l1_formula = "NA", l2_formula = "NA", data,
   
   \item{conv_speedup}{whether to speedup convergence, default F}
   
-  \item{jags}{the system call or path for activating JAGS. Default calls findjags() to attempt to locate JAGS on your system}
+  \item{jags}{the system call or path for activating 'JAGS'. Default calls findjags() to attempt to locate 'JAGS' on your system}
   
   \item{object}{object of class \code{BANOVA.Bern} (returned by \code{BANOVA.Bern})}
 
@@ -67,13 +67,12 @@ Level 1 model: \cr
   \item{data}{original data.frame}
   \item{mf1}{model.frame of level 1}
   \item{mf2}{model.frame of level 2}
-  \item{JAGSmodel}{JAGS model}
+  \item{JAGSmodel}{'JAGS' model}
 }
 
 \examples{
-
-if(0){
 data(bernlogtime)
+\donttest{
 # model with the dependent variable : response
 res <- BANOVA.Bernoulli(response~typical, ~blur + color, bernlogtime,
 bernlogtime$subject, burnin = 5000, sample = 2000, thin = 10)
@@ -82,7 +81,6 @@ summary(res)
 res0 <- BANOVA.run(response~typical, ~blur + color, data = bernlogtime, 
 model_name = 'Bernoulli',id = bernlogtime$subject, iter = 100, thin = 1, chains = 2)
 summary(res0)
-# table.predictions(res)
 }
 
 }

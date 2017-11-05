@@ -57,9 +57,8 @@ for (i in 1:nrow(choicedata)){
   # must be mean centered
   dataX[[i]] <- as.data.frame(logP) - mean(logP)
 }
-
 dataZ <- choicedata[,9:13]
-if (0){
+\donttest{
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, choicedata$choice, 
 choicedata$hhid, burnin = 1000, sample = 1000, thin = 1)
 summary(res)

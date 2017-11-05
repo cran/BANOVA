@@ -23,7 +23,7 @@ BANOVA.model(model_name, single_level = F)
 }
 
 \examples{
-if(0){
+\donttest{
 model <- BANOVA.model('Poisson', single_level = FALSE) 
 cat(model$model_code)
 }
