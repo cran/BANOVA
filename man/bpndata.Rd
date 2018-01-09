@@ -42,24 +42,24 @@ data(bpndata)
 \donttest{
 model <- BANOVA.model('Poisson')
 stanmodel <- BANOVA.build(model)
-res0 <- BANOVA.run(PIC_FIX ~ PIC_SIZE+ PAGE_NUM + PAGE_POS, ~1, 
+res0 <- BANOVA.run(PIC_FIX ~ PIC_SIZE + PAGE_NUM + PAGE_POS, ~1, 
 fit = stanmodel, data = bpndata, id = bpndata$RESPONDENT_ID, 
 iter = 200, thin = 1, chains = 2)
 res0
 # or
-res1 <- BANOVA.Poisson(PIC_FIX ~ PIC_SIZE+ PAGE_NUM 
+res1 <- BANOVA.Poisson(PIC_FIX ~ PIC_SIZE + PAGE_NUM 
 + PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 1000, sample = 1000, thin = 1)
 res1
 
 # within-subjects model using the dependent variable : RECALL_ACCU
 model_bern <- BANOVA.model('Bernoulli')
 stanmodel_bern <- BANOVA.build(model_bern)
-res2<- BANOVA.run(RECALL_ACCU~ RECALL_TIME + PAGE_NUM + PAGE_POS, ~1, 
-fit =stanmodel_bern, data = bpndata, id = bpndata$RESPONDENT_ID, 
+res2 <- BANOVA.run(RECALL_ACCU ~ RECALL_TIME + PAGE_NUM + PAGE_POS, ~1, 
+fit = stanmodel_bern, data = bpndata, id = bpndata$RESPONDENT_ID, 
 iter = 200, thin = 1, chains = 2)
 res2
 # or
-res3 <- BANOVA.Bernoulli(RECALL_ACCU~ RECALL_TIME + PAGE_NUM 
+res3 <- BANOVA.Bernoulli(RECALL_ACCU ~ RECALL_TIME + PAGE_NUM 
 + PAGE_POS, ~1, bpndata, bpndata$RESPONDENT_ID, burnin = 1000, sample = 1000, thin = 1)
 res3
 }

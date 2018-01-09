@@ -18,6 +18,8 @@ function (n_choice, factors, assign = array(dim = 0), index_factor = NA, numeric
 # }
   
   # new version
+  tmp_contrasts <- getOption("contrasts")
+  options(contrasts = rep("contr.sum",2))
   result <- list()
   for (n_c in 1:n_choice){
     if (length(assign) != 0){
@@ -42,5 +44,6 @@ function (n_choice, factors, assign = array(dim = 0), index_factor = NA, numeric
     }
     result[[n_c]] <- effect_matrix
   }
+  options(contrasts = tmp_contrasts)
   return(result)
 }

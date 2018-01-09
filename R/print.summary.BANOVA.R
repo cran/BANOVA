@@ -19,6 +19,11 @@ print.summary.BANOVA <- function(x, ...){
   
   cat('\nTable of coefficients: \n')
   printCoefmat(x$coef.table)
+  
+  if (!is.null(x$R2)){
+    cat('\nMultiple R-squared: ', x$R2, '\n')
+  }
+    
   if (!((x$model_name == "BANOVA.Multinomial")&&(x$single_level))){
     cat('\nTable of predictions: \n')
     table.predictions(x$full_object)

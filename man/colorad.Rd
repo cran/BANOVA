@@ -37,7 +37,7 @@ res
 summary(res)
 table.predictions(res)
 # use the the first row of data to predict, 
-# only the in-model variables data will be used, the others will be ignored
+# only in-model variables(except numeric variables) will be used
 predict(res, c(1, 0, 8, 2, 1, 0.03400759))
 }
 

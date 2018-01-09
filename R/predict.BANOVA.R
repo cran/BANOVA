@@ -8,7 +8,7 @@ predict.BANOVA <- function(object, newdata = NULL, Xsamples = NULL, Zsamples = N
                            mf1 = object$mf1, mf2 = object$mf2, newdata, model = 'PoissonNormal')
     }else if(object$model_name %in% c("BANOVA.Binomial", "BANOVA.Bernoulli")){
       sol <- predict.means(object$samples_l1_param, object$data, object$dMatrice$X, object$dMatrice$Z_full, 
-                           mf1 = object$mf1, mf2 = object$mf2, newdata, model = 'BernNormal')
+                           mf1 = object$mf1, mf2 = object$mf2, newdata, model = 'BernNormal', n_trials = object$num_trials)
     }else if(object$model_name == "BANOVA.ordMultinomial"){
       sol <- predict.means(object$samples_l1_param, object$data, object$dMatrice$X, object$dMatrice$Z_full, 
                            mf1 = object$mf1, mf2 = object$mf2, newdata, samples_cutp_param = object$samples_cutp_param, model = 'MultinomialordNormal')
@@ -25,7 +25,7 @@ predict.BANOVA <- function(object, newdata = NULL, Xsamples = NULL, Zsamples = N
                            mf1 = object$mf1, mf2 = object$mf2, newdata, model = 'PoissonNormal', l2_sd = object$samples_l2_sigma_param)
     }else if(object$model_name %in% c("BANOVA.Binomial", "BANOVA.Bernoulli")){
       sol <- predict.means(object$samples_l2_param, object$data, object$dMatrice$X, object$dMatrice$Z_full, 
-                           mf1 = object$mf1, mf2 = object$mf2, newdata, model = 'BernNormal')
+                           mf1 = object$mf1, mf2 = object$mf2, newdata, model = 'BernNormal', n_trials = object$num_trials)
     }else if(object$model_name == "BANOVA.ordMultinomial"){
       sol <- predict.means(object$samples_l2_param, object$data, object$dMatrice$X, object$dMatrice$Z_full, 
                            mf1 = object$mf1, mf2 = object$mf2, newdata, samples_cutp_param = object$samples_cutp_param, model = 'MultinomialordNormal')

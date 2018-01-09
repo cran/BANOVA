@@ -1,10 +1,14 @@
 ###
 # This version, the floodlight analysis hasn't been tested for two cases: (level1_num && level1_fac) (level2_num && level1_fac)
 ###
+# find the effects of the factor only (not including the numeric variable), using cal.mediation.effects
+# find the effects of the interaction between the numeric variable and the factor, using cal.effects (specific to the numeric var), and possible modifications of effect.matrix.mediator 
+#
 floodlight.analysis <- 
-function (numeric_name, 
+function (sol,
+          numeric_name, 
           factor_name, 
-          samples_l2_param, X, Z, data = NULL, dataX = NULL, dataZ = NULL){
+          samples_l2_param, X, Z, data = NULL, dataX = NULL, dataZ = NULL, flood_values = list()){
   
   numeric_name <- trimws(numeric_name)
   factor_name <- trimws(factor_name)
@@ -91,7 +95,8 @@ function (numeric_name,
     if (!inter_found_flag){
       stop('No specified interaction found in the model!')
     }
-    
+    flood_eff <- cal.flood.effects(sol, est_matrix, n_sample, factor_name, numeric_name, flood_values = flood_values)
+
     # for each level of the factor (names found before)
     ## find these factors which is corresponding to the column of est_matrix
     ## for the first row (the intercept) of est_matrix, calculate the floodlight 
@@ -106,6 +111,7 @@ function (numeric_name,
       sol[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
     }
     rownames(sol) <-  paste(numeric_name, rownames(sol), sep = ":")
+    
   }
   
   if (level2_num && level1_fac){
@@ -122,10 +128,14 @@ function (numeric_name,
     ## find these factors which is corresponding to the column of est_matrix
     ## for the first row (the intercept) of est_matrix, calculate the floodlight 
     floodlight_samples <- data.frame(array(0, dim = c(n_sample, length(X_names_factor)), dimnames = list(NULL, X_names_factor)))
-    for (name_fac in X_names_factor)
+    #factor_eff_samples <- data.frame(array(0, dim = c(n_sample, length(X_names_factor)), dimnames = list(NULL, X_names_factor)))
+    #numeric_eff_sample <- data.frame(array(0, dim = c(n_sample, length(Z_names_num)), dimnames = list(NULL, Z_names_num)))
+    for (name_fac in X_names_factor){
       for (n_s in 1:n_sample){
         floodlight_samples[[name_fac]][n_s] = - est_matrix[name_fac, 1, n_s]/est_matrix[name_fac, Z_names_num, n_s]
       }
+    }
+    flood_eff <- cal.flood.effects(sol, est_matrix, n_sample, factor_name, numeric_name, flood_values = flood_values)
     sol <- array(0, dim = c(length(X_names_factor), 3), dimnames = list(X_names_factor, c('mean', '2.5%', '97.5%')))
     for (name_fac in X_names_factor){
       sol[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
@@ -135,6 +145,7 @@ function (numeric_name,
   }
   
   if (level1_num && level2_fac){
+    warning('This type of analysis is under development for a more general case. It might not be stable now.', call. = FALSE)
     if (!((X_classes[numeric_name] == "numeric" || X_classes[numeric_name] == "integer") && Z_classes[factor_name] == "factor"))
       stop('Variable types are not correct.')
     # generate var names from the factor variable (e.g. name1, name2, ..)
@@ -152,6 +163,9 @@ function (numeric_name,
       for (n_s in 1:n_sample){
         floodlight_samples[[name_fac]][n_s] = - est_matrix[1, name_fac, n_s]/est_matrix[X_names_num, name_fac, n_s]
       }
+    
+    flood_eff <- cal.flood.effects(sol, est_matrix, n_sample, factor_name, numeric_name, flood_values = flood_values)
+    
     sol <- array(0, dim = c(length(Z_names_factor), 3), dimnames = list(Z_names_factor, c('mean', '2.5%', '97.5%')))
     for (name_fac in Z_names_factor){
       sol[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
@@ -161,6 +175,7 @@ function (numeric_name,
   }
   
   if (level2_num && level2_fac){
+    warning('This type of analysis is under development for a more general case. It might not be stable now.', call. = FALSE)
     if (!((Z_classes[numeric_name] == "numeric" || Z_classes[numeric_name] == "integer") && Z_classes[factor_name] == "factor"))
       stop('Variable types are not correct.')
     # generate var names from the factor variable (e.g. name1, name2, ..)
@@ -199,6 +214,8 @@ function (numeric_name,
       stop('No specified interaction found in the model!')
     }
     
+    flood_eff <- cal.flood.effects(sol, est_matrix, n_sample, factor_name, numeric_name, flood_values = flood_values)
+    
     # for each level of the factor (names found before)
     ## find these factors which is corresponding to the column of est_matrix
     ## for the first row (the intercept) of est_matrix, calculate the floodlight 
@@ -214,5 +231,5 @@ function (numeric_name,
     }
     rownames(sol) <-  paste(numeric_name, rownames(sol), sep = ":")
   }
-  return(list(sol = sol, num_range = num_range))
+  return(list(sol = flood_eff, num_range = num_range))
 }

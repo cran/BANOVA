@@ -71,11 +71,6 @@ Level 1 model: \cr
   \item{JAGSmodel}{'JAGS' model}
 }
 \examples{
-\dontshow{
-data(ipadstudy)
-res <- BANOVA.T(attitude~1, ~owner + age + gender + selfbrand*conspic, ipadstudy,
-ipadstudy$id, burnin = 5, sample = 5, thin = 1)
-}
 \donttest{
 # Use the ipadstudy data set
 data(ipadstudy)

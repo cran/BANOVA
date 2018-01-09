@@ -1,3 +1,15 @@
+BANOVA v1.1.0 (Release date: 2018-01-04)
+==============
+* Added R2 measure of fit
+* Added level-1 variance term to the calculation of R2 and effect sizes
+* Added p values and effect sizes for indirect effects 
+* BANOVA mediation only prints indirect effects, users can still access direct effects through the dir_effects element
+* BANOVA mediation for Multinomial models is under development
+* Use 3 decimals for the 95%CI of the effect sizes
+* Default settings for MCMC burn-in=5000, sample=2000, thin=10
+* Other variables in the model are included in the output of floodlight analysis
+* Users can set up values for other numeric variables for the floodlight analysis
+
 BANOVA v1.0.0 (Release date: 2017-11-02)
 ==============
 * add seeds for replications 

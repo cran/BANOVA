@@ -86,7 +86,7 @@ res0 <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial'
 id = colorad$id, num_trials = as.integer(16), iter = 100, thin = 1, chains = 2)
 summary(res0)
 table.predictions(res)
-# only the in-model variables data will be used, the others will be ignored
+# only in-model variables(except numeric variables) will be used
 predict(res0, c(1, 0, 8, 2, 1, 0.03400759))
 }
 

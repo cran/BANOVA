@@ -51,7 +51,8 @@ function(x){
                                       l2_interactions = l2_interactions, 
                                       l2_interactions_index = attr(x$dMatrice$X, 'interactions_index'), 
                                       numeric_index_in_Z = attr(x$dMatrice$X, 'numeric_index'), 
-                                      model = 'BernNormal')
+                                      model = 'BernNormal',
+                                      n_trials = x$num_trials)
     }else if (x$model_name == 'BANOVA.ordMultinomial'){
       l2_values <- attr(x$dMatrice$X, 'varValues')
       l2_values[[1]] <- NULL  # remove y var
@@ -116,7 +117,7 @@ function(x){
                         l1_interactions = attr(x$dMatrice$X, 'interactions'), l1_interactions_index = attr(x$dMatrice$X, 'interactions_index'), 
                         l2_values = attr(x$dMatrice$Z, 'varValues'), l2_interactions = attr(x$dMatrice$Z, 'interactions'), 
                         l2_interactions_index = attr(x$dMatrice$Z, 'interactions_index'), numeric_index_in_X = attr(x$dMatrice$X, 'numeric_index'),
-                        numeric_index_in_Z = attr(x$dMatrice$Z, 'numeric_index'), model = 'BernNormal')
+                        numeric_index_in_Z = attr(x$dMatrice$Z, 'numeric_index'), model = 'BernNormal', n_trials = x$num_trials)
     }else if (x$model_name == 'BANOVA.ordMultinomial'){
       sol_tables <- print.table.means(x$coef.tables$coeff_table, x$samples_l2_param, colnames(x$dMatrice$X), X_assign = attr(x$dMatrice$X, 'assign'), 
                         X_classes = attr(x$dMatrice$X, 'dataClasses'), colnames(x$dMatrice$Z), Z_assign = attr(x$dMatrice$Z, 'assign'), 

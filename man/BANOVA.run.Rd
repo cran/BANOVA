@@ -9,8 +9,8 @@
 }
 \usage{
 BANOVA.run(l1_formula = "NA", l2_formula = "NA", fit = NULL, model_name = 'NA', 
-dataX = NULL, dataZ = NULL, data = NULL, y_value = NULL, id, iter = 1000, 
-num_trials = 0, ...)
+dataX = NULL, dataZ = NULL, data = NULL, y_value = NULL, id, iter = 2000, 
+num_trials = 1, ...)
 \method{summary}{BANOVA}(object, ...)
 \method{predict}{BANOVA}(object, newdata = NULL, Xsamples = NULL, Zsamples = 
                         NULL, ...)
@@ -36,7 +36,7 @@ num_trials = 0, ...)
   
   \item{y_value}{choice responses, 1,2,3..., for the Multinomial model only, default NULL}
 
-  \item{iter}{target samples in the 'Stan' algorithm after thinning, default 1000}
+  \item{iter}{target samples in the 'Stan' algorithm after thinning, default 2000}
   
   \item{num_trials}{the number of trials of each
   observation(=1, if it is bernoulli), the type is forced to be 'integer', for the Binomial model only, default 0}
@@ -80,17 +80,17 @@ data(ipadstudy)
 model <- BANOVA.model('Normal', single_level = FALSE)
 banova_model <- BANOVA.build(model)
 res_1 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
-fit = banova_model, data = ipadstudy, id = ipadstudy$id, iter = 1000, 
+fit = banova_model, data = ipadstudy, id = ipadstudy$id, iter = 2000, 
 thin = 5, chains = 2)
 summary(res_1)
 res_2 <- BANOVA.run(attitude~1, ~selfbrand*conspic, 
-fit = banova_model, data = ipadstudy, id = ipadstudy$id, iter = 1000, 
+fit = banova_model, data = ipadstudy, id = ipadstudy$id, iter = 2000, 
 thin = 5, chains = 2)
 
 # or call the function directly without specifying the fit argument
 # but it needs compilation
 res_1 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic,
-model_name = 'Normal', data = ipadstudy, id = ipadstudy$id, iter = 1000, 
+model_name = 'Normal', data = ipadstudy, id = ipadstudy$id, iter = 2000, 
 thin = 5, chains = 2)
 }
 

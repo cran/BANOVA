@@ -1,5 +1,6 @@
 table.ANCOVA <-
   function(samples_l1_param, X, Z, samples_l2_param, y_val = NULL, error = NULL, multi = F, n_cat = 0, choice = 0){
+    eff_digits = 3
     if (length(attr(Z, 'varNames')) > 1){
       if(!is.null(error)){ #for bernoulli binomial and multinomial case
         num_l1_v <- ncol(X) # should be the same with num_l1
@@ -72,12 +73,12 @@ table.ANCOVA <-
                 #factor_SS[1] <- paste(format(factor_SS[1], nsmall = 4), " (", paste(pmax(round(quantile(y_square - y_var, c(0.05, 0.95)),digits = 2), 0), collapse = ","), ")", sep = "")
                 factor_SS[choice] <- format(factor_SS[choice], nsmall = 4)
                 #effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(pmax(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.05, 0.95)),digits = 2), 0), collapse = ","), ")", sep = "")
-                effect_size[choice] <- paste(format(effect_size[choice], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                effect_size[choice] <- paste(format(effect_size[choice], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
               }else{
                 #factor_SS[1] <- paste(format(factor_SS[1], nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
                 factor_SS[choice] <- format(factor_SS[choice], nsmall = 4)
                 #effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
-                effect_size[choice] <- paste(format(effect_size[choice], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                effect_size[choice] <- paste(format(effect_size[choice], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
               }
               #factor_SS[1] <- round(error, digits = 4)
               #paste(round(SS_full, digits = 5), ' (', round((SS_full)/SS_TO*100, digits = 2), '%)', sep="")
@@ -102,12 +103,12 @@ table.ANCOVA <-
                   #factor_SS[i_2] <- paste(format(round(e_error_i_2, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error_i_2_type3, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
                   factor_SS[i_2] <- format(round(e_error_i_2, digits = 4), nsmall = 4)
                   #effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
-                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
                 }else{
                   #factor_SS[i_2] <- paste(format(round(e_error_i_2, digits = 4), nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
                   factor_SS[i_2] <- format(round(e_error_i_2, digits = 4), nsmall = 4)
                   #effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
-                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
                 }
                 #paste(round(SS_full - SS_i, digits = 5), ' (',round((SS_full - SS_i)/SS_TO*100, digits = 2),'%)',sep = '')
               }
@@ -126,12 +127,12 @@ table.ANCOVA <-
                 #factor_SS[1] <- paste(format(factor_SS[1], nsmall = 4), " (", paste(pmax(round(quantile(y_square - y_var, c(0.05, 0.95)),digits = 2), 0), collapse = ","), ")", sep = "")
                 factor_SS[1] <- format(factor_SS[1], nsmall = 4)
                 #effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(pmax(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.05, 0.95)),digits = 2), 0), collapse = ","), ")", sep = "")
-                effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
               }else{
                 #factor_SS[1] <- paste(format(factor_SS[1], nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
                 factor_SS[1] <- format(factor_SS[1], nsmall = 4)
                 #effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
-                effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((var_pred_full - var_pred_full_center)/(var_pred_full - var_pred_full_center + var_error), c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
               }
               #factor_SS[1] <- round(error, digits = 4)
               #paste(round(SS_full, digits = 5), ' (', round((SS_full)/SS_TO*100, digits = 2), '%)', sep="")
@@ -156,12 +157,12 @@ table.ANCOVA <-
                   #factor_SS[i_2] <- paste(format(round(e_error_i_2, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error_i_2_type3, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
                   factor_SS[i_2] <- format(round(e_error_i_2, digits = 4), nsmall = 4)
                   #effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
-                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
                 }else{
                   #factor_SS[i_2] <- paste(format(round(e_error_i_2, digits = 4), nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
                   factor_SS[i_2] <- format(round(e_error_i_2, digits = 4), nsmall = 4)
                   #effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
-                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                  effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
                 }
                 #paste(round(SS_full - SS_i, digits = 5), ' (',round((SS_full - SS_i)/SS_TO*100, digits = 2),'%)',sep = '')
               }
@@ -246,12 +247,12 @@ table.ANCOVA <-
               #factor_SS[1] <- paste(format(factor_SS[1], nsmall = 4), " (", paste(pmax(round(quantile(y_square - y_var, c(0.05, 0.95)),digits = 2), 0), collapse = ","), ")", sep = "")
               factor_SS[1] <- format(factor_SS[1], nsmall = 4)
               #effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(pmax(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.05, 0.95)),digits = 2), 0), collapse = ","), ")", sep = "")
-              effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+              effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
             }else{
               #factor_SS[1] <- paste(format(factor_SS[1], nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
               factor_SS[1] <- format(factor_SS[1], nsmall = 4)
               #effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
-              effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+              effect_size[1] <- paste(format(effect_size[1], nsmall = 4), " (", paste(round(quantile((y_square - y_var)/(y_square - y_var + var_error), c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
             }
             #factor_SS[1] <- round(error, digits = 4)
             #paste(round(SS_full, digits = 5), ' (', round((SS_full)/SS_TO*100, digits = 2), '%)', sep="")
@@ -276,12 +277,12 @@ table.ANCOVA <-
                 #factor_SS[i_2] <- paste(format(round(e_error_i_2, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error_i_2_type3, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
                 factor_SS[i_2] <- format(round(e_error_i_2, digits = 4), nsmall = 4)
                 #effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
-                effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
               }else{
                 #factor_SS[i_2] <- paste(format(round(e_error_i_2, digits = 4), nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
                 factor_SS[i_2] <- format(round(e_error_i_2, digits = 4), nsmall = 4)
                 #effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(c(0,0), collapse = ","), ")", sep = "")
-                effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = 2), collapse = ","), ")", sep = "")
+                effect_size[i_2] <- paste(format(round(effect_i_2, digits = 4), nsmall = 4), " (", paste(round(quantile(var_error_i_2_type3/var_error_i_2, c(0.025, 0.975)),digits = eff_digits), collapse = ","), ")", sep = "")
               }
               #paste(round(SS_full - SS_i, digits = 5), ' (',round((SS_full - SS_i)/SS_TO*100, digits = 2),'%)',sep = '')
             }

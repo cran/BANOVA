@@ -17,8 +17,8 @@ BANOVA.run <- function (l1_formula = 'NA',
                         data = NULL,
                         y_value = NULL,
                         id, 
-                        iter = 1000,
-                        num_trials = 0,
+                        iter = 2000,
+                        num_trials = 1,
                         ...
                         ){
   if (l1_formula == 'NA'){
@@ -64,6 +64,12 @@ BANOVA.run <- function (l1_formula = 'NA',
     }else{
       stop(model_name, " is not supported currently!")
     }
+  }
+  if (is.character(id) && length(id) == 1){
+    if (id %in% colnames(data))
+      id = data[, id]
+    else
+      stop(id, ' is not found in the data!')
   }
   if (l2_formula == 'NA'){
     # single level models
@@ -118,6 +124,8 @@ BANOVA.run <- function (l1_formula = 'NA',
       ### find samples ###
       # beta1 J
       fit_beta <- rstan::extract(stan.fit, permuted = T)
+      R2 = NULL
+      tau_ySq = NULL
       beta1_dim <- dim(fit_beta$beta1)
       beta1_names <- c()
       for (i in 1:beta1_dim[2]) #J
@@ -194,6 +202,14 @@ BANOVA.run <- function (l1_formula = 'NA',
       ### find samples ###
       # beta1 J
       fit_beta <- rstan::extract(stan.fit, permuted = T)
+      # For R2 of models with Normal distribution
+      R2 = NULL
+      if (!is.null(fit_beta$r_2)){
+        R2 <- mean(fit_beta$r_2)
+        R2 <- round(R2, 4)
+      }
+      # For the calculation of effect sizes in mediation
+      tau_ySq = NULL
       beta1_dim <- dim(fit_beta$beta1)
       beta1_names <- c()
       for (i in 1:beta1_dim[2]) #J
@@ -225,10 +241,15 @@ BANOVA.run <- function (l1_formula = 'NA',
         anova.table <- NULL
       }else if (model_name == 'Normal' || model_name == 'T'){
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1))) # for ancova models
+        if (!is.null(fit_beta$tau_ySq)){
+          tau_ySq <- mean(fit_beta$tau_ySq)
+        }
       }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, error = pi^2/3)
+        tau_ySq = pi^2/3
       }else if (model_name == 'ordMultinomial'){
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, error = pi^2/6)
+        tau_ySq = pi^2/6
       }
       coef.tables <- table.coefficients(samples_l1_param, beta1_names, colnames(dMatrice$Z), colnames(dMatrice$X), 
                                         attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X, 'assign') + 1, samples_cutp_param )
@@ -355,6 +376,23 @@ BANOVA.run <- function (l1_formula = 'NA',
     # beta1 JxM
     # beta2 KxJ
     fit_beta <- rstan::extract(stan.fit, permuted = T)
+    # For R2 of models with Normal distribution
+    R2 = NULL
+    if (!is.null(fit_beta$r_2)){
+      R2 <- mean(fit_beta$r_2)
+      R2 <- round(R2, 4)
+    }
+    # For the calculation of effect sizes in mediation
+    tau_ySq = NULL
+    if (model_name == 'Normal' || model_name == 'T'){
+      if (!is.null(fit_beta$tau_ySq)){
+        tau_ySq <- mean(fit_beta$tau_ySq)
+      }
+    }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
+      tau_ySq = pi^2/3
+    }else if (model_name == 'ordMultinomial'){
+      tau_ySq = pi^2/6
+    }
     beta1_dim <- dim(fit_beta$beta1)
     beta2_dim <- dim(fit_beta$beta2)
     beta1_names <- c()
@@ -432,6 +470,8 @@ BANOVA.run <- function (l1_formula = 'NA',
                 model_code = fit$stanmodel@model_code, 
                 single_level = single_level,
                 stan_fit = stan.fit,
+                R2 = R2,
+                tau_ySq = tau_ySq,
                 model_name = paste('BANOVA', model_name, sep = "."))
   }else{
     sol <- list(anova.table = anova.table,
@@ -444,11 +484,14 @@ BANOVA.run <- function (l1_formula = 'NA',
               samples_l2_sigma_param = samples_l2_sigma_param,
               samples_cutp_param = samples_cutp_param,
               data = data, 
+              num_trials = num_trials,
               mf1 = mf1, 
               mf2 = mf2, 
               model_code = fit$stanmodel@model_code, 
               single_level = single_level,
               stan_fit = stan.fit,
+              R2 = R2,
+              tau_ySq = tau_ySq,
               model_name = paste('BANOVA', model_name, sep = "."))
   }
   sol$call <- match.call()

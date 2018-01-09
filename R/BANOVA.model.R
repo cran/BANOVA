@@ -18,7 +18,7 @@ BANOVA.model <- function (model_name,
         name <- paste("stan/", model_name, "_Normal.stan", sep = "")
     }
     file_src <- system.file(name, package = 'BANOVA', mustWork = TRUE)
-    #file_src <- paste("Windows/BANOVA_v9_1/BANOVA_R/inst/",name,sep = "")
+    #file_src <- paste("Windows/BANOVA_v1.1/BANOVA_R/inst/",name,sep = "")
     model_code = readChar(file_src, nchars=1000000)
 
   }else{

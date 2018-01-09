@@ -20,6 +20,8 @@ function (factors, assign = array(dim = 0), index_factor = NA, numeric_index = a
 #    attr(effect_matrix, 'levels') <- factors
 #  }
   # new version
+  tmp_contrasts <- getOption("contrasts")
+  options(contrasts = rep("contr.sum",2))
   # TODO combine effect matrix factor with effect matrix interaction
   if (length(assign) != 0){
     #level <- length(unique(factors))
@@ -33,5 +35,6 @@ function (factors, assign = array(dim = 0), index_factor = NA, numeric_index = a
   }else{
     effect_matrix = NA
   }
+  options(contrasts = tmp_contrasts)
   return(effect_matrix)
 }

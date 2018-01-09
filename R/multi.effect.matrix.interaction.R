@@ -43,7 +43,8 @@ if(0){
 }
   
 # new method including higher number (>= 2) of interactions
-  
+  tmp_contrasts <- getOption("contrasts")
+  options(contrasts = rep("contr.sum",2))
   if (length(interaction_factors) >= 2){
     num_inter = length(interaction_factors)
     levels_inter = list()
@@ -73,6 +74,7 @@ if(0){
   }else{
     result = NA
   }
+  options(contrasts = tmp_contrasts)
   return(result)
   
 }

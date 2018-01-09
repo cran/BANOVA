@@ -1,5 +1,6 @@
 multi.design.matrix <-
 function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id){
+  tmp_contrasts <- getOption("contrasts")
   #check formats
   if (l1_formula == 'NA') 
     stop("Formula in level 1 is missing! In the case of no level 1 factor, please use 'y~1'")
@@ -290,5 +291,6 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id){
     attr(Z,'numeric_index') <- numeric_index_in_Z
     attr(Z_full,'numeric_index') <- numeric_index_in_Z
   }
+  options(contrasts = tmp_contrasts)
   return(list(X_full = X_full, X_original_choice = X_original_choice, Z = Z, Z_full = Z_full))
 }

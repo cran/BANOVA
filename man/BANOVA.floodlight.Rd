@@ -6,7 +6,7 @@
 \code{BANOVA.floodlight} conducts floodlight analysis based on various BANOVA models.
 }
 \usage{
-BANOVA.floodlight(sol, var_numeric, var_factor)
+BANOVA.floodlight(sol, var_numeric, var_factor, flood_values = list())
 \method{print}{BANOVA.floodlight}(x, ...)
 }
 \arguments{
@@ -15,6 +15,8 @@ BANOVA.floodlight(sol, var_numeric, var_factor)
   \item{var_numeric}{the numeric variable}
 
   \item{var_factor}{the factor variable}
+  
+  \item{flood_values}{a list of values of the other numeric variables which interact with var_factor and var_numeric, the floodlight analysis will be based on these values, default 0}
   
   \item{x}{a BANOVA.floodlight object}
 
@@ -44,23 +46,23 @@ Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Co
 
 \examples{
 data(condstudy)
-\dontshow{
-out2 <- BANOVA.Normal(att~cond+pict, ~type, condstudy, condstudy$id, 
-burnin = 5, sample = 10, thin = 1)      
-# floodlight for pict 
-BANOVA.floodlight(out2, var_factor = 'type', var_numeric = 'pict') 
-}
 \donttest{
-out2 <- BANOVA.Normal(att~cond+pict, ~type, condstudy, condstudy$id, 
-burnin = 5000, sample = 1000, thin = 20)      
-# floodlight for pict 
-BANOVA.floodlight(out2, var_factor = 'type', var_numeric = 'pict') 
-# or use BANOVA.run
+# use BANOVA.run
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
 res <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
                   id = condstudy$id, iter = 500, thin = 1, chains = 2)
-BANOVA.floodlight(res, var_factor = 'type', var_numeric = 'pict') 
+BANOVA.floodlight(res, var_factor = 'type', var_numeric = 'pict')
+
+data(colorad)
+colorad$num <- rnorm(nrow(colorad))
+res1 <- BANOVA.run(y ~ typic*num, ~ color*blur, fit = stanmodel_bin,
+                   data = colorad, id = colorad$id, 
+                   num_trials = as.integer(16))
+# floodlight analysis at the +sd(standard deviation) level
+BANOVA.floodlight(res1, var_factor = 'typic', 
+                  var_numeric = 'blur', list(num = sd(colorad$num)))
+
 }
 }
 

@@ -128,6 +128,6 @@ BANOVA.BinNormal <-
                 coef.tables = coef.tables,
                 pvalue.table = pvalue.table, 
                 conv = conv,
-                dMatrice = dMatrice, samples_l2_param = samples_l2_param, data = data, 
+                dMatrice = dMatrice, samples_l2_param = samples_l2_param, data = data, num_trials = num_trials,
                 mf1 = mf1, mf2 = mf2, JAGSmodel = JAGS.model$sModel, single_level = F, model_name = "BANOVA.Binomial"))
   }

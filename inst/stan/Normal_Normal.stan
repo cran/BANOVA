@@ -16,19 +16,26 @@ parameters {
   vector<lower=0>[J] tau_beta1Sq;
 } 
 
-model {
+transformed parameters {
   vector[N] y_hat;
+  vector[N] y_pred;
   matrix[M, J] mu_beta1;
+  mu_beta1 = Z*beta2;
+  for (i in 1:N){
+    y_hat[i] = X[i,]*beta1[,id[i]];
+  }
+  for (i in 1:N){
+    y_pred[i] = X[i,]*mu_beta1[id[i],]';
+  }
+}
+
+model {
   real tau_y;
   vector[J] tau_beta1;
   tau_y = sqrt(tau_ySq);
   tau_beta1 = sqrt(tau_beta1Sq);
-  for (i in 1:N){
-    y_hat[i] = X[i,]*beta1[,id[i]];
-  }
   y ~ normal(y_hat, tau_y);
   tau_ySq ~ inv_gamma(1, 1);
-  mu_beta1 = Z*beta2;
   for (i in 1:J){
     beta1[i,] ~ normal(mu_beta1[,i], tau_beta1[i]);
   }
@@ -36,5 +43,10 @@ model {
   for (i in 1:J){
     beta2[,i] ~ normal(0, 100);
   }
+}
+
+generated quantities {
+  real r_2;
+  r_2 = variance(y_pred)/(variance(y_hat) + tau_ySq);
 }
 

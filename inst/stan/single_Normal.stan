@@ -8,14 +8,17 @@ data {
 parameters {
   vector[J] beta1;
   real<lower=0> tau_ySq;
-} 
+}
+
+transformed parameters {
+  vector[N] y_hat;
+  y_hat = X*beta1;
+}
 
 model {
-  vector[N] y_hat;
   real tau_y;
   vector[J] tau_beta1;
   tau_y = sqrt(tau_ySq);
-  y_hat = X*beta1;
   y ~ normal(y_hat, tau_y);
   tau_ySq ~ inv_gamma(1, 1);
   for (i in 1:J){
@@ -23,4 +26,10 @@ model {
   }
 }
 
+generated quantities {
+  real var_f;
+  real r_2;
+  var_f = variance(y_hat);
+  r_2 = var_f/(var_f + tau_ySq);
+}
 
