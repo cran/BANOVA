@@ -1,6 +1,6 @@
-b17ce08613b40268cf5cb39882ddb1cf *DESCRIPTION
+891321ff28376d58322e146be824b3cd *DESCRIPTION
 04a5f537d28edc3c2cd7c00a6f4a3c4d *NAMESPACE
-2e077014b2403b91e5f702a1a0abe3fd *NEWS
+8833e8c0c6be2904ee0880d45ac2aea3 *NEWS
 3ef54804733d91dabcef851bd8c301ec *R/BANOVA.Bern.R
 4423d4b107a515eeabb9022d77a5d597 *R/BANOVA.BernNormal.R
 1b8f916618ce472f21580754066c07b2 *R/BANOVA.Bin.R
@@ -99,6 +99,7 @@ f2309d380ac72490ce73eafd36215133 *R/table.ANOVA.R
 da23e97b7fa2e6f39fb335b1236f956c *R/table.pvalues.R
 5eeda99243219f48810db90db1de0bad *R/trace.plot.R
 880246e31c9cdb8adf11f59ac79e481a *R/traceplot.R
+fb9ebc60d705e03643d16a92646e4c82 *build/vignette.rds
 6608f3082bb0dc2ba6766424d5ea11ca *data/bernlogtime.rdata
 0d4d6d80155e1e353e378a1d5fbb837a *data/bpndata.rdata
 9cc77d779a6b33afb1e5ccf37673cebf *data/choicedata.rdata
@@ -108,6 +109,9 @@ da23e97b7fa2e6f39fb335b1236f956c *R/table.pvalues.R
 ee54a07eb2b140febeb35b84303fbfbd *data/goalstudy.rdata
 b886cd7e16a5db328181d3dc309e92f6 *data/ipadstudy.rdata
 0884a873c1f5d61ba54aa7fdbb99c913 *inst/CITATION
+9c1449eb9ed3ca4eb6e792d586173f5e *inst/doc/banova_examples.R
+99f2f1b48e154668dabca17d0bf66860 *inst/doc/banova_examples.Rmd
+2b9d991d0d4c6e4bc817f58c12acf692 *inst/doc/banova_examples.html
 901077dd53a957026bd19a7a21d507fb *inst/stan/Bernoulli_Normal.stan
 2714a0d6dbaba8b8bb6ab75256f37ad0 *inst/stan/Binomial_Normal.stan
 494229077d88ef624fb2c6c58db9a58e *inst/stan/Multinomial_Normal.stan
@@ -124,7 +128,7 @@ a9a59eb7dbdf1f22fa9c110fce0b4969 *inst/stan/single_Normal.stan
 8f27e74743a1a70b6e9aca9599aa8ce5 *inst/stan/single_Poisson.stan
 30121a68152fc14e62265a12989f45ab *inst/stan/single_T.stan
 e5c9407f12c3eb2a1da0c2f095e25101 *inst/stan/single_ordMultinomial.stan
-c34afe1d2d8d6850cfb153dc038fa699 *man/BANOVA-package.Rd
+e950b89084da522b642fd7de094e6d34 *man/BANOVA-package.Rd
 3a01bc9913eed94d8a058dc80980dd5c *man/BANOVA.Bernoulli.Rd
 6952650a3db1079428611d1a67e07b9c *man/BANOVA.Binomial.Rd
 1fd1e5e711f5b26390118dd64b8f36f0 *man/BANOVA.Multinomial.Rd
@@ -152,5 +156,6 @@ ff883fa1309ff70f9d9fc729eca8d469 *man/pairs.BANOVA.Rd
 5cad095aefc7b50b9d15f8cd862e169c *man/table.pvalues.Rd
 acbb3fa2467e5b8999cafccabbea7fa9 *man/trace.plot.Rd
 df7bfff0c3110f66f412aa06e0728121 *src/Makevars
-d41d8cd98f00b204e9800998ecf8427e *src/Makevars.win
+e3d3cb360fbfdb3c6974e14eb5f09870 *src/Makevars.win
 4ec223b2b53310ef1f4c874db270dbba *src/install.libs.R
+99f2f1b48e154668dabca17d0bf66860 *vignettes/banova_examples.Rmd
