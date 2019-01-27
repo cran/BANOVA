@@ -1,5 +1,5 @@
 effect.matrix.factor <-
-function (factors, assign = array(dim = 0), index_factor = NA, numeric_index = array(dim = 0)){
+function (factors, assign = array(dim = 0), index_factor = NA, numeric_index = array(dim = 0), contrast = NULL){
   # generate the effect matrix for each factor, numerical covariates excluded, TODO: may have various levels for numeric variables
   # Args:
   #     factors       : values of factors to generate factor matrix
@@ -27,6 +27,9 @@ function (factors, assign = array(dim = 0), index_factor = NA, numeric_index = a
     #level <- length(unique(factors))
     level <- as.factor(levels(factors))
     var_name <- attr(factors,'var_names')
+    ### 1.1.2
+    level <- assign_contrast_factor(level, var_name, contrast)
+    ###
     #eval(parse(text = paste(var_name,'<- factor(c(1:',level,'))', sep = '')))
     eval(parse(text = paste(var_name,'<- level', sep = '')))
     # with column names, and include an intercept

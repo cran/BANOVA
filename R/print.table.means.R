@@ -2,7 +2,13 @@ print.table.means <-
 function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_classes = character(0), Z_names, Z_assign = array(dim = 0), Z_classes = character(0), 
                                l1_values = list(), l1_interactions = list(), l1_interactions_index = array(dim = 0), 
                                l2_values = list(), l2_interactions = list(), l2_interactions_index = array(dim = 0), 
-                               numeric_index_in_X, numeric_index_in_Z, samples_cutp_param = NA, model = NA, l2_sd = NULL, n_trials = NULL){
+                               numeric_index_in_X, 
+          numeric_index_in_Z, 
+          samples_cutp_param = NA, 
+          model = NA, 
+          l2_sd = NULL, 
+          n_trials = NULL,
+          contrast = NULL){
   sol_tables <- list()
   
   if (length(X_assign) == 1 && length(Z_assign) == 1) coeff_table <- matrix(coeff_table, nrow = 1) # the case that there is only one intercept 
@@ -57,7 +63,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
         for (i in 1:length(l1_factors)){
           # l1_values also include y values
-          l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X)
+          l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
           #means <- l1_matrix[[i]] %*% est_matrix_mean %*% l2_v
           #quantile_025 <- l1_matrix[[i]] %*% est_matrix_025 %*% l2_v
           #quantile_975 <- l1_matrix[[i]] %*% est_matrix_975 %*% l2_v
@@ -91,7 +97,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l2_matrix <- list()
         l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
         for (i in 1:length(l2_factors)){
-          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
           #means <- l1_v %*% est_matrix_mean %*% t(l2_matrix[[i]])
           #quantile_025 <- l1_v %*% est_matrix_025 %*% t(l2_matrix[[i]])
           #quantile_975 <- l1_v %*% est_matrix_975 %*% t(l2_matrix[[i]])
@@ -166,7 +172,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
           #temp2[[j]] <- levels(temp1[[j]])
           l1_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = X_assign, 
                                                                 l1_interactions[[i]] - 1, index_inter_factor = l1_interactions_index[i], 
-                                                                numeric_index_in_X) #'-1' exclude the 'y'
+                                                                numeric_index_in_X, contrast = contrast) #'-1' exclude the 'y'
           est_samples <- matrix(0, nrow = nrow(l1_inter_matrix[[index]]), ncol = n_sample)
           for (n_s in 1:n_sample)
             est_samples[ ,n_s] <- l1_inter_matrix[[index]] %*% est_matrix[colnames(l1_inter_matrix[[index]]),,n_s] %*% t(l2_v) + p_indicator * sum(l2_var[n_s,])/2 #sum(l2_var[n_s,c('(Intercept)',colnames(l1_inter_matrix[[index]]))])/2
@@ -237,7 +243,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
           #temp2[[j]] <- levels(temp1[[j]])
           l2_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = Z_assign, 
                                                                 l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                numeric_index_in_Z) 
+                                                                numeric_index_in_Z, contrast = contrast) 
           #means <- l1_v %*% est_matrix_mean %*% t(l2_inter_matrix[[index]])
           #quantile_025 <- l1_v %*% est_matrix_025 %*% t(l2_inter_matrix[[index]])
           #quantile_975 <- l1_v %*% est_matrix_975 %*% t(l2_inter_matrix[[index]])
@@ -345,7 +351,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
         for (i in 1:length(l1_factors)){
           # l1_values also include y values
-          l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X)
+          l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
           #means <- l1_matrix[[i]] %*% est_matrix_mean %*% l2_v
           #quantile_025 <- l1_matrix[[i]] %*% est_matrix_025 %*% l2_v
           #quantile_975 <- l1_matrix[[i]] %*% est_matrix_975 %*% l2_v
@@ -379,7 +385,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l2_matrix <- list()
         l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
         for (i in 1:length(l2_factors)){
-          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
         #means <- l1_v %*% est_matrix_mean %*% t(l2_matrix[[i]])
         #quantile_025 <- l1_v %*% est_matrix_025 %*% t(l2_matrix[[i]])
         #quantile_975 <- l1_v %*% est_matrix_975 %*% t(l2_matrix[[i]])
@@ -454,7 +460,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             #temp2[[j]] <- levels(temp1[[j]])
           l1_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = X_assign, 
                                                                 l1_interactions[[i]] - 1, index_inter_factor = l1_interactions_index[i], 
-                                                                numeric_index_in_X) #'-1' exclude the 'y'
+                                                                numeric_index_in_X, contrast = contrast) #'-1' exclude the 'y'
           est_samples <- matrix(0, nrow = nrow(l1_inter_matrix[[index]]), ncol = n_sample)
           for (n_s in 1:n_sample)
             est_samples[ ,n_s] <- l1_inter_matrix[[index]] %*% est_matrix[colnames(l1_inter_matrix[[index]]),,n_s] %*% t(l2_v) + p_indicator * sum(l2_var[n_s,])/2 #sum(l2_var[n_s,c('(Intercept)',colnames(l1_inter_matrix[[index]]))])/2
@@ -525,7 +531,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             #temp2[[j]] <- levels(temp1[[j]])
           l2_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = Z_assign, 
                                                                 l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                numeric_index_in_Z) 
+                                                                numeric_index_in_Z, contrast = contrast) 
           #means <- l1_v %*% est_matrix_mean %*% t(l2_inter_matrix[[index]])
           #quantile_025 <- l1_v %*% est_matrix_025 %*% t(l2_inter_matrix[[index]])
           #quantile_975 <- l1_v %*% est_matrix_975 %*% t(l2_inter_matrix[[index]])
@@ -623,7 +629,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l1_matrix <- list()
         for (i in 1:length(l1_factors)){
           # y var is also included in l1_values
-          l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X)
+          l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
           # Compute median and quantile
           est_l1mean <- 0
           for (y in 1:(n.cut + 1)){
@@ -656,7 +662,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
         l2_matrix <- list()
         #l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
         for (i in 1:length(l2_factors)){
-          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
           est_l2mean <- 0
           for (y in 1:(n.cut + 1)){
             est_samples <- est(link_inv, est_matrix, n_sample, l1_v, l2_matrix[[i]], cut_samples[,y], cut_samples[,y+1])
@@ -729,7 +735,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             #temp2[[j]] <- levels(temp1[[j]])
           l1_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = X_assign, 
                                                                 l1_interactions[[i]] - 1, index_inter_factor = l1_interactions_index[i], 
-                                                                numeric_index_in_X) #'-1' exclude the 'y'
+                                                                numeric_index_in_X, contrast = contrast) #'-1' exclude the 'y'
           est_l1inmean <- 0
           for (y in 1:(n.cut + 1)){
             est_samples <- est(link_inv, est_matrix, n_sample, l1_inter_matrix[[index]], l2_v, cut_samples[,y], cut_samples[,y+1])
@@ -801,7 +807,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
             #temp2[[j]] <- levels(temp1[[j]])
           l2_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = Z_assign, 
                                                                 l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                numeric_index_in_Z) 
+                                                                numeric_index_in_Z, contrast = contrast) 
           est_l2inmean <- 0
           for (y in 1:(n.cut + 1)){
             est_samples <- est(link_inv, est_matrix, n_sample, l1_v, l2_inter_matrix[[index]], cut_samples[,y], cut_samples[,y+1])
@@ -890,7 +896,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
           #l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
           for (i in 1:length(l1_factors)){
             # y var is also included in l1_values
-            l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X)
+            l1_matrix[[i]] <- effect.matrix.factor(l1_values[[l1_factors[i]+1]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
             #means <- l1_matrix[[i]] %*% est_matrix_mean %*% l2_v
             #quantile_025 <- l1_matrix[[i]] %*% est_matrix_025 %*% l2_v
             #quantile_975 <- l1_matrix[[i]] %*% est_matrix_975 %*% l2_v
@@ -922,7 +928,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
           l2_matrix <- list()
           #l1_v <- matrix(c(1, rep(0, num_l1 - 1)), nrow = 1) # only look at the intercept in level 1
           for (i in 1:length(l2_factors)){
-            l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+            l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
             #means <- l1_v %*% est_matrix_mean %*% t(l2_matrix[[i]])
             #quantile_025 <- l1_v %*% est_matrix_025 %*% t(l2_matrix[[i]])
             #quantile_975 <- l1_v %*% est_matrix_975 %*% t(l2_matrix[[i]])
@@ -993,7 +999,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
               #temp2[[j]] <- levels(temp1[[j]])
             l1_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = X_assign, 
                                                                   l1_interactions[[i]] - 1, index_inter_factor = l1_interactions_index[i], 
-                                                                  numeric_index_in_X) #'-1' exclude the 'y'
+                                                                  numeric_index_in_X, contrast = contrast) #'-1' exclude the 'y'
             #means <- l1_inter_matrix[[index]] %*% est_matrix_mean %*% l2_v
             #quantile_025 <- l1_inter_matrix[[index]] %*% est_matrix_025 %*% l2_v
             #quantile_975 <- l1_inter_matrix[[index]] %*% est_matrix_975 %*% l2_v
@@ -1063,7 +1069,7 @@ function (coeff_table, samples_l2_param, X_names, X_assign = array(dim = 0), X_c
               #temp2[[j]] <- levels(temp1[[j]])
             l2_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = Z_assign, 
                                                                   l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                  numeric_index_in_Z) 
+                                                                  numeric_index_in_Z, contrast = contrast) 
             #means <- l1_v %*% est_matrix_mean %*% t(l2_inter_matrix[[index]])
             #quantile_025 <- l1_v %*% est_matrix_025 %*% t(l2_inter_matrix[[index]])
             #quantile_975 <- l1_v %*% est_matrix_975 %*% t(l2_inter_matrix[[index]])

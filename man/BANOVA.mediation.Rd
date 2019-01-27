@@ -6,7 +6,7 @@
 \code{BANOVA.mediation} conducts mediation/moderated mediation analysis based on various BANOVA models.
 }
 \usage{
-BANOVA.mediation(sol_1, sol_2, xvar, mediator)
+BANOVA.mediation(sol_1, sol_2, xvar, mediator, individual = F)
 \method{print}{BANOVA.mediation}(x, ...)
 }
 \arguments{
@@ -17,6 +17,8 @@ BANOVA.mediation(sol_1, sol_2, xvar, mediator)
   \item{xvar}{the causal variable}
   
   \item{mediator}{the mediator variable}
+  
+  \item{individual}{whether to output individual level effects}
   
   \item{x}{a BANOVA.mediation object}
 
@@ -30,11 +32,14 @@ A mediation or moderated mediation analysis (Baron and Kenny 1986; Zao, Lynch an
 \value{
   \code{BANOVA.mediation} returns an object of class \code{"BANOVA.mediation"}. The returned object is a list containing:
   \item{dir_effects}{tables of the direct effect}
+  \item{individual_direct}{the table of the direct effect at the individual level if individual = T and the causal variable is a within-subject variable}
   \item{m1_effects}{tables of the effct of the mediator on the outcome}
   \item{m2_effects}{tables of the effct of the causal variable on the mediator}
   \item{indir_effects}{tables of the indirect effect}
+  \item{individual_indirect}{the table of the indirect effect at the individual level if individual = T and the mediator is a within-subject variable}
   \item{xvar}{the name of the causal variable}
   \item{mediator}{the name of the mediator}
+  \item{individual}{the value of the argument individual}
 
 }
 

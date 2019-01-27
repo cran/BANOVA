@@ -1,7 +1,7 @@
 multi.effect.matrix.interaction <-
 function (n_choice, interaction_factors = list(), assign = array(dim = 0), 
                                        main_eff_index = array(dim = 0), index_inter_factor = NA, 
-                                       numeric_index = array(dim = 0)){
+                                       numeric_index = array(dim = 0), contrast = NULL){
   result <- list()
 # old method, hard coded
 if(0){
@@ -55,6 +55,9 @@ if(0){
     }
     factors_inter = expand.grid(levels_inter)
     factors_inter_factor = as.data.frame(lapply(factors_inter, as.factor))
+    #### 1.1.2
+    factors_inter_factor <- assign_contrast(factors_inter_factor, contrast)
+    ####
     formula_inter = paste(names_inter, collapse = '*')
     eval(parse(text = paste('effect_matrix <- model.matrix(~',formula_inter,', data = factors_inter_factor)', sep='')))
     for (n_c in 1: n_choice){

@@ -79,11 +79,11 @@ cal.flood.effects <-
         num_l2_matrix <- effect.matrix.mediator(interaction_factors = l2_values,
                                                 matrix_formula=formula(attr(sol_1$mf2, 'terms')),
                                                 mediator=numeric_name, 
-                                                flood_values = flood_values)
+                                                flood_values = flood_values, contrast = sol_1$contrast)
         l2_matrix <- effect.matrix.mediator(interaction_factors = l2_values, 
                                             matrix_formula=formula(attr(sol_1$mf2, 'terms')), 
                                             xvar=numeric_name, intercept_include = TRUE, 
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
       }
       if (length(factor_interaction_list) > 0){
         l1_values <- attr(sol_1$dMatrice$X, 'varValues')
@@ -94,7 +94,7 @@ cal.flood.effects <-
           # y var is also included in l1_values, interaction_list has considered this
           factor_interaction_effect_matrix[[i]] <- effect.matrix.mediator(interaction_factors = l1_values[factor_interaction_list[[i]]], 
                                                                           mediator=factor_name, xvar=numeric_name, 
-                                                                          flood_values = flood_values)
+                                                                          flood_values = flood_values, contrast = sol_1$contrast)
           est_samples <- array(0, dim = c(nrow(factor_interaction_effect_matrix[[i]]), nrow(l2_matrix), n_sample))
           num_est_samples <- array(0, dim = c(nrow(factor_interaction_effect_matrix[[i]]), nrow(num_l2_matrix), n_sample))
           for (n_s in 1:n_sample){
@@ -115,7 +115,7 @@ cal.flood.effects <-
         # y var is also included in l1_values, interaction_list has considered this
         l1_matrix <- effect.matrix.mediator(l1_values[factor_assign], 
                                             mediator=factor_name, 
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
         est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(l2_matrix), n_sample))
         num_est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(num_l2_matrix), n_sample))
         for (n_s in 1:n_sample){
@@ -174,7 +174,7 @@ cal.flood.effects <-
       }else{
         l2_matrix <- effect.matrix.mediator(interaction_factors = l2_values, 
                                             matrix_formula=formula(attr(sol_1$mf2, 'terms')),
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
       }
       if (length(factor_interaction_list) > 0){
         #TODO: check if numeric varible in L1
@@ -200,13 +200,15 @@ cal.flood.effects <-
           factor_interaction_effect_matrix[[i]] <- effect.matrix.mediator(interaction_factors = l1_values[factor_interaction_list[[i]]], 
                                                                           mediator=factor_name, 
                                                                           xvar=numeric_name, 
-                                                                          flood_values = flood_values)
+                                                                          flood_values = flood_values,
+                                                                          contrast = sol_1$contrast)
           num_factor_interaction_effect_matrix[[i]] <- effect.matrix.mediator(interaction_factors = l1_values,
                                                                               matrix_formula=formula(attr(sol_1$mf1, 'terms')),
                                                                               mediator=factor_name, 
                                                                               xvar=numeric_name, 
                                                                               xvar_include = TRUE, 
-                                                                              flood_values = flood_values)
+                                                                              flood_values = flood_values,
+                                                                              contrast = sol_1$contrast)
           est_samples <- array(0, dim = c(nrow(factor_interaction_effect_matrix[[i]]), nrow(l2_matrix), n_sample))
           num_est_samples <- array(0, dim = c(nrow(num_factor_interaction_effect_matrix[[i]]), nrow(l2_matrix), n_sample))
           if ("" %in% dimnames(est_matrix)[[2]]){
@@ -235,7 +237,7 @@ cal.flood.effects <-
         # y var is also included in l1_values, interaction_list has considered this
         l1_matrix <- effect.matrix.mediator(l1_values[factor_assign], 
                                             mediator=factor_name, 
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
         # find the response variable
         # vars <- as.character(attr(attr(sol_1$mf1, 'terms'), 'variables'))[-1]
         # response_ind <- attr(attr(sol_1$mf1, 'terms'), 'response')
@@ -251,7 +253,8 @@ cal.flood.effects <-
                                                 mediator=factor_name, 
                                                 xvar = numeric_name, 
                                                 xvar_include = TRUE, 
-                                                flood_values = flood_values)
+                                                flood_values = flood_values, 
+                                                contrast = sol_1$contrast)
         est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(l2_matrix), n_sample))
         num_est_samples <- array(0, dim = c(nrow(num_l1_matrix), nrow(l2_matrix), n_sample))
         if ("" %in% dimnames(est_matrix)[[2]]){
@@ -325,12 +328,13 @@ cal.flood.effects <-
         num_l1_matrix <- effect.matrix.mediator(interaction_factors = l1_values, 
                                                 matrix_formula=formula(attr(sol_1$mf1, 'terms')), 
                                                 mediator=numeric_name, 
-                                                flood_values = flood_values)
+                                                flood_values = flood_values, contrast = sol_1$contrast)
         l1_matrix <- effect.matrix.mediator(interaction_factors = l1_values, 
                                             matrix_formula=formula(attr(sol_1$mf1, 'terms')), 
                                             xvar=numeric_name, 
                                             intercept_include = TRUE, 
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, 
+                                            contrast = sol_1$contrast)
       }
       l2_values <- attr(sol_1$dMatrice$Z, 'varValues')
       if (length(l2_values) == 0){
@@ -345,7 +349,8 @@ cal.flood.effects <-
         num_l2_matrix <- effect.matrix.mediator(interaction_factors = l2_values, 
                                                 matrix_formula=formula(attr(sol_1$mf2, 'terms')), 
                                                 mediator = factor_name, 
-                                                flood_values = flood_values)
+                                                flood_values = flood_values, 
+                                                contrast = sol_1$contrast)
       }
       num_est_samples <- array(0, dim = c(nrow(num_l1_matrix), nrow(num_l2_matrix), n_sample))
       for (n_s in 1:n_sample){
@@ -359,7 +364,8 @@ cal.flood.effects <-
           factor_interaction_effect_matrix[[i]] <- effect.matrix.mediator(interaction_factors = l2_values[factor_interaction_list[[i]]], 
                                                                           mediator=factor_name, 
                                                                           xvar=numeric_name, 
-                                                                          flood_values = flood_values)
+                                                                          flood_values = flood_values, 
+                                                                          contrast = sol_1$contrast)
           est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(factor_interaction_effect_matrix[[i]]), n_sample))
           for (n_s in 1:n_sample){
             est_samples[,,n_s] <- l1_matrix %*% est_matrix[colnames(l1_matrix), colnames(factor_interaction_effect_matrix[[i]]), n_s] %*% t(factor_interaction_effect_matrix[[i]])
@@ -376,7 +382,7 @@ cal.flood.effects <-
         # no interaction with the mediator in level 2, only select the mediator
         l2_matrix <- effect.matrix.mediator(l2_values[factor_assign], 
                                             mediator= factor_name, 
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
         est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(l2_matrix), n_sample))
         for (n_s in 1:n_sample){
           est_samples[,,n_s] <- l1_matrix %*% est_matrix[colnames(l1_matrix), colnames(l2_matrix), n_s] %*% t(l2_matrix)
@@ -450,7 +456,7 @@ cal.flood.effects <-
       }else{
         l1_matrix <- effect.matrix.mediator(interaction_factors = l1_values, 
                                             matrix_formula=formula(attr(sol_1$mf1, 'terms')),
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
       }
       l2_values <- attr(sol_1$dMatrice$Z, 'varValues')
       num_l2_matrix <- effect.matrix.mediator(l2_values, 
@@ -458,7 +464,8 @@ cal.flood.effects <-
                                               mediator=factor_name, 
                                               xvar = numeric_name, 
                                               xvar_include = TRUE, 
-                                              flood_values = flood_values)
+                                              flood_values = flood_values, 
+                                              contrast = sol_1$contrast)
       num_est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(num_l2_matrix), n_sample))
       for (n_s in 1:n_sample)
         num_est_samples[,,n_s] <- l1_matrix %*% est_matrix[colnames(l1_matrix), colnames(num_l2_matrix), n_s] %*% t(num_l2_matrix)
@@ -470,7 +477,8 @@ cal.flood.effects <-
           factor_interaction_effect_matrix[[i]] <- effect.matrix.mediator(interaction_factors = l2_values[factor_interaction_list[[i]]], 
                                                                           mediator=factor_name, 
                                                                           xvar=numeric_name, 
-                                                                          flood_values = flood_values)
+                                                                          flood_values = flood_values, 
+                                                                          contrast = sol_1$contrast)
           est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(factor_interaction_effect_matrix[[i]]), n_sample))
           for (n_s in 1:n_sample){
             est_samples[,,n_s] <- l1_matrix %*% est_matrix[colnames(l1_matrix), colnames(factor_interaction_effect_matrix[[i]]), n_s] %*% t(factor_interaction_effect_matrix[[i]])
@@ -487,7 +495,7 @@ cal.flood.effects <-
         # no interaction with the mediator in level 2, only select the mediator
         l2_matrix <- effect.matrix.mediator(l2_values[factor_assign], 
                                             mediator= factor_name, 
-                                            flood_values = flood_values)
+                                            flood_values = flood_values, contrast = sol_1$contrast)
         est_samples <- array(0, dim = c(nrow(l1_matrix), nrow(l2_matrix), n_sample))
         for (n_s in 1:n_sample){
           est_samples[,,n_s] <- l1_matrix %*% est_matrix[colnames(l1_matrix), colnames(l2_matrix), n_s] %*% t(l2_matrix)

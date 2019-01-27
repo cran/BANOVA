@@ -10,7 +10,7 @@
 \usage{
 BANOVA.run(l1_formula = "NA", l2_formula = "NA", fit = NULL, model_name = 'NA', 
 dataX = NULL, dataZ = NULL, data = NULL, y_value = NULL, id, iter = 2000, 
-num_trials = 1, ...)
+num_trials = 1, contrast = NULL, ...)
 \method{summary}{BANOVA}(object, ...)
 \method{predict}{BANOVA}(object, newdata = NULL, Xsamples = NULL, Zsamples = 
                         NULL, ...)
@@ -40,6 +40,8 @@ num_trials = 1, ...)
   
   \item{num_trials}{the number of trials of each
   observation(=1, if it is bernoulli), the type is forced to be 'integer', for the Binomial model only, default 0}
+  
+  \item{contrast}{a list of contrasts for planned comparisons, default: effect coding (NULL value)}
 
   \item{object}{an object of class \code{BANOVA} (returned by \code{BANOVA.run})}
   
@@ -70,6 +72,9 @@ num_trials = 1, ...)
   \item{single_level}{if this is a single level model}
   \item{stan_fit}{fitted samples}
   \item{model_name}{the name of the model}
+  \item{contrast}{contrasts for planned comparisons}
+  \item{new_id}{id values coded in 1,2,3,...}
+  \item{old_id}{original id values}
 }
 
 \examples{

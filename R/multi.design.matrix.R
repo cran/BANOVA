@@ -1,5 +1,5 @@
 multi.design.matrix <-
-function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id){
+function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id, contrast = NULL){
   tmp_contrasts <- getOption("contrasts")
   #check formats
   if (l1_formula == 'NA') 
@@ -67,6 +67,9 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id){
       # build full design matrix of X
       options(contrasts = rep("contr.sum",2)) # use effect coding for both unordered and ordered factors
       options(na.action='na.fail') # An error will occur if features data contains NA's.
+      #### 1.1.2
+      matrixtemp <- assign_contrast(matrixtemp, contrast)
+      ####
       mf1 <- model.frame(formula = l1_formula, data = matrixtemp)
       #y <- model.response(mf1)
       X <- model.matrix(attr(mf1,'terms'), data = mf1)
@@ -188,6 +191,9 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id){
       # build full design matrix of X and Z
       options(contrasts = rep("contr.sum",2)) # use effect coding for both unordered and ordered factors
       options(na.action='na.fail') # An error will occur if features data contains NA's.
+      #### 1.1.2
+      matrixtemp <- assign_contrast(matrixtemp, contrast)
+      ####
       mf1 <- model.frame(formula = l1_formula, data = matrixtemp)
       #y <- model.response(mf1)
       X <- model.matrix(attr(mf1,'terms'), data = mf1)
@@ -245,7 +251,9 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id){
     for (i in 2:n_choice)
       if(ncol(X_full[[i]]) != n_full_feature) stop('Data is not balanced! for each choice alternative, the categorical features should have the same number of levels.')
     
-    
+    #### 1.1.2
+    dataZ <- assign_contrast(dataZ, contrast)
+    ####
     mf2 <- model.frame(formula = l2_formula, data = dataZ)
     Z_full <- model.matrix(attr(mf2,'terms'), data = mf2)
     if (dim(Z_full)[2] == 0) stop('No variables in level 2 model! Please add an intercept at least.')

@@ -19,8 +19,13 @@ BANOVA.run <- function (l1_formula = 'NA',
                         id, 
                         iter = 2000,
                         num_trials = 1,
+                        contrast = NULL, # 1.1.2
                         ...
                         ){
+  # data sanity check
+  if (!is.null(data)){
+    if (!is.data.frame(data)) stop("data needs to be a data frame!")
+  }
   if (l1_formula == 'NA'){
     stop("Formula in level 1 is missing or not correct!")
   }else{
@@ -67,9 +72,11 @@ BANOVA.run <- function (l1_formula = 'NA',
   }
   if (is.character(id) && length(id) == 1){
     if (id %in% colnames(data))
-      id = data[, id]
+      old_id = data[, id]
     else
       stop(id, ' is not found in the data!')
+  }else{
+    stop('id ambiguous!')
   }
   if (l2_formula == 'NA'){
     # single level models
@@ -96,11 +103,11 @@ BANOVA.run <- function (l1_formula = 'NA',
           }
         }
       n <- length(dataX)
-      uni_id <- unique(id)
+      uni_id <- unique(old_id)
       num_id <- length(uni_id)
-      new_id <- rep(0, length(id)) # store the new id from 1,2,3,...
-      for (i in 1:length(id))
-        new_id[i] <- which(uni_id == id[i])
+      new_id <- rep(0, length(old_id)) # store the new id from 1,2,3,...
+      for (i in 1:length(old_id))
+        new_id[i] <- which(uni_id == old_id[i])
       id <- new_id
       dMatrice <- multi.design.matrix(l1_formula, l2_formula, dataX = dataX, id = id)
       # create 3-dimensional matrix of X for stan data
@@ -160,13 +167,13 @@ BANOVA.run <- function (l1_formula = 'NA',
         }
       }
       n <- nrow(data)
-      uni_id <- unique(id)
+      uni_id <- unique(old_id)
       num_id <- length(uni_id)
-      new_id <- rep(0, length(id)) # store the new id from 1,2,3,...
-      for (i in 1:length(id))
-        new_id[i] <- which(uni_id == id[i])
+      new_id <- rep(0, length(old_id)) # store the new id from 1,2,3,...
+      for (i in 1:length(old_id))
+        new_id[i] <- which(uni_id == old_id[i])
       id <- new_id
-      dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id)
+      dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id, contrast = contrast)
       if (model_name == "Binomial"){
         trials <- num_trials
         if (length(trials) == 1) trials <- rep(num_trials, n) 
@@ -284,11 +291,11 @@ BANOVA.run <- function (l1_formula = 'NA',
           }
         }
       n <- nrow(dataZ)
-      uni_id <- unique(id)
+      uni_id <- unique(old_id)
       num_id <- length(uni_id)
-      new_id <- rep(0, length(id)) # store the new id from 1,2,3,...
-      for (i in 1:length(id))
-        new_id[i] <- which(uni_id == id[i])
+      new_id <- rep(0, length(old_id)) # store the new id from 1,2,3,...
+      for (i in 1:length(old_id))
+        new_id[i] <- which(uni_id == old_id[i])
       id <- new_id
       dMatrice <- multi.design.matrix(l1_formula, l2_formula, dataX = dataX, dataZ = dataZ, id = id)
       
@@ -320,13 +327,13 @@ BANOVA.run <- function (l1_formula = 'NA',
         }
       }
       n <- nrow(data)
-      uni_id <- unique(id)
+      uni_id <- unique(old_id)
       num_id <- length(uni_id)
-      new_id <- rep(0, length(id)) # store the new id from 1,2,3,...
-      for (i in 1:length(id))
-        new_id[i] <- which(uni_id == id[i])
+      new_id <- rep(0, length(old_id)) # store the new id from 1,2,3,...
+      for (i in 1:length(old_id))
+        new_id[i] <- which(uni_id == old_id[i])
       id <- new_id
-      dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id)
+      dMatrice <- design.matrix(l1_formula, l2_formula, data = data, id = id, contrast = contrast)
       if (model_name == "Binomial"){
         trials <- num_trials
         if (length(trials) == 1) trials <- rep(num_trials, n) 
@@ -390,8 +397,10 @@ BANOVA.run <- function (l1_formula = 'NA',
       }
     }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
       tau_ySq = pi^2/3
-    }else if (model_name == 'ordMultinomial'){
+    }else if (model_name == 'ordMultinomial' || model_name == 'Multinomial'){
       tau_ySq = pi^2/6
+    }else{
+      tau_ysq = 0
     }
     beta1_dim <- dim(fit_beta$beta1)
     beta2_dim <- dim(fit_beta$beta2)
@@ -434,14 +443,14 @@ BANOVA.run <- function (l1_formula = 'NA',
     }
     cat('Constructing ANOVA/ANCOVA tables...\n')
     if (model_name == 'Multinomial'){
-      anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X_full[[1]], dMatrice$Z, samples_l2_param) # for ancova models
+      anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X_full[[1]], dMatrice$Z, samples_l2_param, l1_error = tau_ySq) # for ancova models
       coef.tables <- table.coefficients(samples_l2_param, beta2_names, colnames(dMatrice$X_full[[1]]), colnames(dMatrice$Z), 
                                         attr(dMatrice$X_full[[1]], 'assign'), attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
       pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X_full[[1]], 'varNames'), 
                                    l2_names = attr(dMatrice$Z, 'varNames'))
       conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X_full[[1]]), colnames(dMatrice$Z))
     }else{
-      anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param) # for ancova models
+      anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param, l1_error = tau_ySq) # for ancova models
       coef.tables <- table.coefficients(samples_l2_param, beta2_names, colnames(dMatrice$X), colnames(dMatrice$Z), 
                                         attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
       pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 
@@ -472,7 +481,10 @@ BANOVA.run <- function (l1_formula = 'NA',
                 stan_fit = stan.fit,
                 R2 = R2,
                 tau_ySq = tau_ySq,
-                model_name = paste('BANOVA', model_name, sep = "."))
+                model_name = paste('BANOVA', model_name, sep = "."),
+                contrast = contrast,
+                new_id = new_id,
+                old_id = old_id)
   }else{
     sol <- list(anova.table = anova.table,
               coef.tables = coef.tables,
@@ -492,7 +504,10 @@ BANOVA.run <- function (l1_formula = 'NA',
               stan_fit = stan.fit,
               R2 = R2,
               tau_ySq = tau_ySq,
-              model_name = paste('BANOVA', model_name, sep = "."))
+              model_name = paste('BANOVA', model_name, sep = "."),
+              contrast = contrast,
+              new_id = new_id,
+              old_id = old_id)
   }
   sol$call <- match.call()
   #if(single_level){

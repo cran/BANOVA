@@ -105,12 +105,12 @@ function (sol,
       for (n_s in 1:n_sample){
         floodlight_samples[[name_fac]][n_s] = - est_matrix[name_fac, 1, n_s]/est_matrix[factor_name_map_inter_name[[name_fac]], 1, n_s]
       }
-    sol <- array(0, dim = c(length(X_names_factor), 3), dimnames = list(X_names_factor, c('mean', '2.5%', '97.5%')))
+    res <- array(0, dim = c(length(X_names_factor), 3), dimnames = list(X_names_factor, c('mean', '2.5%', '97.5%')))
     for (name_fac in X_names_factor){
-      sol[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
-      sol[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
+      res[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
+      res[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
     }
-    rownames(sol) <-  paste(numeric_name, rownames(sol), sep = ":")
+    rownames(res) <-  paste(numeric_name, rownames(res), sep = ":")
     
   }
   
@@ -136,12 +136,12 @@ function (sol,
       }
     }
     flood_eff <- cal.flood.effects(sol, est_matrix, n_sample, factor_name, numeric_name, flood_values = flood_values)
-    sol <- array(0, dim = c(length(X_names_factor), 3), dimnames = list(X_names_factor, c('mean', '2.5%', '97.5%')))
+    res <- array(0, dim = c(length(X_names_factor), 3), dimnames = list(X_names_factor, c('mean', '2.5%', '97.5%')))
     for (name_fac in X_names_factor){
-      sol[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
-      sol[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
+      res[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
+      res[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
     }
-    rownames(sol) <-  paste(numeric_name, rownames(sol), sep = ":")
+    rownames(res) <-  paste(numeric_name, rownames(res), sep = ":")
   }
   
   if (level1_num && level2_fac){
@@ -166,12 +166,12 @@ function (sol,
     
     flood_eff <- cal.flood.effects(sol, est_matrix, n_sample, factor_name, numeric_name, flood_values = flood_values)
     
-    sol <- array(0, dim = c(length(Z_names_factor), 3), dimnames = list(Z_names_factor, c('mean', '2.5%', '97.5%')))
+    res <- array(0, dim = c(length(Z_names_factor), 3), dimnames = list(Z_names_factor, c('mean', '2.5%', '97.5%')))
     for (name_fac in Z_names_factor){
-      sol[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
-      sol[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
+      res[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
+      res[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
     }
-    rownames(sol) <-  paste(numeric_name, rownames(sol), sep = ":")
+    rownames(res) <-  paste(numeric_name, rownames(res), sep = ":")
   }
   
   if (level2_num && level2_fac){
@@ -224,12 +224,12 @@ function (sol,
       for (n_s in 1:n_sample){
         floodlight_samples[[name_fac]][n_s] = - est_matrix[1, name_fac, n_s]/est_matrix[1, factor_name_map_inter_name[[name_fac]], n_s]
       }
-    sol <- array(0, dim = c(length(Z_names_factor), 3), dimnames = list(Z_names_factor, c('mean', '2.5%', '97.5%')))
+    res <- array(0, dim = c(length(Z_names_factor), 3), dimnames = list(Z_names_factor, c('mean', '2.5%', '97.5%')))
     for (name_fac in Z_names_factor){
-      sol[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
-      sol[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
+      res[name_fac, 1] <- mean(floodlight_samples[[name_fac]])
+      res[name_fac, 2:3] <- quantile(floodlight_samples[[name_fac]], c(0.025, 0.975))
     }
-    rownames(sol) <-  paste(numeric_name, rownames(sol), sep = ":")
+    rownames(res) <-  paste(numeric_name, rownames(res), sep = ":")
   }
   return(list(sol = flood_eff, num_range = num_range))
 }

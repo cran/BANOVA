@@ -1,7 +1,13 @@
 # find design matrix of coefficients of a mediator (including interactions which contains the mediator, using summation)
 # the mediator must be included in each interaction
-effect.matrix.mediator <- 
-function (interaction_factors=list(), mediator=NA, matrix_formula=NULL, xvar=NA, xvar_include = FALSE, intercept_include = FALSE, flood_values = list()){
+effect.matrix.mediator <- function (interaction_factors=list(), 
+                                    mediator=NA, 
+                                    matrix_formula=NULL, 
+                                    xvar=NA, 
+                                    xvar_include = FALSE, 
+                                    intercept_include = FALSE, 
+                                    flood_values = list(),
+                                    contrast = NULL){
   # generate the effect matrix for each interaction, numerical covariates excluded, TODO: may have various levels for numeric variables
   # Args:
   #     interaction_factors       : a list of values of factors in the interaction to generate the effect matrix
@@ -54,6 +60,9 @@ function (interaction_factors=list(), mediator=NA, matrix_formula=NULL, xvar=NA,
         as.numeric(as.character(x))
     }
     factors_inter_factor = as.data.frame(lapply(factors_inter, temp_fun))
+    #### 1.1.2
+    factors_inter_factor <- assign_contrast(factors_inter_factor, contrast)
+    ####
     formula_inter = paste(names_inter, collapse = '*')
     if (is.null(matrix_formula))
       eval(parse(text = paste('model_frame <- model.frame(~',formula_inter,', data = factors_inter_factor)', sep='')))

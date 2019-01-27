@@ -1,7 +1,10 @@
 effect.matrix.interaction <-
-function (interaction_factors = list(), assign = array(dim = 0), 
-                                       main_eff_index = array(dim = 0), index_inter_factor = NA, 
-                                       numeric_index = array(dim = 0)){
+function (interaction_factors = list(), 
+          assign = array(dim = 0), 
+          main_eff_index = array(dim = 0), 
+          index_inter_factor = NA, 
+          numeric_index = array(dim = 0),
+          contrast = NULL){
 # generate the effect matrix for each interaction, numerical covariates excluded, TODO: may have various levels for numeric variables
 # Args:
 #     interaction_factors       : a list of values of factors in the interaction to generate the effect matrix
@@ -60,6 +63,9 @@ if(0){
     }
     factors_inter = expand.grid(levels_inter)
     factors_inter_factor = as.data.frame(lapply(factors_inter, as.factor))
+    #### 1.1.2
+    factors_inter_factor <- assign_contrast(factors_inter_factor, contrast)
+    ####
     formula_inter = paste(names_inter, collapse = '*')
     eval(parse(text = paste('effect_matrix <- model.matrix(~',formula_inter,', data = factors_inter_factor)', sep='')))
     attr(effect_matrix, 'levels') = as.matrix(factors_inter)

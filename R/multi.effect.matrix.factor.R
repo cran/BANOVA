@@ -1,5 +1,5 @@
 multi.effect.matrix.factor <-
-function (n_choice, factors, assign = array(dim = 0), index_factor = NA, numeric_index = array(dim = 0)){
+function (n_choice, factors, assign = array(dim = 0), index_factor = NA, numeric_index = array(dim = 0), contrast = NULL){
 
 # old version
 #  result <- list()
@@ -25,6 +25,9 @@ function (n_choice, factors, assign = array(dim = 0), index_factor = NA, numeric
     if (length(assign) != 0){
       level <- as.factor(levels(factors))
       var_name <- attr(factors,'var_names')
+      ### 1.1.2
+      level <- assign_contrast_factor(level, var_name, contrast)
+      ###
       eval(parse(text = paste(var_name,'<- level', sep = '')))
       # with column names, and include an intercept
       eval(parse(text = paste('effect_matrix <- model.matrix(~',var_name,', data = ', var_name,')', sep='')))

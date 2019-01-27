@@ -29,16 +29,26 @@ Wedel, M and R. Pieters (2015).
 \examples{ 
 \donttest{
 data(colorad)
-# mean center blur
-colorad$blur <- colorad$blur - mean(colorad$blur)
-res <- BANOVA.Binomial(y ~ typic, ~ color + blur + color*blur, colorad, colorad$id, 
-as.integer(16), burnin = 1000, sample = 1000, thin = 1)
-res
-summary(res)
-table.predictions(res)
-# use the the first row of data to predict, 
-# only in-model variables(except numeric variables) will be used
-predict(res, c(1, 0, 8, 2, 1, 0.03400759))
+# Build the model
+model_bin <- BANOVA.model('Binomial')
+stanmodel_bin <- BANOVA.build(model_bin)
+out0 = BANOVA.run(y ~ typic, ~ color*blurfac, fit = stanmodel_bin,
+                   data = colorad, id = 'id', num_trials = as.integer(16), 
+                   iter = 10000, thin = 10, chains = 1)
+summary(out0)
+# planned comparison
+out0_contra = BANOVA.run(y ~ typic, ~ color*blurfac, fit = stanmodel_bin,
+                          data = colorad, id = 'id', num_trials = as.integer(16), 
+                          iter = 10000, thin = 10, chains = 1, 
+                          contrast = list(typic = c(-1,1), 
+                          blurfac = c(1,1,0,-1,-1)))
+summary(out0_contra)
+# floodlight analysis
+set.seed(200)
+out0_f = BANOVA.run(y ~ typic, ~ color*blur, fit = stanmodel_bin,
+                     data = colorad, id = 'id', num_trials = as.integer(16), 
+                     iter = 10000, thin = 10, chains = 1)
+BANOVA.floodlight(out0_f, var_factor = 'typic', var_numeric = 'blur')
 }
 
 }

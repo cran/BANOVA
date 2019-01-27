@@ -2,7 +2,7 @@ multi.print.table.means <-
 function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim = 0), X_classes = character(0), Z_names, Z_assign = array(dim = 0), Z_classes = character(0), 
                                l1_values = list(), l1_interactions = list(), l1_interactions_index = array(dim = 0), 
                                l2_values = list(), l2_interactions = list(), l2_interactions_index = array(dim = 0), 
-                               numeric_index_in_X, numeric_index_in_Z, single_level = F){
+                               numeric_index_in_X, numeric_index_in_Z, single_level = F, contrast = NULL){
   
   sol_tables <- list()
   if (length(X_assign) == 1 && length(Z_assign) == 1) coeff_table <- matrix(coeff_table, nrow = 1) # the case that there is only one intercept 
@@ -52,7 +52,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
         l1_matrix <- list()
         #l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
         for (i in 1:length(l1_factors)){
-          l1_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l1_values[[l1_factors[i]]], X_assign, l1_factors[i], numeric_index_in_X)
+          l1_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l1_values[[l1_factors[i]]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
           # Compute median and quantile
           # print(dim(est_matrix))
           # print(est_matrix[,,1])
@@ -91,7 +91,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
         sol_tables[['Means for factors at level 2: \n']] <- list()
         l2_matrix <- list()
         for (i in 1:length(l2_factors)){
-          l2_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+          l2_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
           est_samples <- est.multi(est_matrix, n_sample, l1_v, l2_matrix[[i]])
           cat('\nFactor:',attr(Z_classes, 'names')[l2_factors[i]],'\n')
           for (n_c in 1: n_choice){
@@ -172,7 +172,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
           #temp2[[j]] <- levels(temp1[[j]])
           l1_inter_matrix[[index]] <- multi.effect.matrix.interaction(n_choice, interaction_factors = temp1, assign = X_assign, 
                                                                       l1_interactions[[i]], index_inter_factor = l1_interactions_index[i], 
-                                                                      numeric_index_in_X) 
+                                                                      numeric_index_in_X, contrast = contrast) 
           est_samples <- est.multi(est_matrix, n_sample, l1_inter_matrix[[index]], l2_v)
           cat('\nFactor:',attr(X_classes, 'names')[l1_interactions[[i]] - 1],'\n')
           for (n_c in 1: n_choice){
@@ -252,7 +252,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
           #temp2[[j]] <- levels(temp1[[j]])
           l2_inter_matrix[[index]] <- multi.effect.matrix.interaction(n_choice, interaction_factors = temp1, assign = Z_assign, 
                                                                 l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                numeric_index_in_Z) 
+                                                                numeric_index_in_Z, contrast = contrast) 
           est_samples <- est.multi(est_matrix, n_sample, l1_v, l2_inter_matrix[[index]])
           cat('\nFactor:',attr(Z_classes, 'names')[l2_interactions[[i]]],'\n')
           for (n_c in 1: n_choice){
@@ -351,7 +351,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
         l1_matrix <- list()
         #l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
         for (i in 1:length(l1_factors)){
-          l1_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l1_values[[l1_factors[i]]], X_assign, l1_factors[i], numeric_index_in_X)
+          l1_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l1_values[[l1_factors[i]]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
           # Compute median and quantile
           est_samples <- est.multi(est_matrix, n_sample, l1_matrix[[i]], l2_v)
           est_l1mean <- 0
@@ -384,7 +384,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
         cat('Table of means of for factors at level 2: \n')
         l2_matrix <- list()
         for (i in 1:length(l2_factors)){
-          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
           est_samples <- est.multi(est_matrix, n_sample, l1_v, l2_matrix[[i]])
           est_l2mean <- 0
           cat('\nFactor:',attr(Z_classes, 'names')[l2_factors[i]],'\n')
@@ -459,7 +459,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
             #temp2[[j]] <- levels(temp1[[j]])
           l1_inter_matrix[[index]] <- multi.effect.matrix.interaction(n_choice, interaction_factors = temp1, assign = X_assign, 
                                                                       l1_interactions[[i]], index_inter_factor = l1_interactions_index[i], 
-                                                                      numeric_index_in_X)
+                                                                      numeric_index_in_X, contrast = contrast)
           est_l1inmean <- 0
           est_samples <- est.multi(est_matrix, n_sample, l1_inter_matrix[[index]], l2_v)
           cat('\nFactor:',attr(X_classes, 'names')[l1_interactions[[i]] - 1],'\n')
@@ -534,7 +534,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
             #temp2[[j]] <- levels(temp1[[j]])
           l2_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = Z_assign, 
                                                                 l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                numeric_index_in_Z)
+                                                                numeric_index_in_Z, contrast = contrast)
           est_l2inmean <- 0
           est_samples <- est.multi(est_matrix, n_sample, l1_v, l2_inter_matrix[[index]])
           cat('\nFactor:',attr(Z_classes, 'names')[l2_interactions[[i]]],'\n')
@@ -629,7 +629,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
         l1_matrix <- list()
         #l2_v <- matrix(c(1, rep(0, num_l2 - 1)), nrow = 1) # only look at the intercept in level 2
         for (i in 1:length(l1_factors)){
-          l1_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l1_values[[l1_factors[i]]], X_assign, l1_factors[i], numeric_index_in_X)
+          l1_matrix[[i]] <- multi.effect.matrix.factor(n_choice, l1_values[[l1_factors[i]]], X_assign, l1_factors[i], numeric_index_in_X, contrast = contrast)
           # Compute median and quantile
           est_samples <- est.multi(est_matrix, n_sample, l1_matrix[[i]], l2_v)
           cat('\nFactor:',attr(X_classes, 'names')[l1_factors[i]],'\n')
@@ -664,7 +664,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
         sol_tables[['Means for factors at level 2: \n']] <- list()
         l2_matrix <- list()
         for (i in 1:length(l2_factors)){
-          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z)
+          l2_matrix[[i]] <- effect.matrix.factor(l2_values[[l2_factors[i]]], Z_assign, l2_factors[i], numeric_index_in_Z, contrast = contrast)
           est_samples <- est.multi(est_matrix, n_sample, l1_v, l2_matrix[[i]])
           cat('\nFactor:',attr(Z_classes, 'names')[l2_factors[i]],'\n')
           for (n_c in 1: n_choice){
@@ -745,7 +745,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
             #temp2[[j]] <- levels(temp1[[j]])
           l1_inter_matrix[[index]] <- multi.effect.matrix.interaction(n_choice, interaction_factors = temp1, assign = X_assign, 
                                                                 l1_interactions[[i]], index_inter_factor = l1_interactions_index[i], 
-                                                                numeric_index_in_X) 
+                                                                numeric_index_in_X, contrast = contrast) 
           est_samples <- est.multi(est_matrix, n_sample, l1_inter_matrix[[index]], l2_v)
           cat('\nFactor:',attr(X_classes, 'names')[l1_interactions[[i]] - 1],'\n')
           for (n_c in 1: n_choice){
@@ -825,7 +825,7 @@ function (coeff_table, n_choice, samples_l2_param, X_names, X_assign = array(dim
             #temp2[[j]] <- levels(temp1[[j]])
           l2_inter_matrix[[index]] <- effect.matrix.interaction(interaction_factors = temp1, assign = Z_assign, 
                                                                 l2_interactions[[i]], index_inter_factor = l2_interactions_index[i], 
-                                                                numeric_index_in_Z) 
+                                                                numeric_index_in_Z, contrast = contrast) 
           est_samples <- est.multi(est_matrix, n_sample, l1_v, l2_inter_matrix[[index]])
           cat('\nFactor:',attr(Z_classes, 'names')[l2_interactions[[i]]],'\n')
           for (n_c in 1: n_choice){

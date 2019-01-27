@@ -1,10 +1,12 @@
 design.matrix <-
-function(l1_formula = 'NA', l2_formula = 'NA', data, id){
+function(l1_formula = 'NA', l2_formula = 'NA', data, id, contrast = NULL){
   tmp_contrasts <- getOption("contrasts")
   # error checking
   if (l1_formula == 'NA') 
     stop("Formula in level 1 is missing! In the case of no level 1 factor, please use 'y~1'")
-  
+  #### 1.1.2
+  data <- assign_contrast(data, contrast)
+  ####
   if (l2_formula == 'NA'){
     # stop("Formula in level 2 is missing! In the case of no level 1 factor, please use '~1'")
     # one level model 
@@ -73,7 +75,6 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id){
       warning("level 1 numeric variables have been mean centered.\n", call. = F, immediate. = T)
     }
     attr(X,'numeric_index') <- numeric_index_in_X
-    
     mf2 <- model.frame(formula = l2_formula, data = data)
     Z_full <- model.matrix(attr(mf2,'terms'), data = mf2)
     if (sum(is.na(Z_full)) > 0) stop('Missing/NA values in level 2 features!')

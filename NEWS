@@ -1,3 +1,10 @@
+BANOVA v1.1.2 (Release date: 2019-01-21)
+==============
+* Fixed the problem with large effect sizes by including the level-1 error term
+* Enable the calculation of the posterior distribution of planned comparisons
+* Output the distribution of indirect effects in mediation across respondents
+* Fixed the bug related to id input and output 
+
 BANOVA v1.1.1 (Release date: 2018-01-21)
 ==============
 * Added vignettes
