@@ -64,9 +64,9 @@ data(condstudy)
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
 out2 <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
-                  id = condstudy$id, iter = 500, thin = 1, chains = 2)
+                  id = 'id', iter = 500, thin = 1, chains = 2)
 out3 <- BANOVA.run(pict~cond, ~type, fit = stanmodel, data = condstudy, 
-                  id = condstudy$id, iter = 500, thin = 1, chains = 2)
+                  id = 'id', iter = 500, thin = 1, chains = 2)
 # (moderated) mediation
 sol <- BANOVA.mediation(out2, out3, xvar='cond', mediator='pict')
 print(sol)

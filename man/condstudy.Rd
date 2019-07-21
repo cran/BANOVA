@@ -33,7 +33,7 @@ data(condstudy)
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
 out2 <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
-                  id = condstudy$id, iter = 500, thin = 1, chains = 2)    
+                  id = 'id', iter = 500, thin = 1, chains = 2)    
 conv.diag(out2)
 summary(out2) 
 table.predictions(out2)  
@@ -41,7 +41,7 @@ BANOVA.floodlight(out2, var_factor = 'type', var_numeric = 'pict')
 cat(out2$model_code)
 
 out3 <- BANOVA.run(pict~cond, ~type, fit = stanmodel, data = condstudy, 
-                  id = condstudy$id, iter = 500, thin = 1, chains = 2)
+                  id = 'id', iter = 500, thin = 1, chains = 2)
 conv.diag(out3)
 summary(out3)
 BANOVA.mediation(out2, out3, xvar='cond', mediator='pict')

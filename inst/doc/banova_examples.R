@@ -14,17 +14,17 @@ head(colorad)
 #  model <- BANOVA.model(model_name = 'Binomial')
 #  banova_fit <- BANOVA.build(model)
 #  res <- BANOVA.run(y~typic, ~color*blur, data = colorad, fit = banova_fit,
-#                    id = colorad$id, num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
+#                    id = 'id', num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
 
 ## ---- message=FALSE, eval=FALSE------------------------------------------
 #  res_alt <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
-#                       id = colorad$id, num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
+#                       id = 'id', num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
 
 ## ---- message=FALSE, eval=FALSE------------------------------------------
 #  summary(res)
 #  #> Call:
 #  #> BANOVA.run(l1_formula = y ~ typic, l2_formula = ~color * blur,
-#  #>     fit = banova_fit, data = colorad, id = colorad$id, iter = 1000,
+#  #>     fit = banova_fit, data = colorad, id = 'id', iter = 1000,
 #  #>     num_trials = as.integer(16), thin = 1, chains = 2)
 #  #>
 #  #> Convergence diagnostics:
@@ -139,13 +139,13 @@ head(colorad)
 ## ---- message=FALSE, eval=FALSE------------------------------------------
 #  set.seed(900)
 #  res_fac <- BANOVA.run(y~typic, ~color*blurfac, data = colorad, fit = banova_fit,
-#                    id = colorad$id, num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
+#                    id = 'id', num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
 
 ## ---- message=FALSE, eval=FALSE------------------------------------------
 #  summary(res_fac)
 #  #> Call:
 #  #> BANOVA.run(l1_formula = y ~ typic, l2_formula = ~color * blurfac,
-#  #>     fit = banova_fit, data = colorad, id = colorad$id, iter = 2000,
+#  #>     fit = banova_fit, data = colorad, id = 'id', iter = 2000,
 #  #>     num_trials = as.integer(16), thin = 1, chains = 2)
 #  #>
 #  #> Convergence diagnostics:

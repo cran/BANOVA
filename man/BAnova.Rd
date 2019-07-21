@@ -50,7 +50,7 @@ BAnova(res1)
 \donttest{
 # or use BANOVA.run based on 'Stan'
 res2 <- BANOVA.run(bid~1, ~progress*prodvar,  model_name = 'Normal', 
-data = goalstudy, id = goalstudy$id, iter = 1000, chains = 2)
+data = goalstudy, id = 'id', iter = 1000, chains = 2)
 BAnova(res2)
 }
 

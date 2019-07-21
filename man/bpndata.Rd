@@ -43,7 +43,7 @@ data(bpndata)
 model <- BANOVA.model('Poisson')
 stanmodel <- BANOVA.build(model)
 res0 <- BANOVA.run(PIC_FIX ~ PIC_SIZE + PAGE_NUM + PAGE_POS, ~1, 
-fit = stanmodel, data = bpndata, id = bpndata$RESPONDENT_ID, 
+fit = stanmodel, data = bpndata, id = 'RESPONDENT_ID', 
 iter = 200, thin = 1, chains = 2)
 res0
 # or
@@ -55,7 +55,7 @@ res1
 model_bern <- BANOVA.model('Bernoulli')
 stanmodel_bern <- BANOVA.build(model_bern)
 res2 <- BANOVA.run(RECALL_ACCU ~ RECALL_TIME + PAGE_NUM + PAGE_POS, ~1, 
-fit = stanmodel_bern, data = bpndata, id = bpndata$RESPONDENT_ID, 
+fit = stanmodel_bern, data = bpndata, id = 'RESPONDENT_ID', 
 iter = 200, thin = 1, chains = 2)
 res2
 # or

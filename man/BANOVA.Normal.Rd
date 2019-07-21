@@ -85,7 +85,7 @@ summary(res)
 \donttest{
 # or use BANOVA.run based on 'Stan'
 res <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
-data = ipadstudy, model_name = 'Normal', id = ipadstudy$id, 
+data = ipadstudy, model_name = 'Normal', id = 'id', 
 iter = 100, thin = 1, chains = 2)
 }
 }

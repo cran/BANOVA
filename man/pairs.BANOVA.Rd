@@ -23,7 +23,7 @@ For a detailed description see \code{\link[rstan:pairs.stanfit]{pairs.stanfit}}
 \donttest{
 data(ipadstudy)
 res_1 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
-model_name = 'Normal', data = ipadstudy, id = ipadstudy$id, iter = 1000, 
+model_name = 'Normal', data = ipadstudy, id = 'id', iter = 1000, 
 thin = 1, chains = 2)
 pairs(res_1, pars = c("beta2[1,1]","beta2[2,1]"))
 }

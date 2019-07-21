@@ -35,7 +35,7 @@ data(colorad2)
 model_bin <- BANOVA.model('Binomial')
 stanmodel_bin <- BANOVA.build(model_bin)
 res0 <- BANOVA.run(Y1 ~ 1, ~ C + B + C*B, fit = stanmodel_bin, 
-data = colorad2, id = colorad2$id, num_trials = as.integer(25), 
+data = colorad2, id = 'id', num_trials = as.integer(25), 
 iter = 1000, thin = 1, chains = 4)
 res0
 # or use BANOVA.Binomial

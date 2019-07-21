@@ -1,3 +1,9 @@
+BANOVA v1.1.3 (Release date: 2019-06-23)
+==============
+* Fixed a bug in the table predictions for the ordered logit model
+* Update the manual with the new id assignment in the function BANOVA.run 
+* Remove the system requirement for JAGS installation, JAGS based functions are not recommended
+
 BANOVA v1.1.2 (Release date: 2019-01-21)
 ==============
 * Fixed the problem with large effect sizes by including the level-1 error term

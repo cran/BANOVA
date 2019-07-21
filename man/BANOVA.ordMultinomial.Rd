@@ -93,7 +93,7 @@ goalstudy$id, burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # or use BANOVA.run based on 'Stan'
 res <- BANOVA.run(perceivedsim~1, ~progress*prodvar, data = goalstudy, 
-model_name = 'ordMultinomial', id = goalstudy$id, iter = 100, thin = 1, chains = 2)
+model_name = 'ordMultinomial', id = 'id', iter = 100, thin = 1, chains = 2)
 }
 
 }

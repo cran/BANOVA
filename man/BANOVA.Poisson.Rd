@@ -87,7 +87,7 @@ summary(res2)
 
 # or use the BANOVA.run based on 'Stan'
 res3 <- BANOVA.run(bid~1, ~progress*prodvar, data = goalstudy, 
-model_name = 'Poisson', id = goalstudy$id, iter = 100, thin = 1, chains = 2)
+model_name = 'Poisson', id = 'id', iter = 100, thin = 1, chains = 2)
 
 }
 }

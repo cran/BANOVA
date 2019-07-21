@@ -90,7 +90,7 @@ function (f, est_matrix, n_sample, l1_matrix, l2_matrix, cutp0, cutp1){
         temp <- l1_matrix %*% est_matrix[colnames(l1_matrix), colnames(l2_matrix),n_s] %*% t(l2_matrix)
         est_samples_cutp0[,, n_s] <- temp - cutp0[n_s]
         est_samples_cutp1[,, n_s] <- temp - cutp1[n_s]
-        est_samples[,, n_s] <- f(est_samples_cutp0[colnames(l1_matrix), colnames(l2_matrix), n_s]) - f(est_samples_cutp1[,, n_s])
+        est_samples[,, n_s] <- f(est_samples_cutp0[,, n_s]) - f(est_samples_cutp1[,, n_s])
       }
     }
   }

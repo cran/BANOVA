@@ -51,13 +51,13 @@ data(condstudy)
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
 res <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
-                  id = condstudy$id, iter = 500, thin = 1, chains = 2)
+                  id = 'id', iter = 500, thin = 1, chains = 2)
 BANOVA.floodlight(res, var_factor = 'type', var_numeric = 'pict')
 
 data(colorad)
 colorad$num <- rnorm(nrow(colorad))
 res1 <- BANOVA.run(y ~ typic*num, ~ color*blur, fit = stanmodel_bin,
-                   data = colorad, id = colorad$id, 
+                   data = colorad, id = 'id', 
                    num_trials = as.integer(16))
 # floodlight analysis at the +sd(standard deviation) level
 BANOVA.floodlight(res1, var_factor = 'typic', 

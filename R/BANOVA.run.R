@@ -127,6 +127,7 @@ BANOVA.run <- function (l1_formula = 'NA',
         model_name <- fit$model_name
         single_level <- fit$single_level
       }
+      #library(rstan)
       stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
       ### find samples ###
       # beta1 J
@@ -205,6 +206,7 @@ BANOVA.run <- function (l1_formula = 'NA',
         model_name <- fit$model_name
         single_level <- fit$single_level
       }
+      #library(rstan)
       stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
       ### find samples ###
       # beta1 J
@@ -378,6 +380,7 @@ BANOVA.run <- function (l1_formula = 'NA',
       model_name <- fit$model_name
       single_level <- fit$single_level
     }
+    #library(rstan)
     stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
     ### find samples ###
     # beta1 JxM

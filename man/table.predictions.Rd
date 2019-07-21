@@ -19,7 +19,7 @@ burnin = 1000, sample = 1000, thin = 1)
 \donttest{
 # or use BANOVA.run based on 'Stan'
 res <- BANOVA.run(bid~progress*prodvar, model_name = "Normal", 
-data = goalstudy, id = goalstudy$id, iter = 1000, thin = 1, chains = 2) 
+data = goalstudy, id = 'id', iter = 1000, thin = 1, chains = 2) 
 }
 table.predictions(res)
 

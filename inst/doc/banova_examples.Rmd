@@ -51,14 +51,14 @@ set.seed(700)
 model <- BANOVA.model(model_name = 'Binomial')
 banova_fit <- BANOVA.build(model)
 res <- BANOVA.run(y~typic, ~color*blur, data = colorad, fit = banova_fit,
-                  id = colorad$id, num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
+                  id = 'id', num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
 ```
 
 The commands above load and build (compile) a Binomial Stan model included in the package. Then, the function `BANOVA.run` is called to run the simulation using two chains (1000 iterations each with thin = 1). Alternatively, users can set up the `model_name` argument to run the simulation directly using a precompiled model (note that it might report errors if compiler settings are not correct). 
 
 ```{r, message=FALSE, eval=FALSE}
 res_alt <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
-                     id = colorad$id, num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
+                     id = 'id', num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
 ```
 
 **ANOVA**-like table of sums of squares, effect sizes and p values, as well as the posterior means, standard
@@ -71,7 +71,7 @@ and typic).
 summary(res)
 #> Call:
 #> BANOVA.run(l1_formula = y ~ typic, l2_formula = ~color * blur, 
-#>     fit = banova_fit, data = colorad, id = colorad$id, iter = 1000, 
+#>     fit = banova_fit, data = colorad, id = 'id', iter = 1000, 
 #>     num_trials = as.integer(16), thin = 1, chains = 2)
 #> 
 #> Convergence diagnostics:
@@ -199,7 +199,7 @@ using the following command:
 ```{r, message=FALSE, eval=FALSE}
 set.seed(900)
 res_fac <- BANOVA.run(y~typic, ~color*blurfac, data = colorad, fit = banova_fit,
-                  id = colorad$id, num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
+                  id = 'id', num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
 ```
 
 Since the above model involves more parameters, a larger number of iterations is used to ensure the chains for all parameters converge (iter = 2000).
@@ -208,7 +208,7 @@ Since the above model involves more parameters, a larger number of iterations is
 summary(res_fac)
 #> Call:
 #> BANOVA.run(l1_formula = y ~ typic, l2_formula = ~color * blurfac, 
-#>     fit = banova_fit, data = colorad, id = colorad$id, iter = 2000, 
+#>     fit = banova_fit, data = colorad, id = 'id', iter = 2000, 
 #>     num_trials = as.integer(16), thin = 1, chains = 2)
 #> 
 #> Convergence diagnostics:

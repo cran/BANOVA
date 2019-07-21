@@ -80,7 +80,7 @@ summary(res)
 
 # or use BANOVA.run based on 'Stan'
 res19 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
-data = ipadstudy, model_name = 'T', id = ipadstudy$id, iter = 100, 
+data = ipadstudy, model_name = 'T', id = 'id', iter = 100, 
 thin = 1, chains = 2)
 }
 }

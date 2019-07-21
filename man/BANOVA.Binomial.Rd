@@ -83,7 +83,7 @@ burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # or use BANOVA.run
 res0 <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
-id = colorad$id, num_trials = as.integer(16), iter = 100, thin = 1, chains = 2)
+id = 'id', num_trials = as.integer(16), iter = 100, thin = 1, chains = 2)
 summary(res0)
 table.predictions(res)
 # only in-model variables(except numeric variables) will be used

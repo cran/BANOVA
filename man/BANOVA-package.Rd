@@ -12,8 +12,8 @@ This package includes several hierarchical Bayes Analysis of Variance models. Th
 \tabular{ll}{
 Package: \tab BANOVA\cr
 Type: \tab Package\cr
-Version: \tab 1.1.2\cr
-Date: \tab 2019-01-21\cr
+Version: \tab 1.1.3\cr
+Date: \tab 2019-06-23\cr
 License: \tab GPL (>= 2)\cr
 }
 Model: \cr
@@ -60,6 +60,6 @@ Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Co
 }
 %Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation ~~
 % directory ~~
-\keyword{ Hierarchical Bayes, ANOVA }
+\concept{ Hierarchical Bayes ANOVA }
 
 

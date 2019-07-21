@@ -33,7 +33,7 @@ burnin = 1000, sample = 1000, thin = 1)
 \donttest{
 # use BANOVA.run based on 'Stan'
 res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", 
-data = goalstudy, id = goalstudy$id, iter = 1000, thin = 1, chains = 2) 
+data = goalstudy, id = 'id', iter = 1000, thin = 1, chains = 2) 
 conv.diag(res1)
 # using pairs, it shows that the chains are not converged
 # the level 1 and level 2 variances are not identified since the data 
@@ -41,7 +41,7 @@ conv.diag(res1)
 pairs(res1, pars = c("beta1[1,1]", "beta2[1,1]", "tau_ySq", "tau_beta1Sq"))
 # single level model
 res1 <- BANOVA.run(bid~progress*prodvar, model_name = "Normal", 
-data = goalstudy, id = goalstudy$id, iter = 1000, thin = 1, chains = 2) 
+data = goalstudy, id = 'id', iter = 1000, thin = 1, chains = 2) 
 BAnova(res1)
 table.pvalues(res1)
 trace.plot(res1)
