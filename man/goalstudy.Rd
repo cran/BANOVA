@@ -27,10 +27,10 @@ Etkin, J. and Ratner, R. (2012) \emph{The Dynamic Impact of Variety among Means 
 
 \examples{
 data(goalstudy)
-
 res1 <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
 \donttest{
+library(rstan)
 # use BANOVA.run based on 'Stan'
 res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", 
 data = goalstudy, id = 'id', iter = 1000, thin = 1, chains = 2) 

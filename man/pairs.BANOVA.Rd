@@ -21,6 +21,7 @@ For a detailed description see \code{\link[rstan:pairs.stanfit]{pairs.stanfit}}
 
 \examples{
 \donttest{
+library(rstan)
 data(ipadstudy)
 res_1 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
 model_name = 'Normal', data = ipadstudy, id = 'id', iter = 1000, 

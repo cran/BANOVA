@@ -29,6 +29,7 @@ Wedel, M and R. Pieters (2015).
 \examples{ 
 \donttest{
 data(colorad)
+library(rstan)
 # Build the model
 model_bin <- BANOVA.model('Binomial')
 stanmodel_bin <- BANOVA.build(model_bin)

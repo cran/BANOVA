@@ -17,6 +17,7 @@ data(goalstudy)
 res <- BANOVA.Normal(bid~1, ~progress*prodvar,  goalstudy, goalstudy$id, 
 burnin = 1000, sample = 1000, thin = 1) 
 \donttest{
+library(rstan)
 # or use BANOVA.run based on 'Stan'
 res <- BANOVA.run(bid~progress*prodvar, model_name = "Normal", 
 data = goalstudy, id = 'id', iter = 1000, thin = 1, chains = 2) 

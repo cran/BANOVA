@@ -241,7 +241,8 @@ factors blur, color and blur x color interaction vary between subjects.</p>
 to implement the analysis is shown below. For this model, the <code>BANOVA</code> function call needs
 to include the binomial total (16) as an additional argument.</p>
 
-<pre><code class="r">set.seed(700)
+<pre><code class="r">library(rstan)
+set.seed(700)
 model &lt;- BANOVA.model(model_name = &#39;Binomial&#39;)
 banova_fit &lt;- BANOVA.build(model)
 res &lt;- BANOVA.run(y~typic, ~color*blur, data = colorad, fit = banova_fit,
@@ -388,7 +389,8 @@ further understand the effects of blur, we can use the discrete variable blur (b
 two-way <strong>BANOVA</strong> at the between-subjects level (and the factor typic again within-subjects),
 using the following command:</p>
 
-<pre><code class="r">set.seed(900)
+<pre><code class="r">library(rstan)
+set.seed(900)
 res_fac &lt;- BANOVA.run(y~typic, ~color*blurfac, data = colorad, fit = banova_fit,
                   id = &#39;id&#39;, num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
 </code></pre>

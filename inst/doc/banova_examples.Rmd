@@ -47,6 +47,7 @@ to implement the analysis is shown below. For this model, the `BANOVA` function 
 to include the binomial total (16) as an additional argument.
 
 ```{r, message=FALSE, eval=FALSE}
+library(rstan)
 set.seed(700)
 model <- BANOVA.model(model_name = 'Binomial')
 banova_fit <- BANOVA.build(model)
@@ -197,6 +198,7 @@ two-way **BANOVA** at the between-subjects level (and the factor typic again wit
 using the following command:
 
 ```{r, message=FALSE, eval=FALSE}
+library(rstan)
 set.seed(900)
 res_fac <- BANOVA.run(y~typic, ~color*blurfac, data = colorad, fit = banova_fit,
                   id = 'id', num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)

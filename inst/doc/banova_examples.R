@@ -10,6 +10,7 @@ data(colorad)
 head(colorad)
 
 ## ---- message=FALSE, eval=FALSE------------------------------------------
+#  library(rstan)
 #  set.seed(700)
 #  model <- BANOVA.model(model_name = 'Binomial')
 #  banova_fit <- BANOVA.build(model)
@@ -137,6 +138,7 @@ head(colorad)
 #  #>  1     1     8.5735  7.4431 9.6343
 
 ## ---- message=FALSE, eval=FALSE------------------------------------------
+#  library(rstan)
 #  set.seed(900)
 #  res_fac <- BANOVA.run(y~typic, ~color*blurfac, data = colorad, fit = banova_fit,
 #                    id = 'id', num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
