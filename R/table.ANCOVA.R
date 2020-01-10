@@ -4,15 +4,17 @@ table.ANCOVA <-
            Z, 
            samples_l2_param, 
            y_val = NULL, 
-           error = NULL, # for bernoulli binomial and multinomial case, sigle level, need to be fixed here
-           multi = F, 
+           error = NULL, # for Poisson, bernoulli binomial and multinomial case, sigle level, need to fix here
+           multi = F,  # multinomial
            n_cat = 0, 
            choice = 0,
-           l1_error = 0 # variance of the level 1 error 
+           l1_error = 0,  # variance of the level 1 error 
+           num_trials = 0, 
+           model = NULL
            ){
     eff_digits = 3
     if (length(attr(Z, 'varNames')) >= 1){
-      if(!is.null(error)){ #for bernoulli binomial and multinomial case, single level
+      if(!is.null(error)){ #for bernoulli Poisson, binomial and multinomial case, single level
         num_l1_v <- ncol(X) # should be the same with num_l1
         num_l2_v <- length(attr(Z, 'varNames')) - 1# Not include intercept
         num_id <- nrow(Z)
@@ -60,17 +62,27 @@ table.ANCOVA <-
           for (j in 1:n_sample){
             pred_full[ , j] <- est_matrix[i, , j] %*% t(newdesign_matrix) 
           }
-          error <- array(error, dim = c(num_id, n_sample))
+          # v1.1.5
+          y = array(0 , dim = c(num_id, n_sample))
+          for (s in 1:n_sample){
+            y[ , s] = y_val
+          }
+          if (model == "Binomial" || model == "Bernoulli"){
+            pred_full = exp(pred_full) / (1 + exp(pred_full))
+            e = 2 * (y * log(y / pmax(num_trials * pred_full, 0.000001) + 0.000001) + 
+                    (num_trials - y) * log (pmax((num_trials - y) / pmax(num_trials - num_trials * pred_full, 0.000001), 0.000001)))
+          } else if (model == "Poisson"){
+            pred_full = exp(pred_full)
+            e = 2 * (y * log(pmax(y / pmax(pred_full, 0.000001), 0.000001)) - (y - pred_full))
+          } 
+          error <- pmax(e, 0)
+          if (model == "Multinomial" || model == "ordMultinomial")
+            error <- array(error, dim = c(num_id, n_sample))
           var_error <- colSums(error) / num_id * (num_id - 1)
           e_error <- max(mean(var_error), 0)
           var_pred_full <- colSums(pred_full^2) / num_id * (num_id - 1)
           pred_full_center <- scale(pred_full, scale = F)
           var_pred_full_center <- colSums(pred_full_center^2) / num_id * (num_id - 1)
-          #y_var <- colSums(y_center^2)#/(num_id - 1))
-          #e_y_var <- mean(y_var)
-          #y_square <- colSums(y^2)
-          #ancova_table[i,'Residuals'] <- paste(format(round(e_error, digits = 4), nsmall = 4), " (", paste(pmax(round(quantile(var_error, c(0.05, 0.95)),digits = 2),0), collapse = ","), ")", sep = "")
-          #ancova_table[i,'Total'] <- paste(format(round(e_y_var, digits = 4), nsmall = 4), " (", paste(round(quantile(y_var, c(0.05, 0.95)),digits = 2), collapse = ","), ")", sep = "")
           ancova_table[i,'Residuals'] <- format(round(e_error, digits = 4), nsmall = 4)
           if (multi){
             if (n_f >= (n_cat - 1) && choice > 0){

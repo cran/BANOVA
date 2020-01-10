@@ -247,14 +247,14 @@ BANOVA.run <- function (l1_formula = 'NA',
       attr(dMatrice$Z, 'varNames') <- " "
       samples_l2_param <- NULL
       if (model_name == 'Poisson'){
-        anova.table <- NULL
+        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, model = model_name)
       }else if (model_name == 'Normal' || model_name == 'T'){
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1))) # for ancova models
         if (!is.null(fit_beta$tau_ySq)){
           tau_ySq <- mean(fit_beta$tau_ySq)
         }
       }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, error = pi^2/3)
+        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, num_trials = num_trials, model = model_name)
         tau_ySq = pi^2/3
       }else if (model_name == 'ordMultinomial'){
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, error = pi^2/6)
@@ -403,7 +403,7 @@ BANOVA.run <- function (l1_formula = 'NA',
     }else if (model_name == 'ordMultinomial' || model_name == 'Multinomial'){
       tau_ySq = pi^2/6
     }else{
-      tau_ysq = 0
+      tau_ySq = 0
     }
     beta1_dim <- dim(fit_beta$beta1)
     beta2_dim <- dim(fit_beta$beta2)

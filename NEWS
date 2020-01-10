@@ -1,3 +1,8 @@
+BANOVA v1.1.5 (Release date: 2019-12-31)
+==============
+* Fixed a bug related to the recent R update (as.matrix)
+* Updated the effect size formula using deviance residuals for Poisson, Binomial, etc.
+
 BANOVA v1.1.4 (Release date: 2019-08-11)
 ==============
 * Added 'library(rstan)' to the manual to fix a bug in running BANOVA.run on R 3.6.0+

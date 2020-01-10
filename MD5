@@ -1,6 +1,6 @@
-8886fd13fedd33c5d89fb55a2e26dfa0 *DESCRIPTION
+8f790fed089666c1d86b2257be505470 *DESCRIPTION
 9c55915e4a0af3d8981129849e8bd2be *NAMESPACE
-1481b4ea5e7d09ec4d3a8685e30d6631 *NEWS
+c0f9ba50c2ec98c59bc64ce5c83097e3 *NEWS
 89335d155decbf22cf8c7ca0139b23af *R/BANOVA.Bern.R
 4423d4b107a515eeabb9022d77a5d597 *R/BANOVA.BernNormal.R
 1e1b0f132402eb7d74e9c9cbeb2eea1e *R/BANOVA.Bin.R
@@ -19,7 +19,7 @@ a8ed473edb12b474f326fcc4a828e7cf *R/BANOVA.mediation.R
 a27e5d04f39785a460e6aa953d5cc5c4 *R/BANOVA.model.R
 f88aab2260da98a8bc43f724c7c8092c *R/BANOVA.ordMultiNormal.R
 452a4c681d63ec23e5265ad4e462c9bf *R/BANOVA.ordMultinomial.R
-b9c03ffec2dc01bcb33261c099ec8d42 *R/BANOVA.run.R
+e1193dfd702354f495e6500f5b46bb6d *R/BANOVA.run.R
 fb1c99e3357149ada984ee0e85abec12 *R/BAnova.R
 a518b758100a78e31e30e59fc3af1f5e *R/JAGSgen.PNormal.R
 ffefab85b5de1c711f8dc733fdd77c22 *R/JAGSgen.TNormal.R
@@ -43,7 +43,7 @@ e1b961e8695cac9dfdd87daae44f4df6 *R/est.R
 22659f9917b83549ef5dd25ee17475bf *R/floodlight.analysis.R
 7de34ab2021287235dfbfc0d9de3e46e *R/get.interactions.R
 c494647689965ccd914bd08f836db4ee *R/get.values.R
-5847222cc90663b3ef42c0ddb39a08cf *R/mean.center.R
+f3b1ae82aea92e657c4cb07ecff022f8 *R/mean.center.R
 0dd2a52161236cb89f7e153b6b6c8335 *R/multi.design.matrix.R
 5ae997c065f0f6357f5ed6f589f61719 *R/multi.effect.matrix.factor.R
 42192ada69d0234b738b4e3221203134 *R/multi.effect.matrix.interaction.R
@@ -92,7 +92,7 @@ cd4e6c3db4afe3deba19debca2d66149 *R/summary.BANOVA.Bern.R
 f6fb28b608fb1c210844d3cbf9dbeb55 *R/summary.BANOVA.R
 0d556eba5fa6fc8a0ffad97682ec793a *R/summary.BANOVA.T.R
 f19e9af47dfb52fb8c9e56588947b896 *R/summary.BANOVA.ordMultinomial.R
-b99caf207e4b6f2c067833660bb51057 *R/table.ANCOVA.R
+c3a88e398be40419d0b7061df7ffd786 *R/table.ANCOVA.R
 f2309d380ac72490ce73eafd36215133 *R/table.ANOVA.R
 0effa03a81b57a63ebc8b99f93220ba8 *R/table.coefficients.R
 2b5293720f279532e9a1bd8d2cba6af6 *R/table.predictions.R
@@ -101,7 +101,7 @@ da23e97b7fa2e6f39fb335b1236f956c *R/table.pvalues.R
 e8b4865895fbe19d90ea68017fd3a87b *R/trace.plot.R
 d3c91682b1826aa65d5f6314b1d11333 *R/traceplot.R
 5f7c24ba84439f9753d0e6e127347c1b *R/util.R
-49fe6c51c981fb653ae30aa9d0907f03 *build/vignette.rds
+f9d9a56596f72779bd0176e8342d9712 *build/vignette.rds
 6608f3082bb0dc2ba6766424d5ea11ca *data/bernlogtime.rdata
 0d4d6d80155e1e353e378a1d5fbb837a *data/bpndata.rdata
 9cc77d779a6b33afb1e5ccf37673cebf *data/choicedata.rdata
@@ -130,7 +130,7 @@ bff8b3ebe8933520813c3384f0f49e63 *inst/stan/single_Multinomial.stan
 e255f392cf95cb18f5940d8e792c3bbf *inst/stan/single_Poisson.stan
 68a119f78a9f26b89dd2c3cee64f1ed7 *inst/stan/single_T.stan
 1f2a165dd985473adfcb70ad6815cf96 *inst/stan/single_ordMultinomial.stan
-ac57ad3e0ad9f7bad9b590cf73c3c1bf *man/BANOVA-package.Rd
+77045d897c2f1c1da043dafc4a5e09c8 *man/BANOVA-package.Rd
 39169e6363d4f142527f682a868c9e73 *man/BANOVA.Bernoulli.Rd
 f94bb6ef8ce71264a4264730896b9b8c *man/BANOVA.Binomial.Rd
 81cabb2fd2082cc0e1e6602134383dcd *man/BANOVA.Multinomial.Rd
