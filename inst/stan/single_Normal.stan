@@ -22,7 +22,7 @@ model {
   y ~ normal(y_hat, tau_y);
   tau_ySq ~ inv_gamma(1, 1);
   for (i in 1:J){
-    beta1[i] ~ normal(0, 1);
+    beta1[i] ~ normal(0, 100);
   }
 }
 

@@ -24,7 +24,7 @@ model {
   }
   c ~ normal(0, 10);
   for (i in 1:J){
-    beta1[i] ~ normal(0, 10);
+    beta1[i] ~ normal(0, 100);
   }
 }
 

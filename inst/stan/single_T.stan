@@ -23,7 +23,7 @@ model {
   df ~ normal(5,5);
   tau_yS ~ inv_gamma(1, 1);
   for (i in 1:J){
-    beta1[i] ~ normal(0, 1);
+    beta1[i] ~ normal(0, 100);
   }
 }
 

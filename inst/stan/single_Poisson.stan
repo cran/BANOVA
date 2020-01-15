@@ -17,7 +17,7 @@ transformed parameters {
 model {
   y ~ poisson_log(y_hat);
   for (i in 1:J){
-    beta1[i] ~ normal(0, 1);
+    beta1[i] ~ normal(0, 100);
   }
 }
 

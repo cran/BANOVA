@@ -18,7 +18,7 @@ transformed parameters {
 model {
   y ~ binomial_logit(trials, y_hat);
   for (i in 1:J){
-    beta1[i] ~ normal(0, 1);
+    beta1[i] ~ normal(0, 100);
   }
 }
 
