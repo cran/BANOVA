@@ -1,3 +1,7 @@
+BANOVA v1.1.7 (Release date: 2020-04-10)
+==============
+* Fixed a bug related to the class function updates
+
 BANOVA v1.1.6 (Release date: 2020-01-12)
 ==============
 * The default prior for single level models is changed to weakly informative N(0, 100)

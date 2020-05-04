@@ -42,9 +42,9 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
   l1_numeric_index_in_data <- array(dim = 0)
   if (length(l1_index_in_data) > 0){
     for (i in 1: length(l1_index_in_data)){
-      if (class(data[,l1_index_in_data[i]]) == 'factor')
+      if (class(data[1, l1_index_in_data[i]]) == 'factor')
         l1_factor_index_in_data <- c(l1_factor_index_in_data, l1_index_in_data[i])
-      if (class(data[,l1_index_in_data[i]]) == 'integer' || class(data[,l1_index_in_data[i]]) == 'numeric')
+      if (class(data[1, l1_index_in_data[i]]) == 'integer' || class(data[1, l1_index_in_data[i]]) == 'numeric')
         l1_numeric_index_in_data <- c(l1_numeric_index_in_data, l1_index_in_data[i])
     }
   }
@@ -53,9 +53,9 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
   l2_numeric_index_in_data <- array(dim = 0)
   if (length(l2_index_in_data) > 0){
     for (i in 1: length(l2_index_in_data)){
-      if (class(data[,l2_index_in_data[i]]) == 'factor')
+      if (class(data[1, l2_index_in_data[i]]) == 'factor')
         l2_factor_index_in_data <- c(l2_factor_index_in_data, l2_index_in_data[i])
-      if (class(data[,l2_index_in_data[i]]) == 'integer' || class(data[,l2_index_in_data[i]]) == 'numeric')
+      if (class(data[1, l2_index_in_data[i]]) == 'integer' || class(data[1, l2_index_in_data[i]]) == 'numeric')
         l2_numeric_index_in_data <- c(l2_numeric_index_in_data, l2_index_in_data[i])
     }
   }
@@ -65,6 +65,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
     colnames(y_pred) <- c('Median', '2.5%', '97.5%')
     est_samples <- matrix(0, nrow = 1, ncol = n_iter)
     sample_size = mean(n_trials)
+    
     for (n_sample in 1 : nrow(samples)){
       l1_vector <- matrix(c(1, rep(0, num_l1-1)), nrow = 1)
       l2_vector <- matrix(c(1, rep(0, num_l2-1)), nrow = 1)
@@ -85,7 +86,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
       #    l2_vector[attr(Z_full, 'numeric_index')[i]] <- samples[n_sample,l2_numeric_index_in_data[i]]
       if (sum(is.na(l2_sd)) > 0){
         for (n_i in 1:n_iter){
-          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+          if (length(l1_vector) == 1 | length(l2_vector) == 1){
             if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
             if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
             est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1))
@@ -95,7 +96,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
         }
       }else{
         for (n_i in 1:n_iter){
-          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+          if (length(l1_vector) == 1 | length(l2_vector) == 1){
             if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
             if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
             est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1)) + sum(l2_var[n_i,])/2
@@ -137,7 +138,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
       #    l2_vector[attr(Z_full, 'numeric_index')[i]] <- samples[n_sample,l2_numeric_index_in_data[i]]
       if (sum(is.na(l2_sd)) > 0){
         for (n_i in 1:n_iter){
-          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+          if (length(l1_vector) == 1 | length(l2_vector) == 1){ 
             if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
             if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
             est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1))
@@ -147,7 +148,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
         }
       }else{
         for (n_i in 1:n_iter){
-          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+          if (length(l1_vector) == 1 | length(l2_vector) == 1){
             if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
             if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
             est_samples[n_i] <- matrix(l1_vector, nrow = 1) %*% temp %*% t(matrix(l2_vector, nrow = 1)) + sum(l2_var[n_i,])/2
@@ -194,7 +195,7 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
       
       for (y in 1:(n.cut + 1)){
         for (n_i in 1:n_iter){
-          if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+          if (length(l1_vector) == 1 | length(l2_vector) == 1){ 
             if (length(l1_vector) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
             if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
             est_samples[n_i] <- est_pred(link_inv, temp, matrix(l1_vector, nrow = 1), matrix(l2_vector, nrow = 1), 

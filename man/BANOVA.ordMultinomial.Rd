@@ -89,10 +89,11 @@ goalstudy$id, burnin = 5, sample = 5, thin = 1)
 }
 \donttest{
 res <- BANOVA.ordMultinomial (perceivedsim~1, ~progress*prodvar,  goalstudy,
-goalstudy$id, burnin = 5000, sample = 2000, thin = 10)
+goalstudy$id, burnin = 1000, sample = 1000, thin = 2)
 summary(res)
 # or use BANOVA.run based on 'Stan'
-res <- BANOVA.run(perceivedsim~1, ~progress*prodvar, data = goalstudy, 
+require(rstan)
+res <- BANOVA.run(perceivedsim~progress*prodvar, data = goalstudy, 
 model_name = 'ordMultinomial', id = 'id', iter = 100, thin = 1, chains = 2)
 }
 

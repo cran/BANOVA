@@ -74,9 +74,13 @@ BANOVA.run <- function (l1_formula = 'NA',
     if (id %in% colnames(data))
       old_id = data[, id]
     else
-      stop(id, ' is not found in the data!')
+      stop(id, ' is not found in the input data, please assign values directly!')
   }else{
-    stop('id ambiguous!')
+    if (model_name != 'Multinomial') {
+      stop('id ambiguous!')
+    }else{
+      old_id = id
+    }
   }
   if (l2_formula == 'NA'){
     # single level models
@@ -206,7 +210,6 @@ BANOVA.run <- function (l1_formula = 'NA',
         model_name <- fit$model_name
         single_level <- fit$single_level
       }
-      #library(rstan)
       stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
       ### find samples ###
       # beta1 J
@@ -249,7 +252,7 @@ BANOVA.run <- function (l1_formula = 'NA',
       if (model_name == 'Poisson'){
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, model = model_name)
       }else if (model_name == 'Normal' || model_name == 'T'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1))) # for ancova models
+        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1)), model = model_name) # for ancova models
         if (!is.null(fit_beta$tau_ySq)){
           tau_ySq <- mean(fit_beta$tau_ySq)
         }
@@ -257,7 +260,7 @@ BANOVA.run <- function (l1_formula = 'NA',
         anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, num_trials = num_trials, model = model_name)
         tau_ySq = pi^2/3
       }else if (model_name == 'ordMultinomial'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, error = pi^2/6)
+        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/6, model = model_name)
         tau_ySq = pi^2/6
       }
       coef.tables <- table.coefficients(samples_l1_param, beta1_names, colnames(dMatrice$Z), colnames(dMatrice$X), 
@@ -380,8 +383,7 @@ BANOVA.run <- function (l1_formula = 'NA',
       model_name <- fit$model_name
       single_level <- fit$single_level
     }
-    #library(rstan)
-    stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, ...)
+    stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, verbose=TRUE, ...)
     ### find samples ###
     # beta1 JxM
     # beta2 KxJ
@@ -543,6 +545,7 @@ get_BANOVA_stan_model <- function(model, single_level) {
   }, error = function(cond) {
     compile_BANOVA_stan_model(model, single_level)
   })
+  return(stanmodel)
 }
 
 # Compile BANOVA stan model

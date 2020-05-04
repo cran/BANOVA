@@ -44,9 +44,9 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   l1_numeric_index_in_data <- array(dim = 0)
   if (length(l1_index_in_data) > 0){
     for (i in 1: length(l1_index_in_data)){
-      if (class(dataX[[1]][,l1_index_in_data[i]]) == 'factor')
+      if (class(dataX[[1]][1,l1_index_in_data[i]]) == 'factor')
         l1_factor_index_in_data <- c(l1_factor_index_in_data, l1_index_in_data[i])
-      if (class(dataX[[1]][,l1_index_in_data[i]]) == 'integer' || class(dataX[[1]][,l1_index_in_data[i]]) == 'numeric')
+      if (class(dataX[[1]][1,l1_index_in_data[i]]) == 'integer' || class(dataX[[1]][1,l1_index_in_data[i]]) == 'numeric')
         l1_numeric_index_in_data <- c(l1_numeric_index_in_data, l1_index_in_data[i])
     }
   }
@@ -55,9 +55,9 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   l2_numeric_index_in_data <- array(dim = 0)
   if (length(l2_index_in_data) > 0){
     for (i in 1: length(l2_index_in_data)){
-      if (class(dataZ[,l2_index_in_data[i]]) == 'factor')
+      if (class(dataZ[1,l2_index_in_data[i]]) == 'factor')
         l2_factor_index_in_data <- c(l2_factor_index_in_data, l2_index_in_data[i])
-      if (class(dataZ[,l2_index_in_data[i]]) == 'integer' || class(dataZ[,l2_index_in_data[i]]) == 'numeric')
+      if (class(dataZ[1,l2_index_in_data[i]]) == 'integer' || class(dataZ[1,l2_index_in_data[i]]) == 'numeric')
         l2_numeric_index_in_data <- c(l2_numeric_index_in_data, l2_index_in_data[i])
     }
   }
@@ -95,7 +95,7 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
         l2_vector[attr(Z_full, 'numeric_index')[i]] <- Zsamples[n_sample,l2_numeric_index_in_data[i]]
     for(n_c in 1: n_choice){
       for (n_i in 1:n_iter){
-        if (class(est_matrix[,,n_i]) == 'numeric' | class(est_matrix[,,n_i]) == 'integer'){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
+        if (length(l1_vector[[n_c]]) == 1 | length(l2_vector) == 1){ # not a matrix, R somehow automatically convert dim(1,n) matrix to a vector
           if (length(l1_vector[[n_c]]) == 1) temp <- matrix(est_matrix[,,n_i], nrow = 1)
           if (length(l2_vector) == 1) temp <- matrix(est_matrix[,,n_i], ncol = 1)
           #print(l1_vector[[n_c]])

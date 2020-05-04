@@ -35,21 +35,14 @@ model_bin <- BANOVA.model('Binomial')
 stanmodel_bin <- BANOVA.build(model_bin)
 out0 = BANOVA.run(y ~ typic, ~ color*blurfac, fit = stanmodel_bin,
                    data = colorad, id = 'id', num_trials = as.integer(16), 
-                   iter = 10000, thin = 10, chains = 1)
+                   iter = 100, thin = 2, chains = 1)
 summary(out0)
 # planned comparison
 out0_contra = BANOVA.run(y ~ typic, ~ color*blurfac, fit = stanmodel_bin,
                           data = colorad, id = 'id', num_trials = as.integer(16), 
-                          iter = 10000, thin = 10, chains = 1, 
-                          contrast = list(typic = c(-1,1), 
-                          blurfac = c(1,1,0,-1,-1)))
+                          iter = 100, thin = 2, chains = 1, 
+                          contrast = list(typic = c(-1,1)))
 summary(out0_contra)
-# floodlight analysis
-set.seed(200)
-out0_f = BANOVA.run(y ~ typic, ~ color*blur, fit = stanmodel_bin,
-                     data = colorad, id = 'id', num_trials = as.integer(16), 
-                     iter = 10000, thin = 10, chains = 1)
-BANOVA.floodlight(out0_f, var_factor = 'typic', var_numeric = 'blur')
 }
 
 }

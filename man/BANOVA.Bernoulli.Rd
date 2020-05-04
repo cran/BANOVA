@@ -78,6 +78,7 @@ res <- BANOVA.Bernoulli(response~typical, ~blur + color, bernlogtime,
 bernlogtime$subject, burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # or use BANOVA.run
+require(rstan)
 res0 <- BANOVA.run(response~typical, ~blur + color, data = bernlogtime, 
 model_name = 'Bernoulli',id = 'subject', iter = 100, thin = 1, chains = 2)
 summary(res0)

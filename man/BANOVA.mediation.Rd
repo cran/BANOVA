@@ -58,15 +58,15 @@ Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Co
 }
 
 \examples{
-data(condstudy)
+data(condstudy_sub)
 \donttest{
 library(rstan)
 # use BANOVA.run based on 'Stan'
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
-out2 <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
+out2 <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy_sub, 
                   id = 'id', iter = 500, thin = 1, chains = 2)
-out3 <- BANOVA.run(pict~cond, ~type, fit = stanmodel, data = condstudy, 
+out3 <- BANOVA.run(pict~cond, ~type, fit = stanmodel, data = condstudy_sub, 
                   id = 'id', iter = 500, thin = 1, chains = 2)
 # (moderated) mediation
 sol <- BANOVA.mediation(out2, out3, xvar='cond', mediator='pict')
@@ -75,5 +75,4 @@ print(sol$dir_effects)
 }
 
 }
-
 

@@ -79,7 +79,8 @@ ipadstudy$id, burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 
 # or use BANOVA.run based on 'Stan'
-res19 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
+require(rstan)
+res19 <- BANOVA.run(attitude~owner + age + gender + selfbrand*conspic, 
 data = ipadstudy, model_name = 'T', id = 'id', iter = 100, 
 thin = 1, chains = 2)
 }

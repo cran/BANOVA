@@ -20,7 +20,7 @@ burnin = 1000, sample = 1000, thin = 2)
 \donttest{
 library(rstan)
 # or use BANOVA.run
-res1 <- BANOVA.run(bid~1, ~progress*prodvar, model_name = "Normal", 
+res1 <- BANOVA.run(bid~progress*prodvar, model_name = "Normal", 
 data = goalstudy, id = 'id', iter = 1000, thin = 1, chains = 2) 
 }
 trace.plot(res1)

@@ -71,11 +71,13 @@ table.ANCOVA <-
             pred_full = exp(pred_full) / (1 + exp(pred_full))
             e = 2 * (y * log(y / pmax(num_trials * pred_full, 0.000001) + 0.000001) + 
                     (num_trials - y) * log (pmax((num_trials - y) / pmax(num_trials - num_trials * pred_full, 0.000001), 0.000001)))
+            error <- pmax(e, 0)
           } else if (model == "Poisson"){
             pred_full = exp(pred_full)
             e = 2 * (y * log(pmax(y / pmax(pred_full, 0.000001), 0.000001)) - (y - pred_full))
+            error <- pmax(e, 0)
           } 
-          error <- pmax(e, 0)
+          
           if (model == "Multinomial" || model == "ordMultinomial")
             error <- array(error, dim = c(num_id, n_sample))
           var_error <- colSums(error) / num_id * (num_id - 1)

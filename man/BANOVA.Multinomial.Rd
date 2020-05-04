@@ -95,10 +95,11 @@ for (i in 1:nrow(choicedata)){
 dataZ <- choicedata[,9:13]
 \donttest{
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, 
-  choicedata$choice, choicedata$hhid, burnin = 5000, sample = 2000, thin = 10)
+  choicedata$choice, choicedata$hhid, burnin = 100, sample = 100, thin = 10)
 # or use BANOVA.run based on 'Stan'
+require(rstan)
 res <- BANOVA.run(~ logP, ~ college, dataX = dataX, dataZ = dataZ, 
                     model_name = 'Multinomial', y_value = choicedata$choice, 
-                    id = 'hhid', iter = 100, thin = 1, chains = 2)
+                    id = choicedata$hhid, iter = 100, thin = 1, chains = 2)
 }
 }

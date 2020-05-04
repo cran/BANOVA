@@ -83,19 +83,17 @@ data(ipadstudy)
 \donttest{
 library(rstan)
 # build the BANOVA model first so that it can be reused
-model <- BANOVA.model('Normal', single_level = FALSE)
+model <- BANOVA.model('Normal', single_level = TRUE)
 banova_model <- BANOVA.build(model)
-res_1 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic, 
+res_1 <- BANOVA.run(attitude~owner + age + gender + selfbrand*conspic, 
 fit = banova_model, data = ipadstudy, id = 'id', iter = 2000, 
 thin = 5, chains = 2)
 summary(res_1)
-res_2 <- BANOVA.run(attitude~1, ~selfbrand*conspic, 
-fit = banova_model, data = ipadstudy, id = 'id', iter = 2000, 
-thin = 5, chains = 2)
+
 
 # or call the function directly without specifying the fit argument
 # but it needs compilation
-res_1 <- BANOVA.run(attitude~1, ~owner + age + gender + selfbrand*conspic,
+res_1 <- BANOVA.run(attitude~owner + age + gender + selfbrand*conspic,
 model_name = 'Normal', data = ipadstudy, id = 'id', iter = 2000, 
 thin = 5, chains = 2)
 }

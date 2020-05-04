@@ -60,7 +60,7 @@ for (i in 1:nrow(choicedata)){
 dataZ <- choicedata[,9:13]
 \donttest{
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, choicedata$choice, 
-choicedata$hhid, burnin = 1000, sample = 1000, thin = 1)
+choicedata$hhid, burnin = 100, sample = 100, thin = 1)
 summary(res)
 predict(res,dataX[1:4], dataZ[1:4,])
 }

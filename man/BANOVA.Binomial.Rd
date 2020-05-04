@@ -82,10 +82,11 @@ res <- BANOVA.Binomial(y~typic, ~color*blur, colorad, colorad$id, as.integer(16)
 burnin = 5000, sample = 2000, thin = 10)
 summary(res)
 # or use BANOVA.run
-res0 <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
+require(rstan)
+res0 <- BANOVA.run(y~typic, ~color*blurfac, data = colorad, model_name = 'Binomial',
 id = 'id', num_trials = as.integer(16), iter = 100, thin = 1, chains = 2)
 summary(res0)
-table.predictions(res)
+table.predictions(res0)
 # only in-model variables(except numeric variables) will be used
 predict(res0, c(1, 0, 8, 2, 1, 0.03400759))
 }

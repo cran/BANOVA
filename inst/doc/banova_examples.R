@@ -1,15 +1,15 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 library(BANOVA)
 data(colorad)
 head(colorad)
 
-## ---- message=FALSE, eval=FALSE------------------------------------------
+## ---- message=FALSE, eval=FALSE-----------------------------------------------
 #  library(rstan)
 #  set.seed(700)
 #  model <- BANOVA.model(model_name = 'Binomial')
@@ -17,11 +17,11 @@ head(colorad)
 #  res <- BANOVA.run(y~typic, ~color*blur, data = colorad, fit = banova_fit,
 #                    id = 'id', num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
 
-## ---- message=FALSE, eval=FALSE------------------------------------------
+## ---- message=FALSE, eval=FALSE-----------------------------------------------
 #  res_alt <- BANOVA.run(y~typic, ~color*blur, data = colorad, model_name = 'Binomial',
 #                       id = 'id', num_trials = as.integer(16), iter = 1000, thin = 1, chains = 2)
 
-## ---- message=FALSE, eval=FALSE------------------------------------------
+## ---- message=FALSE, eval=FALSE-----------------------------------------------
 #  summary(res)
 #  #> Call:
 #  #> BANOVA.run(l1_formula = y ~ typic, l2_formula = ~color * blur,
@@ -137,13 +137,13 @@ head(colorad)
 #  #>  1     0     8.9913  7.7188 10.2174
 #  #>  1     1     8.5735  7.4431 9.6343
 
-## ---- message=FALSE, eval=FALSE------------------------------------------
+## ---- message=FALSE, eval=FALSE-----------------------------------------------
 #  library(rstan)
 #  set.seed(900)
 #  res_fac <- BANOVA.run(y~typic, ~color*blurfac, data = colorad, fit = banova_fit,
 #                    id = 'id', num_trials = as.integer(16), iter = 2000, thin = 1, chains = 2)
 
-## ---- message=FALSE, eval=FALSE------------------------------------------
+## ---- message=FALSE, eval=FALSE-----------------------------------------------
 #  summary(res_fac)
 #  #> Call:
 #  #> BANOVA.run(l1_formula = y ~ typic, l2_formula = ~color * blurfac,

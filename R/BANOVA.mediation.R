@@ -356,7 +356,7 @@ combine.effects.individual <- function (mediator_l1_effects, mediator_xvar_effec
       result_table_sample[, nm, i] <- as.character(temp_table_index[[nm]])
     }
     for (ind in 1:nrow(table_1_est_sample_index)){
-      m_samples <- mediator_l1_effects$samples[table_1_est_sample_index[ind,1], 1:common_n_sample, i] * mediator_xvar_effects$samples[table_2_est_sample_index[ind,1], 1:common_n_sample, i]
+      m_samples <- mediator_l1_effects$samples[as.integer(table_1_est_sample_index[ind,1]), 1:common_n_sample, i] * mediator_xvar_effects$samples[as.integer(table_2_est_sample_index[ind,1]), 1:common_n_sample, i]
       result_table[ind,'mean', i] <- round(mean(m_samples), 4)
       result_table[ind,c('2.5%', '97.5%'), i] <- round(quantile(m_samples, probs = c(0.025, 0.975)),4)
       result_table[ind,'p.value', i] <- ifelse(round(pValues(array(m_samples, dim = c(length(m_samples), 1))), 4) == 0, '<0.0001', round(pValues(array(m_samples, dim = c(length(m_samples), 1))), 4))
@@ -418,7 +418,8 @@ combine.effects <- function (mediator_l1_effects, mediator_xvar_effects, tau_ySq
     result_table_sample[, nm] <- as.character(temp_table_index[[nm]])
   }
   for (ind in 1:nrow(table_1_est_sample_index)){
-    m_samples <- mediator_l1_effects$samples[table_1_est_sample_index[ind,1], table_1_est_sample_index[ind,2], 1:common_n_sample] * mediator_xvar_effects$samples[table_2_est_sample_index[ind,1], table_2_est_sample_index[ind,2], 1:common_n_sample]
+    m_samples <- mediator_l1_effects$samples[as.integer(table_1_est_sample_index[ind,1]), as.integer(table_1_est_sample_index[ind,2]), 1:common_n_sample] * 
+      mediator_xvar_effects$samples[as.integer(table_2_est_sample_index[ind,1]), as.integer(table_2_est_sample_index[ind,2]), 1:common_n_sample]
     result_table[ind,'mean'] <- round(mean(m_samples), 4)
     result_table[ind,c('2.5%', '97.5%')] <- round(quantile(m_samples, probs = c(0.025, 0.975)),4)
     result_table[ind,'p.value'] <- ifelse(round(pValues(array(m_samples, dim = c(length(m_samples), 1))), 4) == 0, '<0.0001', round(pValues(array(m_samples, dim = c(length(m_samples), 1))), 4))

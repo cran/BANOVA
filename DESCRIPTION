@@ -1,12 +1,12 @@
 Package: BANOVA
 Type: Package
 Title: Hierarchical Bayesian ANOVA Models
-Version: 1.1.6
-Date: 2020-01-12
+Version: 1.1.7
+Date: 2020-04-10
 Author: Chen Dong, Michel Wedel
 SystemRequirements: JAGS-4.3.0, C++11
 Maintainer: Chen Dong <cdong@math.umd.edu>
-Depends: R (>= 3.2.3)
+Depends: R (>= 3.5.0)
 Imports: rjags(>= 3-13), runjags (>= 1.2.1-0), coda (>= 0.16-1),
         rstan(>= 2.15.1), methods
 Suggests: knitr, rmarkdown
@@ -14,6 +14,6 @@ VignetteBuilder: knitr
 Description: It covers several Bayesian Analysis of Variance (BANOVA) models used in analysis of experimental designs in which both within- and between- subjects factors are manipulated. They can be applied to data that are common in the behavioral and social sciences. The package includes: Hierarchical Bayes ANOVA models with normal response, t response, Binomial (Bernoulli) response, Poisson response, ordered multinomial response and multinomial response variables. All models accommodate unobserved heterogeneity by including a normal distribution of the parameters across individuals. Outputs of the package include tables of sums of squares, effect sizes and p-values, and tables of predictions, which are easily interpretable for behavioral and social researchers. The floodlight analysis and mediation analysis based on these models are also provided. BANOVA uses 'Stan' and 'JAGS' as the computational platform.
 License: GPL (>= 2)
 NeedsCompilation: yes
-Packaged: 2020-01-14 01:16:47 UTC; chendong
+Packaged: 2020-05-03 01:40:51 UTC; CDONG
 Repository: CRAN
-Date/Publication: 2020-01-15 22:40:02 UTC
+Date/Publication: 2020-05-04 14:00:07 UTC

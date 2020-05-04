@@ -45,24 +45,15 @@ Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Co
 }
 
 \examples{
-data(condstudy)
+data(condstudy_sub)
 \donttest{
 library(rstan)
 # use BANOVA.run
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
-res <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy, 
+res <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy_sub, 
                   id = 'id', iter = 500, thin = 1, chains = 2)
 BANOVA.floodlight(res, var_factor = 'type', var_numeric = 'pict')
-
-data(colorad)
-colorad$num <- rnorm(nrow(colorad))
-res1 <- BANOVA.run(y ~ typic*num, ~ color*blur, fit = stanmodel_bin,
-                   data = colorad, id = 'id', 
-                   num_trials = as.integer(16))
-# floodlight analysis at the +sd(standard deviation) level
-BANOVA.floodlight(res1, var_factor = 'typic', 
-                  var_numeric = 'blur', list(num = sd(colorad$num)))
 
 }
 }
