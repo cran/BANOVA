@@ -22,6 +22,23 @@ BANOVA.run <- function (l1_formula = 'NA',
                         contrast = NULL, # 1.1.2
                         ...
                         ){
+  
+  # auxiliary function for conversion of effect or dummy coded numeric vectors to factors
+  convert_numeric_2_factor <- function(data_vec){ 
+    levels <- unique(data_vec)
+    dummy_condition <- (length(levels) == 2) && (0 %in% levels) && (1 %in% levels)
+    effect_condition <- sum(levels) == 0
+    if (effect_condition || dummy_condition){
+      #if factors are effect or dummy coded, levels count from the postive to negative values, 
+      # so (1, 0, -1) or (1, 0), where "1" is level 1, "0" is level 2, and "-1" is level 3
+      lvl <- as.numeric(sort(levels, decreasing = T))
+      data_vec <- factor(data_vec, levels = lvl, labels = lvl)
+    } else {
+      data_vec <- as.factor(data_vec)
+    }
+    return(data_vec)
+  }
+  
   # data sanity check
   if (!is.null(data)){
     if (!is.data.frame(data)) stop("data needs to be a data frame!")
@@ -102,7 +119,8 @@ BANOVA.run <- function (l1_formula = 'NA',
         for (j in 1:ncol(dataX[[i]])){
           if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
           if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
-            dataX[[i]][,j] <- as.factor(dataX[[i]][,j])
+            #convert the column to factors
+            dataX[[i]][,j] <- convert_numeric_2_factor(dataX[[i]][,j])
             warning("Within-subject variables(levels <= 3) have been converted to factors")
           }
         }
@@ -155,20 +173,26 @@ BANOVA.run <- function (l1_formula = 'NA',
       # print one table for each alternative
       anova.table <- list()
       for (i in 1:n_categories)
-        anova.table[[i]] <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X_full[[i]], samples_l1_param, error = pi^2/6, multi = T, n_cat = n_categories, choice = i-1) #intercept_1 doesn't exist
+        anova.table[[i]] <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X_full[[i]], samples_l1_param, error = pi^2/6, multi = T, n_cat = n_categories, choice = i-1, y_val = y_value, model = model_name) #intercept_1 doesn't exist
       coef.tables <- table.coefficients(samples_l1_param, beta1_names, colnames(dMatrice$Z), colnames(dMatrice$X_full[[1]]), 
                                         attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X_full[[1]], 'assign'), samples_cutp_param )
       pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$Z, 'varNames'), 
                                    l2_names = attr(dMatrice$X_full[[1]], 'varNames'))
       conv <- conv.geweke.heidel(samples_l1_param, colnames(dMatrice$Z), colnames(dMatrice$X_full[[1]]))
     }else{
+      #check only relevant columns
+      data_colnames <- colnames(data)
+      var_names <- colnames(mf1)
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(data)){
-        if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
-        # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-        if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
-          data[,i] <- as.factor(data[,i])
-          warning("Variables(levels <= 3) have been converted to factors")
+        if (data_colnames[i] %in% var_names){
+          if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+          # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
+          if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+            #convert the column to factors
+            data[,i] <- convert_numeric_2_factor(data[,i])
+            warning("Variables(levels <= 3) have been converted to factors")
+          }
         }
       }
       n <- nrow(data)
@@ -282,7 +306,8 @@ BANOVA.run <- function (l1_formula = 'NA',
         if(class(dataZ[,i]) != 'factor' && class(dataZ[,i]) != 'numeric' && class(dataZ[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
         # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
         if ((class(dataZ[,i]) == 'numeric' | class(dataZ[,i]) == 'integer') & length(unique(dataZ[,i])) <= 3){
-          dataZ[,i] <- as.factor(dataZ[,i])
+          #convert the column to factors
+          dataZ[,i] <- convert_numeric_2_factor(dataZ[,i])
           warning("Between-subject variables(levels <= 3) have been converted to factors")
         }
       }
@@ -291,7 +316,8 @@ BANOVA.run <- function (l1_formula = 'NA',
           if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
           if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
-            dataX[[i]][,j] <- as.factor(dataX[[i]][,j])
+            #convert the column to factors
+            dataX[[i]][,j] <- convert_numeric_2_factor(dataX[[i]][,j])
             warning("Within-subject variables(levels <= 3) have been converted to factors")
           }
         }
@@ -322,13 +348,19 @@ BANOVA.run <- function (l1_formula = 'NA',
     }else{
       if (is.null(data)) stop("data must be specified!")
       mf2 <- model.frame(formula = l2_formula, data = data)
+      #check only relevant columns
+      data_colnames <- colnames(data)
+      var_names <- c(colnames(mf1), colnames(mf2))
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(data)){
-        if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
-        # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-        if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
-          data[,i] <- as.factor(data[,i])
-          warning("Variables(levels <= 3) have been converted to factors")
+        if (data_colnames[i] %in% var_names){
+          if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+          # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
+          if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+            #convert the column to factors 
+            data[,i] <- convert_numeric_2_factor(data[,i])
+            warning("Variables(levels <= 3) have been converted to factors")
+          }
         }
       }
       n <- nrow(data)

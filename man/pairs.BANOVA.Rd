@@ -2,7 +2,7 @@
 \alias{pairs.BANOVA}
 \title{Create a matrix of output plots from a \code{BANOVA} object} 
 \description{
-A \code{\link[graphics:pairs]{pairs}} 
+A \code{\link[=graphics]{pairs}} 
 method that is customized for MCMC output.
 }
 \usage{
@@ -12,11 +12,11 @@ method that is customized for MCMC output.
   \item{x}{an object of class \code{"BANOVA"}}
 
   \item{...}{Further arguments to be passed to 
-\code{\link[rstan:pairs.stanfit]{pairs.stanfit}}}
+\code{\link[=rstan]{pairs.stanfit}}}
 }
 
 \details{
-For a detailed description see \code{\link[rstan:pairs.stanfit]{pairs.stanfit}}
+For a detailed description see \code{\link[=rstan]{pairs.stanfit}}
 }
 
 \examples{

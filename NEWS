@@ -1,3 +1,9 @@
+BANOVA v1.1.8 (Release date: 2020-07-23)
+==============
+* Added BANOVA.simple, a simple effects calculation for moderated variables
+* Fixed a bug in data pre-processing related to labelling of dummy and effects coded variables
+* Fixed a bug related to ANOVA table of a single level Multinomial models
+
 BANOVA v1.1.7 (Release date: 2020-04-10)
 ==============
 * Fixed a bug related to the class function updates

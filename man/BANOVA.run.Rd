@@ -51,7 +51,7 @@ num_trials = 1, contrast = NULL, ...)
   data frame. It must have the same format with the original data (the same column number)}
   \item{Xsamples}{a list of sample data frames(each corresponds to the choice set of each observation) that includes all covariates and factors, for the Multinomial model only, default NULL}
   \item{Zsamples}{a data frame(long format) that includes all level 2 covariates and factors, for the Multinomial model only, default NULL}
-  \item{\dots}{additional arguments, for \code{BANOVA.run}, it can include standard 'Stan' arguments, e.g. warmup, thin, chains, etc., see \link[rstan]{sampling} for more details, for other functions, ignored currently}
+  \item{\dots}{additional arguments, for \code{BANOVA.run}, it can include standard 'Stan' arguments, e.g. warmup, thin, chains, etc., see \link[=rstan]{sampling} for more details, for other functions, ignored currently}
 }
 
 \value{

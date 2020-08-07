@@ -24,9 +24,31 @@ function (factors, assign = array(dim = 0), index_factor = NA, numeric_index = a
   options(contrasts = rep("contr.sum",2))
   # TODO combine effect matrix factor with effect matrix interaction
   if (length(assign) != 0){
-    #level <- length(unique(factors))
-    level <- as.factor(levels(factors))
+    defaultWarn <- getOption("warn") 
+    #ignore of warning messages in the code below
+    options(warn = -1)
+    
+    fac_levels <- levels(factors) #extract factor levels 
+    if(is.na(as.numeric(fac_levels[1]))){
+      #if the factor levels are not labeled with numeric values keep the same labeling
+      level <- factor(fac_levels, levels = fac_levels, labels = fac_levels) 
+    } else {
+      fac_levels_numeric <- as.numeric(fac_levels)
+      dummy_condition <- (length(fac_levels_numeric) == 2) && (0 %in% fac_levels_numeric) && (1 %in% fac_levels_numeric)
+      effect_condition <- sum(fac_levels_numeric) == 0
+      if (effect_condition || dummy_condition){
+        #if factors are effect or dummy coded, levels count from postive to negative values
+        level_values_sorted <- sort(fac_levels_numeric, decreasing = T)
+        level <- factor(level_values_sorted, levels = level_values_sorted, labels = level_values_sorted)
+      } else {
+        #if not labeled keep the same labeling with numbers
+        level <- factor(fac_levels, levels = fac_levels, labels = fac_levels) 
+      }
+    }
+    level_label <-  levels(level)
     var_name <- attr(factors,'var_names')
+    options(warn = defaultWarn)
+    
     ### 1.1.2
     level <- assign_contrast_factor(level, var_name, contrast)
     ###
