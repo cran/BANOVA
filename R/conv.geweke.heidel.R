@@ -10,7 +10,7 @@ function (samples_l2_param, X_names, Z_names){
         row_names[temp] <- paste(X_names[i]," : ", Z_names[j])
     }
   pass_ind <- T
-  sol_converge <- geweke.diag(as.mcmc(samples_l2_param),0.2,0.5)
+  sol_converge <- coda::geweke.diag(coda::as.mcmc(samples_l2_param),0.2,0.5)
   p_values_converge <- 2*pnorm(-abs(sol_converge$z)) 
   decision_conerge <- array(NA,length(p_values_converge)) 
   decision_conerge[p_values_converge>=0.001] <- 'passed' 
@@ -24,7 +24,7 @@ function (samples_l2_param, X_names, Z_names){
   
   hddata <- samples_l2_param
   colnames(hddata) <- row_names
-  sol_heidel_temp <- heidel.diag(as.mcmc(hddata))
+  sol_heidel_temp <- coda::heidel.diag(coda::as.mcmc(hddata))
   sol_heidel <- data.frame(H_W_stat = sol_heidel_temp[, 1], H_W_p = round(sol_heidel_temp[, 3], 4))
   colnames(sol_heidel) <- c('H. & W. stationarity test', 'H. & W. convergence p value')
   #print(sol_heidel)

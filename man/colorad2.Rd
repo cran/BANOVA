@@ -28,11 +28,9 @@ Wedel, M and R. Pieters (2015).
 }
 
 \examples{ 
-
+\donttest{
 data(colorad2)
 # factor C is effect coded
-\donttest{
-library(rstan)
 model_bin <- BANOVA.model('Binomial')
 stanmodel_bin <- BANOVA.build(model_bin)
 res0 <- BANOVA.run(Y1 ~ 1, ~ C + B + C*B, fit = stanmodel_bin, 

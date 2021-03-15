@@ -1,3 +1,10 @@
+BANOVA v1.1.9 (Release date: 2020-12-16)
+==============
+* Added BANOVA.multi.mediation, a function for mediation analysis with multiple mediators
+* Added models for analysis of Multivariate Normal and Truncated Normal dependent variables
+* Fixed a bug in BANOVA.mediation related to mediated moderation
+* Updated help functions
+
 BANOVA v1.1.8 (Release date: 2020-07-23)
 ==============
 * Added BANOVA.simple, a simple effects calculation for moderated variables

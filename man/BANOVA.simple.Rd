@@ -9,19 +9,19 @@ dep_var_name = NULL, return_posterior_samples = FALSE)
 }
 \arguments{
 \item{BANOVA_output}{an object of class "BANOVA" returned by BANOVA.run function with 
-an outcome of the Hierarchical Bayesian ANOVA analysis}
+an outcome of the hierarchical Bayesian ANOVA analysis.}
 
 \item{base}{a character string which specifies the name of the mediator variable used as a base 
-for calculation}
+for calculation.}
 
 \item{quantiles}{a numeric vector with quantiles for the posterior interval of the simple effects.
 Must include two elements with values between 0 and 1 in ascending order, default c(0.025, 0.975)}
 
 \item{dep_var_name}{a character string with a name of the dependent variable, for the Multinomial model only, 
-default NULL}
+default NULL.}
 
 \item{return_posterior_samples}{logical indicator of whether samples of the posterior simple effects
-distributions should be returned, default \code{FALSE}}
+distributions should be returned, default \code{FALSE}.}
 }
 \value{
 Returns a list with the summary tables of the results; optionally returns the 
@@ -29,13 +29,15 @@ samples drawn from the posterior simple effects distributions.
 \item{\code{results_summary}}{a list of tables with summaries of the posterior simple effects distributions
   for all factors and their combinations that are interacting with a moderating variable.}
 \item{\code{samples_simple_effects}}{if \code{return_posterior_samples} is set to \code{TRUE} 
-a list of tables with samples of the posterior simple effects is returened. The tables include results
+a list of tables with samples of the posterior simple effects is returned. The tables include results
 for all levels of all factors and their combinations that are interacting with a moderating variable.}
 }
 \description{
-\code{BANOVA.simple} calculates simple or partial effects, also known as simple main effects in a
-model with more than one interacting factors. One variable must be selected as a moderating (or base) 
-factor. Both single-level and multi-level models with any of the distributions accommodated in the package can be analyzed.
+\code{BANOVA.simple} is a function for probing interaction effects in models where
+both  moderator  and  explanatory  variables  are  factors  with an arbitrary  number 
+of levels. The function estimates and tests simple or partial effects, also known as simple main
+or conditional effects. Both single-level and multi-level models with any of the distributions accommodated in 
+the package can be analyzed.
 }
 \details{
 The function identifies all factors and their combinations that are interacting with a moderating of "base"
@@ -51,7 +53,7 @@ original factors are displayed; in the case of user-defined contrasts, the name 
 
 The summary of the posterior distribution of each simple effect contains the mean, 
 standard deviation, posterior interval, which by default reports a central 95\% interval, 
-but can also be specified by the user, and a Bayesian p-value. 
+but can also be specified by the user, and a two-sided Bayesian p-value. 
 
 Note that for a Multinomial model intercepts and between-subject regressors have choice specific 
 coefficients and thus simple effects are reported for each possible choice outcome. To perform the 
@@ -67,8 +69,11 @@ model <- BANOVA.model('Binomial')
 banova_model <- BANOVA.build(model)
 res_1 <- BANOVA.run(y ~ typic, ~ color*blurfac, fit = banova_model,
                     data = colorad, id = 'id', num_trials = as.integer(16), 
-                    iter = 2000, thin = 5, chains = 2)
+                    iter = 2000, thin = 1, chains = 2)
 # Calculate simple effects with "blurfac" as a moderating vriable
 simple_effects <- BANOVA.simple(BANOVA_output = res_1, base = "blurfac")
 }
+}
+\author{
+Anna Kopyakova
 }

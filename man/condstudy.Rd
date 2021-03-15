@@ -28,10 +28,9 @@ Wedel, M. and Dong, C. (2016) \emph{BANOVA: Bayesian Analysis of Variance for Co
 }
 
 \examples{
+\donttest{
 # condstudy_sub is a subset of condstudy with 180 obs. and the same variables
 data(condstudy_sub)
-\donttest{
-library(rstan)
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)
 out2 <- BANOVA.run(att~cond+pict, ~type, fit = stanmodel, data = condstudy_sub, 

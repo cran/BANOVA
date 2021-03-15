@@ -26,8 +26,9 @@ Etkin, J. and Ratner, R. (2012) \emph{The Dynamic Impact of Variety among Means 
 }
 
 \examples{
-data(goalstudy)
+
 \donttest{
+data(goalstudy)
 library(rstan)
 
 # single level model

@@ -106,7 +106,7 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
   
   if (mediator_in_l2){
     # find if there are moderators interacts with the mediator
-    mediator_assign <- which (rownames(model1_level2_var_matrix) == mediator)
+    mediator_assign <- which(rownames(model1_level2_var_matrix) == mediator)
     interaction_list <- attr(sol_1$dMatrice$Z, "interactions_num")
     interaction_list_index <- attr(sol_1$dMatrice$Z, "interactions_numeric_index")
     mediator_interaction_list <- list()
@@ -143,7 +143,9 @@ function (sol_1, est_matrix, n_sample, mediator, xvar = NA){
       l1_matrix <- rbind(l1_matrix, c(1))
       attr(l1_matrix, "levels") <- l1_matrix
     }else{
-      l1_matrix <- effect.matrix.mediator(interaction_factors = l1_values, matrix_formula=formula(attr(sol_1$mf1, 'terms')), xvar=xvar, contrast = sol_1$contrast)
+      form <- formula(attr(sol_1$mf1, 'terms'))
+      newform <- stats::update(form, NULL ~ .)
+      l1_matrix <- effect.matrix.mediator(interaction_factors = l1_values, matrix_formula=newform, xvar=xvar, contrast = sol_1$contrast)
     }
     if (length(mediator_interaction_list) > 0){
       l2_values <- attr(sol_1$dMatrice$Z, 'varValues')

@@ -1,32 +1,30 @@
 #' Simple effects calculation
 #' 
-#' \code{BANOVA.simple} calculates simple or partial effects, also known as simple main effects in a
-#' model with more than one interacting factors. One variable must be selected as a moderating (or base) 
-#' factor. Both single-level and multi-level models with any of the distributions accommodated in the package can be analyzed. 
+#' \code{BANOVA.simple} is a function for probing interaction effects in models where
+#' both  moderator  and  explanatory  variables  are  factors  with an arbitrary  number 
+#' of levels. The function estimates and tests simple or partial effects, also known as simple main
+#' or conditional effects. Both single-level and multi-level models with any of the distributions accommodated in 
+#' the package can be analyzed. 
 #' @usage BANOVA.simple(BANOVA_output, base = NULL, quantiles = c(0.025, 0.975), 
 #' dep_var_name = NULL, return_posterior_samples = FALSE)
 #' @param BANOVA_output an object of class "BANOVA" returned by BANOVA.run function with 
-#' an outcome of the Hierarchical Bayesian ANOVA analysis
+#' an outcome of the hierarchical Bayesian ANOVA analysis.
 #' @param base a character string which specifies the name of the mediator variable used as a base 
-#' for calculation
+#' for calculation.
 #' @param quantiles a numeric vector with quantiles for the posterior interval of the simple effects.
 #' Must include two elements with values between 0 and 1 in ascending order, default c(0.025, 0.975)
 #' @param dep_var_name a character string with a name of the dependent variable, for the Multinomial model only, 
-#' default NULL
+#' default NULL.
 #' @param return_posterior_samples logical indicator of whether samples of the posterior simple effects
-#' distributions should be returned, default \code{FALSE}
+#' distributions should be returned, default \code{FALSE}.
 #' @return Returns a list with the summary tables of the results; optionally returns the 
 #' samples drawn from the posterior simple effects distributions.
 #
 #' \item{\code{results_summary}}{a list of tables with summaries of the posterior simple effects distributions
 #'   for all factors and their combinations that are interacting with a moderating variable.}
 #' \item{\code{samples_simple_effects}}{if \code{return_posterior_samples} is set to \code{TRUE} 
-#' a list of tables with samples of the posterior simple effects is returened. The tables include results
+#' a list of tables with samples of the posterior simple effects is returned. The tables include results
 #' for all levels of all factors and their combinations that are interacting with a moderating variable.}
-
-#' @item results_summary a list of tables with results. 
-#' @item simple_effects If \code{return_posterior_samples} is \code{TRUE} lists 
-#' with samples of the posterior simple effects are also returned.
 #' @details  The function identifies all factors and their combinations that are interacting with a moderating of "base"
 #' variable. For each interaction, it determines all possible level combinations of the involved regressors,
 #' which are further used to combine the posterior samples of the selected regression coefficients to calculate 
@@ -40,7 +38,7 @@
 #' 
 #' The summary of the posterior distribution of each simple effect contains the mean, 
 #' standard deviation, posterior interval, which by default reports a central 95\% interval, 
-#' but can also be specified by the user, and a Bayesian p-value. 
+#' but can also be specified by the user, and a two-sided Bayesian p-value. 
 #' 
 #' Note that for a Multinomial model intercepts and between-subject regressors have choice specific 
 #' coefficients and thus simple effects are reported for each possible choice outcome. To perform the 
@@ -55,10 +53,11 @@
 #' banova_model <- BANOVA.build(model)
 #' res_1 <- BANOVA.run(y ~ typic, ~ color*blurfac, fit = banova_model,
 #'                     data = colorad, id = 'id', num_trials = as.integer(16), 
-#'                     iter = 2000, thin = 5, chains = 2)
+#'                     iter = 2000, thin = 1, chains = 2)
 #' # Calculate simple effects with "blurfac" as a moderating vriable
 #' simple_effects <- BANOVA.simple(BANOVA_output = res_1, base = "blurfac")
 #' }
+#' @author Anna Kopyakova
 #' @export
 BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025, 0.975), dep_var_name = NULL, 
                           return_posterior_samples = FALSE){
@@ -115,9 +114,9 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
   }
   
   # make.formula combines regressors in the fist and second levels of the two-level models into one
-  make.formula <- function(){
+  make.formula <- function(pvalue.table, dep_var){
     # select names of level one variables
-    l1_variables <- rownames(BANOVA_output$pvalue.table)
+    l1_variables <- rownames(pvalue.table)
     if (BANOVA_output$model_name == "BANOVA.Multinomial"){
       # For Multinomial models choice specific intercepts are skipped from a variable list
       l1_variables <- l1_variables[-c(1:(n_categories-1))]
@@ -131,19 +130,13 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
     }
 
     # select names of level two variables
-    l2_variables <- colnames(BANOVA_output$pvalue.table)
+    l2_variables <- colnames(pvalue.table)
     # if there is only the intercept keep an empty string
     if (length(l2_variables) == 1){
       l2_variables <- c()
     } else {
       # if other variables are present remove the intercept
       l2_variables <- l2_variables[which(l2_variables != intercept_name)]
-    }
-    
-    if (BANOVA_output$model_name == "BANOVA.Multinomial"){
-      dep_var     <- dep_var_name #must be specified by the user
-    } else {
-      dep_var     <- colnames(BANOVA_output$mf1)[1] # name of the dependent variable
     }
     
     # combine the variables in a single string separated by "+"
@@ -400,7 +393,6 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
       #intercept and the levels of the base variable should not be included in the simple effects
       effect_matrix[, intercept_name]    <- 0
       effect_matrix[, base_levels_names] <- 0
-      
       coef_temp      <- coefficients[, colnames(effect_matrix)] #coefficients of relevant regressors
 
       if(return_posterior_samples){
@@ -429,11 +421,20 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
       table <- format(round(table, 4), nsmall = 4)
       title <- build.title()
       create_table_result <- create.table()
-      table <- create_table_result$result
-      return_table <- data.frame(table)
-      table <- as.table(table)
-      table[, ncol(table)][table[, ncol(table)] == " 0.0000"] = "<0.0001"
+      table               <- create_table_result$result
       
+      if(is.null(nrow(table))){
+        table <- t(as.matrix(table, nrow = 1))
+        dimnames(table)[[1]] <- ""
+      }
+      return_table <- data.frame(table)
+      table        <- as.table(table)
+      #format pValues
+      n_columns <- ncol(table)
+      p_values  <- as.numeric(table[,  n_columns])
+      table[, n_columns] <- ifelse(round(p_values, 4) == 0, '<0.0001', table[,  n_columns])
+      
+        
       # Print results 
       cat('\n')
       cat(title)
@@ -444,7 +445,7 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
       var_names <- names(selected_vars)
       n_vars    <- length(var_names)
       
-      rownames(return_table) <- NULL
+      rownames(table) <- NULL
       colnames(return_table)[(n_vars+1):ncol(return_table)] <- create_table_result$colnames_return_table
  
       sol_tables[[title]] <- return_table
@@ -524,7 +525,7 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
       data_temp <- cbind(l1_df, l2_vars, dep_var)
       
       # create a formula
-      formula        <- make.formula()
+      formula        <- make.formula(BANOVA_output$pvalue.table, dep_var_name)
       design_matrics <- design.matrix(l1_formula = formula, l2_formula = 'NA', data = data_temp, 
                                       contrast = BANOVA_output$contrast)
       design_matrix    <- design_matrics$X
@@ -559,9 +560,50 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
         cat('\n')
       }
     }
-  } 
+    
+  } else if (model_name == "BANOVA.multiNormal"){
+    intercept_name  <- colnames(BANOVA_output$pvalue.table)[1]  #how intercept is labeled
+    results <- list()
+    names_dv <- BANOVA_output$names_of_dependent_variables
+    if (BANOVA_output$single_level){
+      design_matrix    <- BANOVA_output$dMatrice$X
+      names_regressors <- colnames(design_matrix)
+      for (i in 1:BANOVA_output$num_depenent_variables){
+        name <- names_dv[i]
+        
+        coefficients           <- BANOVA_output$samples_l1.list[[i]] #select semples of the lvl1 parameters
+        colnames(coefficients) <- names_regressors
+
+        title <- paste0("\nSimple effects for ", name,"\n")
+        cat(title)
+        results[[name]] <- perform.calculation()
+      }
+    } else{
+      dep_var_label  <- colnames(BANOVA_output$mf1)[1]            #name of the matrix with dep vars
+      dep_var_matrix <- BANOVA_output$data[, dep_var_label]       #matrix with dep vars
+      combined_data  <- cbind(BANOVA_output$data, dep_var_matrix) #data set with y as a matrix and columns
+      for (i in 1:BANOVA_output$num_depenent_variables){
+        name <- names_dv[i]
+        # for a two level model design matrix is created by "rewriting" two equations into one
+        formula <- make.formula(BANOVA_output$pvalue.tables.list[[i]],
+                                BANOVA_output$names_of_dependent_variables[[i]])
+        
+        design_matrics <- design.matrix(l1_formula = formula, l2_formula = 'NA', data = combined_data,
+                                        contrast = BANOVA_output$contrast)
+        design_matrix    <- design_matrics$X
+        names_regressors <- colnames(design_matrix)
+        coefficients     <- BANOVA_output$samples_l2.list[[i]] #select semples of the lvl2 parameters
+        colnames(coefficients) <- update.regressor.names(rownames(BANOVA_output$coef.tables.list[[i]]$coeff_table))
+        
+        title <- paste0("\nSimple effects for ", name,"\n")
+        cat(title)
+        results[[name]] <- perform.calculation()
+      }
+    }
+    return(results)
+  }
   # All other models ----
-  else { 
+   else { 
     intercept_name  <- colnames(BANOVA_output$pvalue.table)[1] #how intercept is labeled
     if (BANOVA_output$single_level){
       # for a single level model design matrix is extracted from BANOVA_output
@@ -570,10 +612,10 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
       
       coefficients           <- BANOVA_output$samples_l1_param #select semples of the lvl1 parameters
       colnames(coefficients) <- names_regressors
-      
     } else {
       # for a two level model design matrix is created by "rewriting" two equations into one
-      formula        <- make.formula()
+      formula        <- make.formula(pvalue.table = BANOVA_output$pvalue.table, 
+                                     dep_var = colnames(BANOVA_output$mf1)[1])
       design_matrics <- design.matrix(l1_formula = formula, l2_formula = 'NA', data = BANOVA_output$data, 
                                       contrast = BANOVA_output$contrast)
       design_matrix   <- design_matrics$X

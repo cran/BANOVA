@@ -1,7 +1,7 @@
 table.predictions <-
 function(x){
   if (x$single_level){
-    if(x$model_name == 'BANOVA.Normal' || x$model_name == 'BANOVA.T'){
+    if(x$model_name %in% c('BANOVA.Normal', 'BANOVA.T', 'BANOVA.truncNormal')){
       l2_values <- attr(x$dMatrice$X, 'varValues')
       l2_values[[1]] <- NULL  # remove y var
       l2_interactions <- attr(x$dMatrice$X, 'interactions')
@@ -71,7 +71,6 @@ function(x){
                                       numeric_index_in_Z = attr(x$dMatrice$X, 'numeric_index'), 
                                       samples_cutp_param = x$samples_cutp_param,
                                       model = 'MultinomialordNormal', contrast = x$contrast)
-      
     }else if (x$model_name == 'BANOVA.Multinomial'){
       # TODO: X_full[[1]] values must all be 1
       # factors are the same across all alternatives, 
@@ -92,9 +91,53 @@ function(x){
       #                                        numeric_index_in_X = attr(x$dMatrice$X_full[[1]], 'numeric_index'),
       #                                        single_level = T)
      
+    } else if (x$model_name == 'BANOVA.multiNormal'){
+      l2_values <- attr(x$dMatrice$X, 'varValues')
+      l2_values[[1]] <- NULL  # remove y var
+      l2_interactions <- attr(x$dMatrice$X, 'interactions')
+      if (length(l2_interactions) > 0)
+        for (i in 1: length(l2_interactions))
+          l2_interactions[[i]] <- l2_interactions[[i]] - 1
+      sol_tables <- list()
+      for (i in 1:x$num_depenent_variables){
+        name <- x$names_of_dependent_variables[i]
+        title <- paste0("\nPredictions for ", name,"\n")
+        cat(title)
+        sol_tables[[title]] <- print.table.means(x$coef.tables.list[[i]]$coeff_table, x$samples_l1.list[[i]], 
+                                                 X_names = colnames(x$dMatrice$Z), 
+                                                 X_assign = attr(x$dMatrice$Z, 'assign'),
+                                                 Z_names = colnames(x$dMatrice$X), 
+                                                 Z_assign = attr(x$dMatrice$X, 'assign'), 
+                                                 Z_classes = attr(x$dMatrice$X, 'dataClasses'),
+                                                 l2_values = l2_values,
+                                                 l2_interactions = l2_interactions, 
+                                                 l2_interactions_index = attr(x$dMatrice$X, 'interactions_index'), 
+                                                 numeric_index_in_Z = attr(x$dMatrice$X, 'numeric_index'), 
+                                                 model = 'NormalNormal', contrast = x$contrast)
+        # coeff_table =  x$coef.tables.list[[i]]$coeff_table
+        # samples_l2_param = x$samples_l1.list[[i]]
+        # X_names = colnames(x$dMatrice$Z)
+        # X_assign = attr(x$dMatrice$Z, 'assign')
+        # X_classes = character(0) 
+        # Z_names = colnames(x$dMatrice$X)
+        # Z_assign = attr(x$dMatrice$X, 'assign')
+        # Z_classes = attr(x$dMatrice$X, 'dataClasses')
+        # l1_values = list()
+        # l1_interactions = list()
+        # l1_interactions_index = array(dim = 0)
+        # l2_values = l2_values
+        # l2_interactions = l2_interactions
+        # l2_interactions_index = attr(x$dMatrice$X, 'interactions_index')
+        # numeric_index_in_Z = attr(x$dMatrice$X, 'numeric_index')
+        # samples_cutp_param = NA
+        # model = 'NormalNormal'
+        # l2_sd = NULL
+        # n_trials = NULL
+        # contrast = x$contrast
+      }
     }
   }else{
-    if(x$model_name == 'BANOVA.Normal' || x$model_name == 'BANOVA.T'){
+    if(x$model_name %in% c('BANOVA.Normal', 'BANOVA.T', 'BANOVA.truncNormal')){
       sol_tables <- print.table.means(x$coef.tables$coeff_table, x$samples_l2_param, colnames(x$dMatrice$X), X_assign = attr(x$dMatrice$X, 'assign'), 
                         X_classes = attr(x$dMatrice$X, 'dataClasses'), colnames(x$dMatrice$Z), Z_assign = attr(x$dMatrice$Z, 'assign'), 
                         Z_classes = attr(x$dMatrice$Z, 'dataClasses'), l1_values = attr(x$dMatrice$X, 'varValues'), 
@@ -134,6 +177,27 @@ function(x){
                                l2_values = attr(x$dMatrice$Z, 'varValues'), l2_interactions = attr(x$dMatrice$Z, 'interactions'), 
                                l2_interactions_index = attr(x$dMatrice$Z, 'interactions_index'), numeric_index_in_X = attr(x$dMatrice$X_full[[1]], 'numeric_index'),
                                numeric_index_in_Z = attr(x$dMatrice$Z, 'numeric_index'), contrast = x$contrast)
+    } else if (x$model_name == 'BANOVA.multiNormal'){
+      sol_tables <- list()
+      for (i in 1:x$num_depenent_variables){
+        name <- x$names_of_dependent_variables[i]
+        title <- paste0("\nPredictions for ", name,"\n")
+        cat(title)
+        sol_tables[[title]] <- print.table.means(x$coef.tables.list[[i]]$coeff_table, x$samples_l2.list[[i]], 
+                                        colnames(x$dMatrice$X), X_assign = attr(x$dMatrice$X, 'assign'), 
+                                        X_classes = attr(x$dMatrice$X, 'dataClasses'), 
+                                        colnames(x$dMatrice$Z), Z_assign = attr(x$dMatrice$Z, 'assign'), 
+                                        Z_classes = attr(x$dMatrice$Z, 'dataClasses'), 
+                                        l1_values = attr(x$dMatrice$X, 'varValues'), 
+                                        l1_interactions = attr(x$dMatrice$X, 'interactions'), 
+                                        l1_interactions_index = attr(x$dMatrice$X, 'interactions_index'), 
+                                        l2_values = attr(x$dMatrice$Z, 'varValues'), 
+                                        l2_interactions = attr(x$dMatrice$Z, 'interactions'), 
+                                        l2_interactions_index = attr(x$dMatrice$Z, 'interactions_index'), 
+                                        numeric_index_in_X = attr(x$dMatrice$X, 'numeric_index'),
+                                        numeric_index_in_Z = attr(x$dMatrice$Z, 'numeric_index'), 
+                                        model = 'NormalNormal', contrast = x$contrast)
+      }
     }
   }
   invisible(sol_tables)

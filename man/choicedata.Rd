@@ -48,6 +48,7 @@
   \url{http://www.perossi.org/home/bsm-1}
 }
 \examples{ 
+\donttest{
 data(choicedata)
 # generate dataX(convert the within-subjects variables to a list)
 dataX <- list()
@@ -58,7 +59,6 @@ for (i in 1:nrow(choicedata)){
   dataX[[i]] <- as.data.frame(logP) - mean(logP)
 }
 dataZ <- choicedata[,9:13]
-\donttest{
 res <- BANOVA.Multinomial(~ logP, ~ college, dataX, dataZ, choicedata$choice, 
 choicedata$hhid, burnin = 100, sample = 100, thin = 1)
 summary(res)

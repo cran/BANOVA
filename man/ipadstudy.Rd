@@ -29,6 +29,7 @@ Ferraro,R., Kirmani, A. and Matherly, T., (2013) \emph{Look at Me! Look at Me! C
 }
 
 \examples{
+\donttest{
 data(ipadstudy)
 
 # mean center covariates
@@ -39,7 +40,6 @@ ipadstudy$gender <- ipadstudy$gender - mean(ipadstudy$gender)
 res <- BANOVA.Normal(attitude~1, ~owner + age + gender + selfbrand*conspic, 
 ipadstudy, ipadstudy$id, burnin = 100, sample = 100, thin = 1 )
 summary(res)
-\donttest{
 # use apple_dl as the dependent variable
 res <- BANOVA.ordMultinomial(apple_dl~1, ~owner + age + gender + selfbrand*conspic, 
 ipadstudy, ipadstudy$id, burnin = 100, sample = 100, thin = 2 )

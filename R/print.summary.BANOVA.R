@@ -23,6 +23,14 @@ print.summary.BANOVA <- function(x, ...){
   if (!is.null(x$R2)){
     cat('\nMultiple R-squared: ', x$R2, '\n')
   }
+  
+  if (x$model_name == "BANOVA.multiNormal"){
+    cat('\nCorrelation matrix: \n')
+    print(x$full_object$correlation.matrix)
+    print(x$full_object$test.residual.correlation)
+    cat('\nStandard deviations of dependent variables: \n')
+    print(x$full_object$test.standard.deviations.of.dep.var)
+  }
     
   if (!((x$model_name == "BANOVA.Multinomial")&&(x$single_level))){
     cat('\nTable of predictions: \n')

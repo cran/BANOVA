@@ -27,8 +27,8 @@ Wedel, M and R. Pieters (2015).
 }
 
 \examples{
-data(bernlogtime)
 \donttest{
+data(bernlogtime)
 # model using the dependent variable : log of the response time(logtime) 
 res1 <- BANOVA.Normal(logtime~typical, ~blur + color, bernlogtime, 
 bernlogtime$subject, burnin = 1000, sample = 1000, thin = 1)

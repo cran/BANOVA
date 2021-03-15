@@ -20,9 +20,9 @@
 }
 
 \examples{
+\donttest{
 # condstudy_sub is a subset of condstudy with 180 obs. and the same variables
 data(condstudy_sub)
-\donttest{
 library(rstan)
 model <- BANOVA.model('Normal')
 stanmodel <- BANOVA.build(model)

@@ -11,14 +11,14 @@
 BANOVA.model <- function (model_name, 
                           single_level = F){
   if(model_name %in% c('Normal', 'Poisson', 'T', 'Bernoulli', 
-                       'Binomial', 'ordMultinomial', 'Multinomial')){
+                       'Binomial', 'ordMultinomial', 'Multinomial',
+                       'multiNormal', 'truncNormal')){
     if(single_level){
         name <- paste("stan/single_",model_name, ".stan", sep = "")
     }else{
         name <- paste("stan/", model_name, "_Normal.stan", sep = "")
     }
     file_src <- system.file(name, package = 'BANOVA', mustWork = TRUE)
-    #file_src <- paste("Windows/v1.1.7/BANOVA_R/inst/",name,sep = "")
     model_code = readChar(file_src, nchars=1000000)
 
   }else{

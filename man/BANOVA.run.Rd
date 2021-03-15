@@ -10,7 +10,7 @@
 \usage{
 BANOVA.run(l1_formula = "NA", l2_formula = "NA", fit = NULL, model_name = 'NA', 
 dataX = NULL, dataZ = NULL, data = NULL, y_value = NULL, id, iter = 2000, 
-num_trials = 1, contrast = NULL, ...)
+num_trials = 1, contrast = NULL, y_lowerBound = -Inf, y_upperBound = Inf, ...)
 \method{summary}{BANOVA}(object, ...)
 \method{predict}{BANOVA}(object, newdata = NULL, Xsamples = NULL, Zsamples = 
                         NULL, ...)
@@ -20,17 +20,17 @@ num_trials = 1, contrast = NULL, ...)
   \item{l1_formula}{formula for level 1 e.g. 'Y~X1+X2'}
 
   \item{l2_formula}{formula for level 2 e.g. '~Z1+Z2',
-  response variable must not be included. If NULL, the single level model is used}
+  response variable must not be included. If NULL, the single-level model is used}
 
   \item{fit}{a fitted BANOVA models, an object of class \code{"BANOVA.build"}, default NULL which needs compilation}
   
-  \item{model_name}{a character string in c('Normal', 'T', 'Bernoulli', 'Binomial', 'Poisson', 'ordMultinomial', 'Multinomial')}
+  \item{model_name}{a character string in c('Normal', 'T', 'Bernoulli', 'Binomial', 'Poisson', 'ordMultinomial', 'Multinomial', 'multiNormal', 'truncNormal')}
 
-  \item{dataX}{a list of data frames(each corresponds to the choice set of each observation) that includes all covariates and factors, for the Multinomial model only, default NULL}
+  \item{dataX}{a list of data frames (each corresponds to the choice set of each observation) that includes all covariates and factors, for the Multinomial model only, default NULL}
   
-  \item{dataZ}{a data frame(long format) that includes all level 2 covariates and factors, for the Multinomial model only, default NULL}
+  \item{dataZ}{a data frame (long format) that includes all level 2 covariates and factors, for the Multinomial model only, default NULL}
   
-  \item{data}{a data.frame in long format including all features in level 1 and level 2(covariates and categorical factors) and responses, default NULL}
+  \item{data}{a data.frame in a long format including all features in level 1 and level 2 (covariates and categorical factors) and responses, default NULL. For the Multivariate Normal model the data must be specially prepared: first, combine the set of dependent variables in a single matrix; next, add this matrix to an original data frame used in the analysis. For an example of the specification of the data, please, see below.}
 
   \item{id}{subject ID (string) of each response unit}
   
@@ -39,16 +39,22 @@ num_trials = 1, contrast = NULL, ...)
   \item{iter}{target samples in the 'Stan' algorithm after thinning, default 2000}
   
   \item{num_trials}{the number of trials of each
-  observation(=1, if it is bernoulli), the type is forced to be 'integer', for the Binomial model only, default 0}
+  observation(=1, if it is Bernoulli), the type is forced to be 'integer', for the Binomial model only, default 0}
   
   \item{contrast}{a list of contrasts for planned comparisons, default: effect coding (NULL value)}
-
+  
+  \item{y_lowerBound}{lower bound of the dependent variable, for the Truncated Normal model only, 
+  default -Inf.}
+  
+  \item{y_upperBound}{upper bound of the dependent variable, for the Truncated Normal model only, 
+  default Inf.}
+  
   \item{object}{an object of class \code{BANOVA} (returned by \code{BANOVA.run})}
   
   \item{x}{an object of class \code{BANOVA} (returned by \code{BANOVA.run})}
 
   \item{newdata}{test data, either a matrix, vector or a
-  data frame. It must have the same format with the original data (the same column number)}
+  data frame. It must have the same format as the original data (the same column number)}
   \item{Xsamples}{a list of sample data frames(each corresponds to the choice set of each observation) that includes all covariates and factors, for the Multinomial model only, default NULL}
   \item{Zsamples}{a data frame(long format) that includes all level 2 covariates and factors, for the Multinomial model only, default NULL}
   \item{\dots}{additional arguments, for \code{BANOVA.run}, it can include standard 'Stan' arguments, e.g. warmup, thin, chains, etc., see \link[=rstan]{sampling} for more details, for other functions, ignored currently}
@@ -56,7 +62,7 @@ num_trials = 1, contrast = NULL, ...)
 
 \value{
   \code{BANOVA.run} returns an object of class \code{"BANOVA"}. The returned object is a list containing:
-  
+
   \item{anova.table}{table of effect sizes \code{\link{BAnova}}}
   \item{coef.tables}{table of estimated coefficients}
   \item{pvalue.table}{table of p-values \code{\link{table.pvalues}}}
@@ -78,26 +84,36 @@ num_trials = 1, contrast = NULL, ...)
 }
 
 \examples{
+
+\donttest{
+# Analysis of a single-level Normal dependent variable
 # Use the ipadstudy data set
 data(ipadstudy)
-\donttest{
 library(rstan)
 # build the BANOVA model first so that it can be reused
 model <- BANOVA.model('Normal', single_level = TRUE)
 banova_model <- BANOVA.build(model)
 res_1 <- BANOVA.run(attitude~owner + age + gender + selfbrand*conspic, 
-fit = banova_model, data = ipadstudy, id = 'id', iter = 2000, 
-thin = 5, chains = 2)
+fit = banova_model, data = ipadstudy, id = 'id', iter = 2000, chains = 2)
 summary(res_1)
-
-
 # or call the function directly without specifying the fit argument
 # but it needs compilation
 res_1 <- BANOVA.run(attitude~owner + age + gender + selfbrand*conspic,
-model_name = 'Normal', data = ipadstudy, id = 'id', iter = 2000, 
-thin = 5, chains = 2)
-}
+model_name = 'Normal', data = ipadstudy, id = 'id', iter = 2000, chains = 2)
 
+# Hierarchical analysis of multiple dependent variables (Multivariate Normal distribution)
+# Use the colorad data set
+data(colorad)
+# Prepare dependent variables to be analyzed
+colorad$blur_squared <- (colorad$blur)^2
+dv <- cbind(colorad$blur, colorad$blur_squared)
+colnames(dv) <- c("blur", "blur_squared")
+colorad$dv <- dv
+# Build and analyze the model for the dependent variables
+model <- BANOVA.model('multiNormal')
+banova_multi_norm_model <- BANOVA.build(model)
+res_2 <- BANOVA.run(dv ~ typic, ~ color, fit = banova_multi_norm_model,
+                    data = colorad, id = 'id', iter = 2000, thin = 1, chains = 2)
 }
-
+}
 

@@ -1,5 +1,4 @@
 #' run a BANOVA model
-#' @param 
 #'
 #' @return A BANOVA stan model.
 #'
@@ -20,11 +19,13 @@ BANOVA.run <- function (l1_formula = 'NA',
                         iter = 2000,
                         num_trials = 1,
                         contrast = NULL, # 1.1.2
+                        y_lowerBound = -Inf,
+                        y_upperBound = Inf,
                         ...
                         ){
   
   # auxiliary function for conversion of effect or dummy coded numeric vectors to factors
-  convert_numeric_2_factor <- function(data_vec){ 
+  convert.numeric.2.factor <- function(data_vec){ 
     levels <- unique(data_vec)
     dummy_condition <- (length(levels) == 2) && (0 %in% levels) && (1 %in% levels)
     effect_condition <- sum(levels) == 0
@@ -38,7 +39,15 @@ BANOVA.run <- function (l1_formula = 'NA',
     }
     return(data_vec)
   }
-  
+  check.numeric.variables <- function(y_var){
+    if (class(y_var) != 'numeric'){
+      warning("The response variable must be numeric (data class also must be 'numeric')")
+      y_var <- as.numeric(y_var)
+      warning("The response variable has been converted to numeric")
+    }
+    return(y_var)
+  }
+
   # data sanity check
   if (!is.null(data)){
     if (!is.data.frame(data)) stop("data needs to be a data frame!")
@@ -59,11 +68,7 @@ BANOVA.run <- function (l1_formula = 'NA',
       y <- model.response(mf1)
     }
     if (model_name %in% c('Normal', 'T')){
-      if (class(y) != 'numeric'){
-        warning("The response variable must be numeric (data class also must be 'numeric')")
-        y <- as.numeric(y)
-        warning("The response variable has been converted to numeric")
-      }
+      y <- check.numeric.variables(y)
     }else if (model_name %in% c('Poisson', 'Binomial', 'Bernoulli', 'Multinomial', 'ordMultinomial')){
       if (class(y) != 'integer'){
         warning("The response variable must be integers (data class also must be 'integer')..")
@@ -83,7 +88,54 @@ BANOVA.run <- function (l1_formula = 'NA',
         if (n_categories < 3) stop('The number of categories must be greater than 2!')
         if (DV_sort[1] != 1 || DV_sort[n_categories] != n_categories) stop('Check if response variable follows categorical distribution!') 
       }
-    }else{
+    } else if (model_name == "multiNormal") {
+      if (is.null(ncol(y))) stop('The number of dependent variables must be greater than 1!')
+      if (is.null(colnames(y))) stop(paste0('Please, specify the names of dependent variables!\n',
+                                     'See Examples in help(BANOVA.run) for the expected specification of the dependent variables.'))
+      num_dv <- ncol(y)
+      for (l in 1:num_dv){
+        y[,l] <- check.numeric.variables(y[,l])
+      }
+    } else if (model_name == 'truncNormal'){
+      y <- check.numeric.variables(y)
+      #check the specified bounds
+      if (y_lowerBound > y_upperBound){
+        stop(paste0("The lower bound should be below upper bound!\n", 
+                    "Current lower bound of y is ", y_lowerBound, ", and upper bound is ", y_upperBound))
+      }
+      if (y_lowerBound == y_upperBound){
+        stop(paste0("The lower bound should be different from upper bound!\n", 
+                    "Current lower bound of y is ", y_lowerBound, ", and upper bound is ", y_upperBound))
+      }
+      #check if there is an unbounded tail
+      no_lower_bound = 0
+      no_upper_bound = 0
+      if (y_lowerBound == -Inf) no_lower_bound = 1
+      if (y_upperBound == Inf) no_upper_bound = 1
+      if (no_lower_bound == 1 & no_upper_bound == 1){
+        stop(paste0("If the dependent variable is unbounded, please use Normal distributoin!\n", 
+                    "Current lower bound of y is ", y_lowerBound, ", and upper bound is ", y_upperBound))
+      }
+      #check the values of the dependent variable 
+      min_y <- min(y)
+      max_y <- max(y)
+      if (min_y < y_lowerBound){
+        stop(paste0("At least one value of the dependent variable exceeds the specified lower bound!\n", 
+                    "The lowest value of y is ", min_y, ", while specified lower bound is ", y_lowerBound))
+      }
+      if (max_y > y_upperBound){
+        stop(paste0("At least one value of the dependent variable exceeds the specified upper bound!\n", 
+                    "The highest value of y is ", max_y, ", while specified lower bound is ", y_upperBound))
+      }
+      #check how well the boundaries cover the data
+      three_sd_y <- 3*sd(y)
+      if(y_lowerBound!=(-Inf) && y_lowerBound<(min_y-three_sd_y)){
+        warning("The specified lower bound is more than three standard deviations away from the lowest value of y.\nThis may cause problems with initialization of starting values in the MCMC chains.")
+      }
+      if(y_upperBound!=(Inf) && y_upperBound>(max_y+three_sd_y)){
+        warning("The specified upper bound is more than three standard deviations away from the highest value of y.\nThis may cause problems with initialization of starting values in the MCMC chains.")
+      }
+    } else{
       stop(model_name, " is not supported currently!")
     }
   }
@@ -120,7 +172,7 @@ BANOVA.run <- function (l1_formula = 'NA',
           if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
           if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
             #convert the column to factors
-            dataX[[i]][,j] <- convert_numeric_2_factor(dataX[[i]][,j])
+            dataX[[i]][,j] <- convert.numeric.2.factor(dataX[[i]][,j])
             warning("Within-subject variables(levels <= 3) have been converted to factors")
           }
         }
@@ -182,7 +234,7 @@ BANOVA.run <- function (l1_formula = 'NA',
     }else{
       #check only relevant columns
       data_colnames <- colnames(data)
-      var_names <- colnames(mf1)
+      var_names <- colnames(mf1)[-1]# exclude dv, as it was checked before
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(data)){
         if (data_colnames[i] %in% var_names){
@@ -190,7 +242,7 @@ BANOVA.run <- function (l1_formula = 'NA',
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
           if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
             #convert the column to factors
-            data[,i] <- convert_numeric_2_factor(data[,i])
+            data[,i] <- convert.numeric.2.factor(data[,i])
             warning("Variables(levels <= 3) have been converted to factors")
           }
         }
@@ -221,6 +273,21 @@ BANOVA.run <- function (l1_formula = 'NA',
                                  X = dMatrice$X,
                                  Z = dMatrice$Z,
                                  y = y)
+      }else if (model_name == 'multiNormal'){
+        pooled_data_dict <- list(L = num_dv,
+                                 N = nrow(dMatrice$X), 
+                                 J = ncol(dMatrice$X),
+                                 X = dMatrice$X,
+                                 y = y)
+      }else if (model_name == 'truncNormal'){
+        pooled_data_dict <- list(L = y_lowerBound,
+                                 U = y_upperBound,
+                                 no_lower_bound = no_lower_bound,
+                                 no_upper_bound = no_upper_bound,
+                                 N = nrow(dMatrice$X), 
+                                 J = ncol(dMatrice$X),
+                                 X = dMatrice$X,
+                                 y = y)
       }else{
         pooled_data_dict <- list(N = nrow(dMatrice$X), 
                                  J = ncol(dMatrice$X),
@@ -238,64 +305,72 @@ BANOVA.run <- function (l1_formula = 'NA',
       ### find samples ###
       # beta1 J
       fit_beta <- rstan::extract(stan.fit, permuted = T)
-      # For R2 of models with Normal distribution
-      R2 = NULL
-      if (!is.null(fit_beta$r_2)){
-        R2 <- mean(fit_beta$r_2)
-        R2 <- round(R2, 4)
-      }
-      # For the calculation of effect sizes in mediation
-      tau_ySq = NULL
-      beta1_dim <- dim(fit_beta$beta1)
-      beta1_names <- c()
-      for (i in 1:beta1_dim[2]) #J
+      if (model_name != "multiNormal"){
+        # For R2 of models with Normal distribution
+        R2 = NULL
+        if (!is.null(fit_beta$r_2)){
+          R2 <- mean(fit_beta$r_2)
+          R2 <- round(R2, 4)
+        }
+        # For the calculation of effect sizes in mediation
+        tau_ySq = NULL
+        beta1_dim <- dim(fit_beta$beta1)
+        beta1_names <- c()
+        for (i in 1:beta1_dim[2]) #J
           beta1_names <- c(beta1_names, paste("beta1_",i, sep = ""))
-      samples_l1_param <- array(0, dim = c(beta1_dim[1], beta1_dim[2]), dimnames = list(NULL, beta1_names))
-      for (i in 1:beta1_dim[2])
+        samples_l1_param <- array(0, dim = c(beta1_dim[1], beta1_dim[2]), dimnames = list(NULL, beta1_names))
+        for (i in 1:beta1_dim[2])
           samples_l1_param[, i] <- fit_beta$beta1[, i]
-      samples_l2_sigma_param = NA
-      if (model_name == 'Poisson'){
-        samples_l2_sigma_param <- 0
-      }
-      samples_cutp_param = array(dim = 0)
-      if (model_name == 'ordMultinomial'){
-        c_dim <- dim(fit_beta$c_trans)
-        c_names <- c()
-        for (i in 2:c_dim[2])
-          c_names <- c(c_names, paste("c",i, sep = "_"))
-        # c_trans[1] == 0
-        samples_cutp_param <- array(0, dim = c(c_dim[1], c_dim[2] - 1), dimnames = list(NULL, c_names))
-        for (i in 2:c_dim[2])
-          samples_cutp_param[, i-1] <- fit_beta$c_trans[,i]
-      }
-      cat('Constructing ANOVA/ANCOVA tables...\n')
-      dMatrice$Z <-  array(1, dim = c(1,1), dimnames = list(NULL, ' '))
+        samples_l2_sigma_param = NA
+        if (model_name == 'Poisson'){
+          samples_l2_sigma_param <- 0
+        }
+        samples_cutp_param = array(dim = 0)
+        if (model_name == 'ordMultinomial'){
+          c_dim <- dim(fit_beta$c_trans)
+          c_names <- c()
+          for (i in 2:c_dim[2])
+            c_names <- c(c_names, paste("c",i, sep = "_"))
+          # c_trans[1] == 0
+          samples_cutp_param <- array(0, dim = c(c_dim[1], c_dim[2] - 1), dimnames = list(NULL, c_names))
+          for (i in 2:c_dim[2])
+            samples_cutp_param[, i-1] <- fit_beta$c_trans[,i]
+        }
+        cat('Constructing ANOVA/ANCOVA tables...\n')
+        dMatrice$Z <-  array(1, dim = c(1,1), dimnames = list(NULL, ' '))
+        attr(dMatrice$Z, 'assign') <- 0
+        attr(dMatrice$Z, 'varNames') <- " "
+        samples_l2_param <- NULL
+        if (model_name == 'Poisson'){
+          anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, model = model_name)
+        }else if (model_name %in% c('Normal', 'T', 'truncNormal')){
+          anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1)), model = model_name) # for ancova models
+          if (!is.null(fit_beta$tau_ySq)){
+            tau_ySq <- mean(fit_beta$tau_ySq)
+          }
+        }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
+          anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, num_trials = num_trials, model = model_name)
+          tau_ySq = pi^2/3
+        }else if (model_name == 'ordMultinomial'){
+          anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/6, model = model_name)
+          tau_ySq = pi^2/6
+        }
+        coef.tables <- table.coefficients(samples_l1_param, beta1_names, colnames(dMatrice$Z), colnames(dMatrice$X), 
+                                          attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X, 'assign') + 1, samples_cutp_param )
+        pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$Z, 'varNames'), 
+                                     l2_names = attr(dMatrice$X, 'varNames'))
+        conv <- conv.geweke.heidel(samples_l1_param, colnames(dMatrice$Z), colnames(dMatrice$X))
+        mf2 <- NULL
+        class(conv) <- 'conv.diag'
+        cat('Done.\n')
+    } else {
+      dMatrice$Z <- array(1, dim = c(1,1), dimnames = list(NULL, ' '))
       attr(dMatrice$Z, 'assign') <- 0
       attr(dMatrice$Z, 'varNames') <- " "
-      samples_l2_param <- NULL
-      if (model_name == 'Poisson'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, model = model_name)
-      }else if (model_name == 'Normal' || model_name == 'T'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, array(y, dim = c(length(y), 1)), model = model_name) # for ancova models
-        if (!is.null(fit_beta$tau_ySq)){
-          tau_ySq <- mean(fit_beta$tau_ySq)
-        }
-      }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/3, num_trials = num_trials, model = model_name)
-        tau_ySq = pi^2/3
-      }else if (model_name == 'ordMultinomial'){
-        anova.table <- table.ANCOVA(samples_l2_param, dMatrice$Z, dMatrice$X, samples_l1_param, y_val = array(y, dim = c(length(y), 1)), error = pi^2/6, model = model_name)
-        tau_ySq = pi^2/6
-      }
-      coef.tables <- table.coefficients(samples_l1_param, beta1_names, colnames(dMatrice$Z), colnames(dMatrice$X), 
-                                        attr(dMatrice$Z, 'assign') + 1, attr(dMatrice$X, 'assign') + 1, samples_cutp_param )
-      pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$Z, 'varNames'), 
-                                   l2_names = attr(dMatrice$X, 'varNames'))
-      conv <- conv.geweke.heidel(samples_l1_param, colnames(dMatrice$Z), colnames(dMatrice$X))
+      mlvResult <- results.BANOVA.mlvNormal(fit_beta, dep_var_names = colnames(y), dMatrice, single_level)
+      mf2 = NULL
     }
-    mf2 <- NULL
-    class(conv) <- 'conv.diag'
-    cat('Done.\n')
+    }
   }else{
     if (model_name == "Multinomial"){
       if (is.null(dataX) || is.null(dataZ)) stop("dataX or dataZ must be specified!")
@@ -307,7 +382,7 @@ BANOVA.run <- function (l1_formula = 'NA',
         # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
         if ((class(dataZ[,i]) == 'numeric' | class(dataZ[,i]) == 'integer') & length(unique(dataZ[,i])) <= 3){
           #convert the column to factors
-          dataZ[,i] <- convert_numeric_2_factor(dataZ[,i])
+          dataZ[,i] <- convert.numeric.2.factor(dataZ[,i])
           warning("Between-subject variables(levels <= 3) have been converted to factors")
         }
       }
@@ -317,7 +392,7 @@ BANOVA.run <- function (l1_formula = 'NA',
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
           if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
             #convert the column to factors
-            dataX[[i]][,j] <- convert_numeric_2_factor(dataX[[i]][,j])
+            dataX[[i]][,j] <- convert.numeric.2.factor(dataX[[i]][,j])
             warning("Within-subject variables(levels <= 3) have been converted to factors")
           }
         }
@@ -348,9 +423,9 @@ BANOVA.run <- function (l1_formula = 'NA',
     }else{
       if (is.null(data)) stop("data must be specified!")
       mf2 <- model.frame(formula = l2_formula, data = data)
-      #check only relevant columns
+      #check only relevant columns 
       data_colnames <- colnames(data)
-      var_names <- c(colnames(mf1), colnames(mf2))
+      var_names <- c(colnames(mf1), colnames(mf2))[-1] # exclude dv, as it was checked before
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(data)){
         if (data_colnames[i] %in% var_names){
@@ -358,7 +433,7 @@ BANOVA.run <- function (l1_formula = 'NA',
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
           if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
             #convert the column to factors 
-            data[,i] <- convert_numeric_2_factor(data[,i])
+            data[,i] <- convert.numeric.2.factor(data[,i])
             warning("Variables(levels <= 3) have been converted to factors")
           }
         }
@@ -396,6 +471,29 @@ BANOVA.run <- function (l1_formula = 'NA',
                                  Z = dMatrice$Z,
                                  id = id,
                                  y = y)
+      }else if(model_name == 'multiNormal'){
+        pooled_data_dict <- list(L = num_dv,
+                                 N = nrow(dMatrice$X), 
+                                 J = ncol(dMatrice$X),
+                                 M = nrow(dMatrice$Z),
+                                 K = ncol(dMatrice$Z),
+                                 X = dMatrice$X,
+                                 Z = dMatrice$Z,
+                                 id = id,
+                                 y = y)
+      }else if (model_name == 'truncNormal'){
+        pooled_data_dict <- list(L = y_lowerBound,
+                                 U = y_upperBound,
+                                 no_lower_bound = no_lower_bound,
+                                 no_upper_bound = no_upper_bound,
+                                 N = nrow(dMatrice$X), 
+                                 J = ncol(dMatrice$X),
+                                 M = nrow(dMatrice$Z),
+                                 K = ncol(dMatrice$Z),
+                                 X = dMatrice$X,
+                                 Z = dMatrice$Z,
+                                 id = id,
+                                 y = y)
       }else{
         pooled_data_dict <- list(N = nrow(dMatrice$X), 
                                  J = ncol(dMatrice$X),
@@ -415,143 +513,178 @@ BANOVA.run <- function (l1_formula = 'NA',
       model_name <- fit$model_name
       single_level <- fit$single_level
     }
+    
     stan.fit <- rstan::sampling(fit$stanmodel, data = pooled_data_dict, iter=iter, verbose=TRUE, ...)
     ### find samples ###
-    # beta1 JxM
-    # beta2 KxJ
+    #Sizes for all models except for Multivariate:beta1 JxM,  beta2 KxJ
+    #Sizes for Multivariate Normal model: beta1 MxLxJ, beta2 lxKxJ
     fit_beta <- rstan::extract(stan.fit, permuted = T)
-    # For R2 of models with Normal distribution
-    R2 = NULL
-    if (!is.null(fit_beta$r_2)){
-      R2 <- mean(fit_beta$r_2)
-      R2 <- round(R2, 4)
-    }
-    # For the calculation of effect sizes in mediation
-    tau_ySq = NULL
-    if (model_name == 'Normal' || model_name == 'T'){
-      if (!is.null(fit_beta$tau_ySq)){
-        tau_ySq <- mean(fit_beta$tau_ySq)
+    if (model_name != "multiNormal"){
+      # For R2 of models with Normal distribution
+      R2 = NULL
+      if (!is.null(fit_beta$r_2)){
+        R2 <- mean(fit_beta$r_2)
+        R2 <- round(R2, 4)
       }
-    }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
-      tau_ySq = pi^2/3
-    }else if (model_name == 'ordMultinomial' || model_name == 'Multinomial'){
-      tau_ySq = pi^2/6
-    }else{
-      tau_ySq = 0
+      # For the calculation of effect sizes in mediation
+      tau_ySq = NULL
+      if (model_name %in% c('Normal', 'T', 'truncNormal')){
+        if (!is.null(fit_beta$tau_ySq)){
+          tau_ySq <- mean(fit_beta$tau_ySq)
+        }
+      }else if (model_name == 'Bernoulli' || model_name == 'Binomial'){
+        tau_ySq = pi^2/3
+      }else if (model_name == 'ordMultinomial' || model_name == 'Multinomial'){
+        tau_ySq = pi^2/6
+      }else{
+        tau_ySq = 0
+      }
+      beta1_dim <- dim(fit_beta$beta1)
+      beta2_dim <- dim(fit_beta$beta2)
+      beta1_names <- c()
+      for (i in 1:beta1_dim[2]) #J
+        for (j in 1:beta1_dim[3]) #M
+          beta1_names <- c(beta1_names, paste("beta1_",i,"_",j, sep = ""))
+      samples_l1_param <- array(0, dim = c(beta1_dim[1], beta1_dim[2]*beta1_dim[3]), dimnames = list(NULL, beta1_names))
+      for (i in 1:beta1_dim[2])
+        for (j in 1:beta1_dim[3])
+          samples_l1_param[, (i-1) * beta1_dim[3] + j] <- fit_beta$beta1[, i, j]
+      beta2_names <- c()
+      for (i in 1:beta2_dim[3]) #J
+        for (j in 1:beta2_dim[2]) #K
+          beta2_names <- c(beta2_names, paste("beta2_",i,"_",j, sep = ""))
+      samples_l2_param <- array(0, dim = c(beta2_dim[1], beta2_dim[2]*beta2_dim[3]), dimnames = list(NULL, beta2_names))
+      for (i in 1:beta2_dim[3])
+        for (j in 1:beta2_dim[2])
+          samples_l2_param[, (i-1) * beta2_dim[2] + j] <- fit_beta$beta2[, j, i]
+      samples_l2_sigma_param = NA
+      if (model_name == 'Poisson'){
+        tau_beta1Sq_dim <- dim(fit_beta$tau_beta1Sq)
+        tau_beta1Sq_names <- c()
+        for (i in 1:tau_beta1Sq_dim[2])
+          tau_beta1Sq_names <- c(tau_beta1Sq_names, paste("tau_beta1Sq",i, sep = "_"))
+        samples_l2_sigma_param <- array(0, dim = c(tau_beta1Sq_dim[1], tau_beta1Sq_dim[2]), dimnames = list(NULL, tau_beta1Sq_names))
+        for (i in 1:tau_beta1Sq_dim[2])
+          samples_l2_sigma_param[, i] <- sqrt(fit_beta$tau_beta1Sq[,i])
+      }
+      samples_cutp_param = array(dim = 0)
+      if (model_name == 'ordMultinomial'){
+        c_dim <- dim(fit_beta$c_trans)
+        c_names <- c()
+        for (i in 2:c_dim[2])
+          c_names <- c(c_names, paste("c",i, sep = "_"))
+        # c_trans[1] == 0
+        samples_cutp_param <- array(0, dim = c(c_dim[1], c_dim[2] - 1), dimnames = list(NULL, c_names))
+        for (i in 2:c_dim[2])
+          samples_cutp_param[, i-1] <- fit_beta$c_trans[,i]
+      }
+      cat('Constructing ANOVA/ANCOVA tables...\n')
+      if (model_name == 'Multinomial'){
+        anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X_full[[1]], dMatrice$Z, samples_l2_param, l1_error = tau_ySq) # for ancova models
+        coef.tables <- table.coefficients(samples_l2_param, beta2_names, colnames(dMatrice$X_full[[1]]), colnames(dMatrice$Z), 
+                                          attr(dMatrice$X_full[[1]], 'assign'), attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
+        pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X_full[[1]], 'varNames'), 
+                                     l2_names = attr(dMatrice$Z, 'varNames'))
+        conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X_full[[1]]), colnames(dMatrice$Z))
+      }else{
+        anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param, l1_error = tau_ySq) # for ancova models
+        coef.tables <- table.coefficients(samples_l2_param, beta2_names, colnames(dMatrice$X), colnames(dMatrice$Z), 
+                                          attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
+        pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 
+                                     l2_names = attr(dMatrice$Z, 'varNames'))
+        conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X), colnames(dMatrice$Z))
+      }
+      class(conv) <- 'conv.diag'
+      cat('Done.\n')
+    } else {
+      mlvResult <- results.BANOVA.mlvNormal(fit_beta, dep_var_names = colnames(y), dMatrice)
     }
-    beta1_dim <- dim(fit_beta$beta1)
-    beta2_dim <- dim(fit_beta$beta2)
-    beta1_names <- c()
-    for (i in 1:beta1_dim[2]) #J
-      for (j in 1:beta1_dim[3]) #M
-        beta1_names <- c(beta1_names, paste("beta1_",i,"_",j, sep = ""))
-    samples_l1_param <- array(0, dim = c(beta1_dim[1], beta1_dim[2]*beta1_dim[3]), dimnames = list(NULL, beta1_names))
-    for (i in 1:beta1_dim[2])
-      for (j in 1:beta1_dim[3])
-        samples_l1_param[, (i-1) * beta1_dim[3] + j] <- fit_beta$beta1[, i, j]
-    beta2_names <- c()
-    for (i in 1:beta2_dim[3]) #J
-      for (j in 1:beta2_dim[2]) #K
-        beta2_names <- c(beta2_names, paste("beta2_",i,"_",j, sep = ""))
-    samples_l2_param <- array(0, dim = c(beta2_dim[1], beta2_dim[2]*beta2_dim[3]), dimnames = list(NULL, beta2_names))
-    for (i in 1:beta2_dim[3])
-      for (j in 1:beta2_dim[2])
-        samples_l2_param[, (i-1) * beta2_dim[2] + j] <- fit_beta$beta2[, j, i]
-    samples_l2_sigma_param = NA
-    if (model_name == 'Poisson'){
-      tau_beta1Sq_dim <- dim(fit_beta$tau_beta1Sq)
-      tau_beta1Sq_names <- c()
-      for (i in 1:tau_beta1Sq_dim[2])
-        tau_beta1Sq_names <- c(tau_beta1Sq_names, paste("tau_beta1Sq",i, sep = "_"))
-      samples_l2_sigma_param <- array(0, dim = c(tau_beta1Sq_dim[1], tau_beta1Sq_dim[2]), dimnames = list(NULL, tau_beta1Sq_names))
-      for (i in 1:tau_beta1Sq_dim[2])
-        samples_l2_sigma_param[, i] <- sqrt(fit_beta$tau_beta1Sq[,i])
-    }
-    samples_cutp_param = array(dim = 0)
-    if (model_name == 'ordMultinomial'){
-      c_dim <- dim(fit_beta$c_trans)
-      c_names <- c()
-      for (i in 2:c_dim[2])
-        c_names <- c(c_names, paste("c",i, sep = "_"))
-      # c_trans[1] == 0
-      samples_cutp_param <- array(0, dim = c(c_dim[1], c_dim[2] - 1), dimnames = list(NULL, c_names))
-      for (i in 2:c_dim[2])
-        samples_cutp_param[, i-1] <- fit_beta$c_trans[,i]
-    }
-    cat('Constructing ANOVA/ANCOVA tables...\n')
+  }
     if (model_name == 'Multinomial'){
-      anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X_full[[1]], dMatrice$Z, samples_l2_param, l1_error = tau_ySq) # for ancova models
-      coef.tables <- table.coefficients(samples_l2_param, beta2_names, colnames(dMatrice$X_full[[1]]), colnames(dMatrice$Z), 
-                                        attr(dMatrice$X_full[[1]], 'assign'), attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
-      pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X_full[[1]], 'varNames'), 
-                                   l2_names = attr(dMatrice$Z, 'varNames'))
-      conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X_full[[1]]), colnames(dMatrice$Z))
-    }else{
-      anova.table <- table.ANCOVA(samples_l1_param, dMatrice$X, dMatrice$Z, samples_l2_param, l1_error = tau_ySq) # for ancova models
-      coef.tables <- table.coefficients(samples_l2_param, beta2_names, colnames(dMatrice$X), colnames(dMatrice$Z), 
-                                        attr(dMatrice$X, 'assign') + 1, attr(dMatrice$Z, 'assign') + 1, samples_cutp_param)
-      pvalue.table <- table.pvalue(coef.tables$coeff_table, coef.tables$row_indices, l1_names = attr(dMatrice$X, 'varNames'), 
-                                   l2_names = attr(dMatrice$Z, 'varNames'))
-      conv <- conv.geweke.heidel(samples_l2_param, colnames(dMatrice$X), colnames(dMatrice$Z))
+      sol <- list(anova.table = anova.table,
+                  coef.tables = coef.tables,
+                  pvalue.table = pvalue.table, 
+                  conv = conv,
+                  dMatrice = dMatrice, 
+                  samples_l1_param = samples_l1_param,
+                  samples_l2_param = samples_l2_param, 
+                  samples_l2_sigma_param = samples_l2_sigma_param,
+                  samples_cutp_param = samples_cutp_param,
+                  data = data, 
+                  dataX = dataX, 
+                  dataZ = dataZ,
+                  mf1 = mf1, 
+                  mf2 = mf2, 
+                  n_categories = n_categories,
+                  model_code = fit$stanmodel@model_code, 
+                  single_level = single_level,
+                  stan_fit = stan.fit,
+                  R2 = R2,
+                  tau_ySq = tau_ySq,
+                  model_name = paste('BANOVA', model_name, sep = "."),
+                  contrast = contrast,
+                  new_id = new_id,
+                  old_id = old_id)
+    }else if (model_name == "multiNormal"){
+      sol <- list(anova.table = mlvResult$combined.anova,
+                  coef.tables = mlvResult$combined.coef,
+                  pvalue.table = mlvResult$combined.pvalue, 
+                  conv = mlvResult$combined.conv,
+                  correlation.matrix = mlvResult$correlation.matrix,
+                  covariance.matrix = mlvResult$covariance.matrix,
+                  test.standard.deviations.of.dep.var = mlvResult$dep_var_sd,
+                  test.residual.correlation = mlvResult$dep_var_corr,
+                  dMatrice = dMatrice, 
+                  samples_l1_param = mlvResult$combined.samples.l1,
+                  samples_l2_param = mlvResult$combined.samples.l2, 
+                  samples_l2_sigma_param = NA,
+                  samples_cutp_param = array(dim = 0),
+                  data = data, 
+                  num_trials = num_trials,
+                  mf1 = mf1, 
+                  mf2 = mf2, 
+                  model_code = fit$stanmodel@model_code, 
+                  single_level = single_level,
+                  stan_fit = stan.fit,
+                  R2 = mlvResult$R2,
+                  tau_ySq = mlvResult$tau_ySq,
+                  model_name = paste('BANOVA', model_name, sep = "."),
+                  contrast = contrast,
+                  new_id = new_id,
+                  old_id = old_id,
+                  samples_l1.list = mlvResult$samples_l1.list,
+                  samples_l2.list = mlvResult$samples_l2.list,
+                  anova.tables.list = mlvResult$anova.tables.list,
+                  coef.tables.list = mlvResult$coef.tables.list,
+                  pvalue.tables.list = mlvResult$pvalue.tables.list,
+                  conv.list = mlvResult$conv.list,
+                  num_depenent_variables = mlvResult$num_depenent_variables,
+                  names_of_dependent_variables = mlvResult$names_of_dependent_variables)
+    } else {
+      sol <- list(anova.table = anova.table,
+                  coef.tables = coef.tables,
+                  pvalue.table = pvalue.table, 
+                  conv = conv,
+                  dMatrice = dMatrice, 
+                  samples_l1_param = samples_l1_param,
+                  samples_l2_param = samples_l2_param, 
+                  samples_l2_sigma_param = samples_l2_sigma_param,
+                  samples_cutp_param = samples_cutp_param,
+                  data = data, 
+                  num_trials = num_trials,
+                  mf1 = mf1, 
+                  mf2 = mf2, 
+                  model_code = fit$stanmodel@model_code, 
+                  single_level = single_level,
+                  stan_fit = stan.fit,
+                  R2 = R2,
+                  tau_ySq = tau_ySq,
+                  model_name = paste('BANOVA', model_name, sep = "."),
+                  contrast = contrast,
+                  new_id = new_id,
+                  old_id = old_id)
     }
-    class(conv) <- 'conv.diag'
-    cat('Done.\n')
-  }
-  if (model_name == 'Multinomial'){
-    sol <- list(anova.table = anova.table,
-                coef.tables = coef.tables,
-                pvalue.table = pvalue.table, 
-                conv = conv,
-                dMatrice = dMatrice, 
-                samples_l1_param = samples_l1_param,
-                samples_l2_param = samples_l2_param, 
-                samples_l2_sigma_param = samples_l2_sigma_param,
-                samples_cutp_param = samples_cutp_param,
-                data = data, 
-                dataX = dataX, 
-                dataZ = dataZ,
-                mf1 = mf1, 
-                mf2 = mf2, 
-                n_categories = n_categories,
-                model_code = fit$stanmodel@model_code, 
-                single_level = single_level,
-                stan_fit = stan.fit,
-                R2 = R2,
-                tau_ySq = tau_ySq,
-                model_name = paste('BANOVA', model_name, sep = "."),
-                contrast = contrast,
-                new_id = new_id,
-                old_id = old_id)
-  }else{
-    sol <- list(anova.table = anova.table,
-              coef.tables = coef.tables,
-              pvalue.table = pvalue.table, 
-              conv = conv,
-              dMatrice = dMatrice, 
-              samples_l1_param = samples_l1_param,
-              samples_l2_param = samples_l2_param, 
-              samples_l2_sigma_param = samples_l2_sigma_param,
-              samples_cutp_param = samples_cutp_param,
-              data = data, 
-              num_trials = num_trials,
-              mf1 = mf1, 
-              mf2 = mf2, 
-              model_code = fit$stanmodel@model_code, 
-              single_level = single_level,
-              stan_fit = stan.fit,
-              R2 = R2,
-              tau_ySq = tau_ySq,
-              model_name = paste('BANOVA', model_name, sep = "."),
-              contrast = contrast,
-              new_id = new_id,
-              old_id = old_id)
-  }
   sol$call <- match.call()
-  #if(single_level){
-  #  class_name <- paste('BANOVA', model_name, 'single', sep = ".")
-  #}else{
-  #class_name <- paste('BANOVA', model_name, sep = ".")
-  #}
   class(sol) <- "BANOVA"
   sol
 }

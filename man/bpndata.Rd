@@ -37,9 +37,9 @@ Wedel, M. and Pieters, R. (Autumn, 2000). \emph{Eye Fixations on Advertisements 
 }
 
 \examples{ 
+\donttest{
 data(bpndata)
 # within-subjects model using the dependent variable : PIC_FIX
-\donttest{
 library(rstan)
 model <- BANOVA.model('Poisson')
 stanmodel <- BANOVA.build(model)
