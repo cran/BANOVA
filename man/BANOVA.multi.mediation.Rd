@@ -10,7 +10,7 @@ BANOVA.multi.mediation(sol_1, sol_2, xvar, mediators, individual = FALSE)
 \item{sol_1}{an  object  of  class  "BANOVA"  returned  by  BANOVA.run  function with  a fitted 
 model for an outcome variable regressed on a causal variable, a mediator, and, possibly, 
 moderators and control variables. The outcome variable can follow Normal, T, Poisson, Bernoulli, 
-Binomial, and ordered Multinomial distributions.}
+Binomial, Truncated Normal and ordered Multinomial distributions.}
 
 \item{sol_2}{an object of class "BANOVA" returned by BANOVA.run function, which contains an 
 outcome of the analysis for multiple Multivariate Normal mediators regressed on a casual variable

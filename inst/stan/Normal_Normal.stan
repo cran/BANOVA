@@ -35,11 +35,11 @@ model {
   tau_y = sqrt(tau_ySq);
   tau_beta1 = sqrt(tau_beta1Sq);
   y ~ normal(y_hat, tau_y);
-  tau_ySq ~ inv_gamma(1, 1);
+  tau_y ~ cauchy(0, 2.5);
   for (i in 1:J){
     beta1[i,] ~ normal(mu_beta1[,i], tau_beta1[i]);
   }
-  tau_beta1Sq ~ inv_gamma(1, 1);
+  tau_beta1 ~ cauchy(0, 2.5);
   for (i in 1:J){
     beta2[,i] ~ normal(0, 100);
   }

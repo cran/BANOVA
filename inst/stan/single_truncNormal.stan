@@ -37,7 +37,7 @@ model {
       y[i] ~ normal(y_hat[i], tau_y) T[L, U];
     }
     
-  tau_ySq ~ inv_gamma(1, 1);
+  tau_y ~ cauchy(0, 2.5);
   for (i in 1:J){
     beta1[i] ~ normal(0, 100);
   }

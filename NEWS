@@ -1,3 +1,7 @@
+BANOVA v1.2.0 (Release date: 2021-04-26)
+==============
+* Set half-Cauchy priors for all variance parameters
+
 BANOVA v1.1.9 (Release date: 2020-12-16)
 ==============
 * Added BANOVA.multi.mediation, a function for mediation analysis with multiple mediators

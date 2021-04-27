@@ -21,7 +21,7 @@ model {
   tau_y = sqrt(tau_yS);
   y ~ student_t(df, y_hat, tau_y);
   df ~ normal(5,5);
-  tau_yS ~ inv_gamma(1, 1);
+  tau_y ~ cauchy(0, 2.5);
   for (i in 1:J){
     beta1[i] ~ normal(0, 100);
   }
