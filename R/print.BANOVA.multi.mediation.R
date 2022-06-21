@@ -3,7 +3,7 @@ print.BANOVA.multi.mediation <-
     print.effects <- function(list_with_effects, mediators = NULL, additional_title = NULL, 
                               list_with_effect_sizes = NULL){
       print.list.elements <- function(list_with_effects, list_with_effect_sizes){
-        if (class(list_with_effects) != "list"){
+        if (!inherits(list_with_effects, "list")){
           temp <- list_with_effects
           list_with_effects <- list(temp)
         } 

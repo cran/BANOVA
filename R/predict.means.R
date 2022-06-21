@@ -42,9 +42,9 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
   l1_numeric_index_in_data <- array(dim = 0)
   if (length(l1_index_in_data) > 0){
     for (i in 1: length(l1_index_in_data)){
-      if (class(data[1, l1_index_in_data[i]]) == 'factor')
+      if (inherits(data[1, l1_index_in_data[i]], 'factor'))
         l1_factor_index_in_data <- c(l1_factor_index_in_data, l1_index_in_data[i])
-      if (class(data[1, l1_index_in_data[i]]) == 'integer' || class(data[1, l1_index_in_data[i]]) == 'numeric')
+      if (inherits(data[1, l1_index_in_data[i]], 'integer') || inherits(data[1, l1_index_in_data[i]], 'numeric'))
         l1_numeric_index_in_data <- c(l1_numeric_index_in_data, l1_index_in_data[i])
     }
   }
@@ -53,9 +53,9 @@ function (samples_l2_param, data, X, Z_full, mf1, mf2 = NULL, samples = NULL, sa
   l2_numeric_index_in_data <- array(dim = 0)
   if (length(l2_index_in_data) > 0){
     for (i in 1: length(l2_index_in_data)){
-      if (class(data[1, l2_index_in_data[i]]) == 'factor')
+      if (inherits(data[1, l2_index_in_data[i]], 'factor'))
         l2_factor_index_in_data <- c(l2_factor_index_in_data, l2_index_in_data[i])
-      if (class(data[1, l2_index_in_data[i]]) == 'integer' || class(data[1, l2_index_in_data[i]]) == 'numeric')
+      if (inherits(data[1, l2_index_in_data[i]], 'integer') || inherits(data[1, l2_index_in_data[i]], 'numeric'))
         l2_numeric_index_in_data <- c(l2_numeric_index_in_data, l2_index_in_data[i])
     }
   }

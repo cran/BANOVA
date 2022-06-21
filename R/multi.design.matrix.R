@@ -6,7 +6,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id, contrast
     stop("Formula in level 1 is missing! In the case of no level 1 factor, please use 'y~1'")
   
   if (l2_formula == 'NA'){
-    if (class(dataX) != 'list') stop('Xsamples must be a list of features data.')
+    if (!inherits(dataX, 'list')) stop('Xsamples must be a list of features data.')
     temp1 <- nrow(dataX[[1]])
     temp2 <- ncol(dataX[[1]])
     for (i in 1:length(dataX))
@@ -129,7 +129,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ = NULL, id, contrast
     Z = NULL
     Z_full = NULL
   }else{
-    if (class(dataX) != 'list') stop('Xsamples must be a list of features data.')
+    if (!inherits(dataX, 'list')) stop('Xsamples must be a list of features data.')
     if (length(dataX) != nrow(dataZ)) stop('X, Z samples dimension mismatch.')
     temp1 <- nrow(dataX[[1]])
     temp2 <- ncol(dataX[[1]])

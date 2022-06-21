@@ -40,7 +40,7 @@ BANOVA.run <- function (l1_formula = 'NA',
     return(data_vec)
   }
   check.numeric.variables <- function(y_var){
-    if (class(y_var) != 'numeric'){
+    if (!inherits(y_var, 'numeric')){
       warning("The response variable must be numeric (data class also must be 'numeric')")
       y_var <- as.numeric(y_var)
       warning("The response variable has been converted to numeric")
@@ -70,7 +70,7 @@ BANOVA.run <- function (l1_formula = 'NA',
     if (model_name %in% c('Normal', 'T')){
       y <- check.numeric.variables(y)
     }else if (model_name %in% c('Poisson', 'Binomial', 'Bernoulli', 'Multinomial', 'ordMultinomial')){
-      if (class(y) != 'integer'){
+      if (!inherits(y, 'integer')){
         warning("The response variable must be integers (data class also must be 'integer')..")
         y <- as.integer(as.character(y))
         warning("The response variable has been converted to integers..")
@@ -169,8 +169,8 @@ BANOVA.run <- function (l1_formula = 'NA',
       # }
       for (i in 1:length(dataX))
         for (j in 1:ncol(dataX[[i]])){
-          if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
-          if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
+          if(!inherits(dataX[[i]][,j], 'factor') && !inherits(dataX[[i]][,j], 'numeric') && !inherits(dataX[[i]][,j], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
+          if ((inherits(dataX[[i]][,j], 'numeric') | inherits(dataX[[i]][,j], 'integer')) & length(unique(dataX[[i]][,j])) <= 3){
             #convert the column to factors
             dataX[[i]][,j] <- convert.numeric.2.factor(dataX[[i]][,j])
             warning("Within-subject variables(levels <= 3) have been converted to factors")
@@ -238,9 +238,9 @@ BANOVA.run <- function (l1_formula = 'NA',
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(data)){
         if (data_colnames[i] %in% var_names){
-          if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+          if(!inherits(data[,i], 'factor') && !inherits(data[,i], 'numeric') && !inherits(data[,i], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-          if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+          if ((inherits(data[,i], 'numeric') | inherits(data[,i], 'integer')) & length(unique(data[,i])) <= 3){
             #convert the column to factors
             data[,i] <- convert.numeric.2.factor(data[,i])
             warning("Variables(levels <= 3) have been converted to factors")
@@ -378,9 +378,9 @@ BANOVA.run <- function (l1_formula = 'NA',
       mf2 <- model.frame(formula = l2_formula, data = dataZ)
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(dataZ)){
-        if(class(dataZ[,i]) != 'factor' && class(dataZ[,i]) != 'numeric' && class(dataZ[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+        if(!inherits(dataZ[,i], 'factor') && !inherits(dataZ[,i], 'numeric') && !inherits(dataZ[,i], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
         # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-        if ((class(dataZ[,i]) == 'numeric' | class(dataZ[,i]) == 'integer') & length(unique(dataZ[,i])) <= 3){
+        if ((inherits(dataZ[,i], 'numeric') | inherits(dataZ[,i], 'integer')) & length(unique(dataZ[,i])) <= 3){
           #convert the column to factors
           dataZ[,i] <- convert.numeric.2.factor(dataZ[,i])
           warning("Between-subject variables(levels <= 3) have been converted to factors")
@@ -388,9 +388,9 @@ BANOVA.run <- function (l1_formula = 'NA',
       }
       for (i in 1:length(dataX))
         for (j in 1:ncol(dataX[[i]])){
-          if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+          if(!inherits(dataX[[i]][,j], 'factor') && !inherits(dataX[[i]][,j], 'numeric') && !inherits(dataX[[i]][,j], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-          if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
+          if ((inherits(dataX[[i]][,j], 'numeric') | inherits(dataX[[i]][,j], 'integer')) & length(unique(dataX[[i]][,j])) <= 3){
             #convert the column to factors
             dataX[[i]][,j] <- convert.numeric.2.factor(dataX[[i]][,j])
             warning("Within-subject variables(levels <= 3) have been converted to factors")
@@ -429,9 +429,9 @@ BANOVA.run <- function (l1_formula = 'NA',
       # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
       for (i in 1:ncol(data)){
         if (data_colnames[i] %in% var_names){
-          if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+          if(!inherits(data[,i], 'factor') && !inherits(data[,i], 'numeric') && !inherits(data[,i], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
           # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-          if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+          if ((inherits(data[,i], 'numeric') | inherits(data[,i], 'integer')) & length(unique(data[,i])) <= 3){
             #convert the column to factors 
             data[,i] <- convert.numeric.2.factor(data[,i])
             warning("Variables(levels <= 3) have been converted to factors")

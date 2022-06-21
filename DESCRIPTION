@@ -1,11 +1,11 @@
 Package: BANOVA
 Type: Package
 Title: Hierarchical Bayesian ANOVA Models
-Version: 1.2.0
-Date: 2021-04-26
+Version: 1.2.1
+Date: 2022-06-18
 Author: Chen Dong, Michel Wedel, Anna Kopyakova
 SystemRequirements: JAGS-4.3.0, C++11
-Maintainer: Chen Dong <cdong@math.umd.edu>
+Maintainer: Chen Dong <chendong.math.umd@gmail.com>
 Depends: R (>= 3.6.0)
 Imports: rjags(>= 3-13), runjags (>= 1.2.1-0), coda (>= 0.16-1),
         rstan(>= 2.15.1), methods
@@ -15,6 +15,6 @@ Description: It covers several Bayesian Analysis of Variance (BANOVA) models use
 License: GPL (>= 2)
 RoxygenNote: 7.1.1
 NeedsCompilation: yes
-Packaged: 2021-04-26 22:10:00 UTC; chendong
+Packaged: 2022-06-21 04:06:12 UTC; chendong
 Repository: CRAN
-Date/Publication: 2021-04-27 04:20:02 UTC
+Date/Publication: 2022-06-21 07:30:13 UTC

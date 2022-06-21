@@ -521,7 +521,7 @@ combine.effects.individual <- function (mediator_l1_effects, mediator_xvar_effec
       union_names <- union_names[-to_rm]
     data_eff <- data[, union_names, drop = F]
     #If result_table_sample contains only one row it is treated as "character and mergind fails
-    if (class(result_table_sample[,,i]) != "matrix"){
+    if (!inherits(result_table_sample[,,i], "matrix")){
       data_eff_sample <- merge(data_eff, t(data.frame(result_table_sample[,,i])), by = union_names, all.x = TRUE)
     } else {
       data_eff_sample <- merge(data_eff, result_table_sample[,,i], by = union_names, all.x = TRUE)

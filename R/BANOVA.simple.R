@@ -192,7 +192,7 @@ BANOVA.simple <- function(BANOVA_output = "NA", base = NULL, quantiles = c(0.025
       # is.effect.coded checks if the user specified contrasts are a variation of effect coding scheme
       is.effect.coded <- function(coding_matrix){
         #if a contrast with only one column is used it must be converted to a matrix
-        if (class(coding_matrix) == "numeric"){
+        if (inherits(coding_matrix, "numeric")){
           coding_matrix <- as.matrix(coding_matrix)
         }
         n = dim(coding_matrix)[1]

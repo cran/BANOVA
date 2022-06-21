@@ -5,7 +5,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
   if (l2_formula == 'NA')
     stop("The level 2 formula is not specified, please check BANOVA.run for single level models.")
   # check y, if it is integers
-  if (class(y) != 'integer'){
+  if (!inherits(y, 'integer')){
     warning("The response variable must be integers (data class also must be 'integer')..")
     y <- as.integer(as.character(y))
     warning("The response variable has been converted to integers..")
@@ -16,26 +16,26 @@ function(l1_formula = 'NA', l2_formula = 'NA', dataX, dataZ, y, id, l2_hyper, bu
   if (DV_sort[1] != 1 || DV_sort[n_categories] != n_categories) stop('Check if response variable follows categorical distribution!') 
   # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
   for (i in 1:ncol(dataZ)){
-    if(class(dataZ[,i]) != 'factor' && class(dataZ[,i]) != 'numeric' && class(dataZ[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+    if(!inherits(dataZ[,i], 'factor') && !inherits(dataZ[,i], 'numeric') && !inherits(dataZ[,i], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
     # checking missing predictors, already checked in design matrix
     # if(sum(is.na(dataZ[,i])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
     #if(class(dataZ[,i]) == 'numeric')
     #  dataZ[,i] = dataZ[,i] - mean(dataZ[,i])
     # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-    if ((class(dataZ[,i]) == 'numeric' | class(dataZ[,i]) == 'integer') & length(unique(dataZ[,i])) <= 3){
+    if (inherits(dataZ[,i], 'numeric') | inherits(dataZ[,i], 'integer') & length(unique(dataZ[,i])) <= 3){
       dataZ[,i] <- as.factor(dataZ[,i])
       warning("Between-subject variables(levels <= 3) have been converted to factors")
     }
   }
   for (i in 1:length(dataX))
     for (j in 1:ncol(dataX[[i]])){
-      if(class(dataX[[i]][,j]) != 'factor' && class(dataX[[i]][,j]) != 'numeric' && class(dataX[[i]][,j]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+      if(!inherits(dataX[[i]][,j], 'factor') && !inherits(dataX[[i]][,j], 'numeric') && !inherits(dataX[[i]][,j], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
       # checking missing predictors, already checked in design matrix
       # if(sum(is.na(dataX[[i]][,j])) > 0) stop("Data type error, NAs/missing values included in independent variables") 
       #if(class(dataX[[i]][,j]) == 'numeric')
       #  dataX[[i]][,j] = dataX[[i]][,j] - mean(dataX[[i]][,j])
       # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-      if ((class(dataX[[i]][,j]) == 'numeric' | class(dataX[[i]][,j]) == 'integer') & length(unique(dataX[[i]][,j])) <= 3){
+      if ((inherits(dataX[[i]][,j], 'numeric') | inherits(dataX[[i]][,j], 'integer')) & length(unique(dataX[[i]][,j])) <= 3){
         dataX[[i]][,j] <- as.factor(dataX[[i]][,j])
         warning("Within-subject variables(levels <= 3) have been converted to factors")
       }

@@ -8,7 +8,7 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   }
   if(!is.null(mf2))
     if (length(Xsamples) != nrow(Zsamples)) stop('X, Z samples dimension mismatch.')
-  if (class(Xsamples) != 'list') stop('Xsamples must be a list of features data.')
+  if (!inherits(Xsamples, 'list')) stop('Xsamples must be a list of features data.')
   for (i in 1:length(Xsamples))
     if (ncol(Xsamples[[i]]) != ncol(dataX[[1]]) || nrow(Xsamples[[i]]) != nrow(dataX[[1]]))
       stop('level 1 samples dimension mismatch!')
@@ -44,9 +44,9 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   l1_numeric_index_in_data <- array(dim = 0)
   if (length(l1_index_in_data) > 0){
     for (i in 1: length(l1_index_in_data)){
-      if (class(dataX[[1]][1,l1_index_in_data[i]]) == 'factor')
+      if (inherits(dataX[[1]][1,l1_index_in_data[i]], 'factor'))
         l1_factor_index_in_data <- c(l1_factor_index_in_data, l1_index_in_data[i])
-      if (class(dataX[[1]][1,l1_index_in_data[i]]) == 'integer' || class(dataX[[1]][1,l1_index_in_data[i]]) == 'numeric')
+      if (inherits(dataX[[1]][1,l1_index_in_data[i]], 'integer') || inherits(dataX[[1]][1,l1_index_in_data[i]], 'numeric'))
         l1_numeric_index_in_data <- c(l1_numeric_index_in_data, l1_index_in_data[i])
     }
   }
@@ -55,9 +55,9 @@ function(samples_l2_param, dataX, dataZ, X, X_original_choice, Z_full, mf1, mf2,
   l2_numeric_index_in_data <- array(dim = 0)
   if (length(l2_index_in_data) > 0){
     for (i in 1: length(l2_index_in_data)){
-      if (class(dataZ[1,l2_index_in_data[i]]) == 'factor')
+      if (inherits(dataZ[1,l2_index_in_data[i]], 'factor'))
         l2_factor_index_in_data <- c(l2_factor_index_in_data, l2_index_in_data[i])
-      if (class(dataZ[1,l2_index_in_data[i]]) == 'integer' || class(dataZ[1,l2_index_in_data[i]]) == 'numeric')
+      if (inherits(dataZ[1,l2_index_in_data[i]], 'integer') || inherits(dataZ[1,l2_index_in_data[i]], 'numeric'))
         l2_numeric_index_in_data <- c(l2_numeric_index_in_data, l2_index_in_data[i])
     }
   }

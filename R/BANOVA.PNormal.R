@@ -7,7 +7,7 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     mf1 <- model.frame(formula = l1_formula, data = data)
     # check y, if it is integers
     y <- model.response(mf1)
-    if (class(y) != 'integer'){
+    if (!inherits(y, 'integer')){
       warning("The response variable must be integers (data class also must be 'integer')..")
       y <- as.integer(as.character(y))
       warning("The response variable has been converted to integers..")
@@ -18,9 +18,9 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     single_level = T
     # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
     for (i in 1:ncol(data)){
-      if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+      if(!inherits(data[,i], 'factor') && !inherits(data[,i], 'numeric') && !inherits(data[,i], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
       # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-      if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+      if ((inherits(data[,i], 'numeric') | inherits(data[,i], 'integer')) & length(unique(data[,i])) <= 3){
         data[,i] <- as.factor(data[,i])
         warning("Variables(levels <= 3) have been converted to factors")
       }
@@ -71,9 +71,9 @@ function(l1_formula = 'NA', l2_formula = 'NA', data, id, l2_hyper, burnin, sampl
     
     # check each column in the dataframe should have the class 'factor' or 'numeric', no other classes such as 'matrix'...
     for (i in 1:ncol(data)){
-      if(class(data[,i]) != 'factor' && class(data[,i]) != 'numeric' && class(data[,i]) != 'integer') stop("data class must be 'factor', 'numeric' or 'integer'")
+      if(!inherits(data[,i], 'factor') && !inherits(data[,i], 'numeric') && !inherits(data[,i], 'integer')) stop("data class must be 'factor', 'numeric' or 'integer'")
       # checking numerical predictors, converted to categorical variables if the number of levels is <= 3
-      if ((class(data[,i]) == 'numeric' | class(data[,i]) == 'integer') & length(unique(data[,i])) <= 3){
+      if ((inherits(data[,i], 'numeric') | inherits(data[,i], 'integer')) & length(unique(data[,i])) <= 3){
         data[,i] <- as.factor(data[,i])
         warning("Variables(levels <= 3) have been converted to factors")
       }
